@@ -2,7 +2,7 @@ import os
 import json
 from tabula import read_pdf
 
-with open('aliases.json') as alias_file:
+with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
     aliases = json.load(alias_file)
 data = {}
 
@@ -38,7 +38,7 @@ for announcer in os.listdir(data_path):
         if alias is None:
             alias = input(f'{header["text"]}:')
             aliases[header['text']] = alias
-            with open('aliases.json', 'w') as alias_file:
+            with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
                 json.dump(aliases, alias_file)
         if alias not in ['Course Code', 'Course Name', 'Room', 'Block', 'Teacher']:
             alias = ''
@@ -59,22 +59,22 @@ for announcer in os.listdir(data_path):
                     if alias is None:
                         alias = input(f'{ cell["text"] }:')
                         # allows for fixing the file without reloading everything
-                        with open('aliases.json') as alias_file:
+                        with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
                             aliases = json.load(alias_file)
                         aliases[cell['text']] = alias
-                        with open('aliases.json', 'w') as alias_file:
+                        with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
                             json.dump(aliases, alias_file)
                     if cell['width'] == 0:
                         alias = aliases.get(f'{ announcer }{ pages.index(page) }{ page["data"].index(row) }{ row.index(cell) }')
                         if alias is None:
                             alias = input(f'truncated:')
                             aliases[f'{ announcer }{ pages.index(page) }{ page["data"].index(row) }{ row.index(cell) }'] = alias
-                            with open('aliases.json', 'w') as alias_file:
+                            with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
                                 json.dump(aliases, alias_file)
                     data[announcer[:-4]][-1][header] = alias
             if all(field == '' for field in data[announcer[:-4]][-1].values()) or all(x == y for (x, y) in data[announcer[:-4]][-1].items()):
                 data[announcer[:-4]].remove(data[announcer[:-4]][-1])
             else:
-                with open('data.json', 'w') as data_file:
+                with open(os.path.join(os.path.dirname(__file__), 'data.json'), 'w') as data_file:
                     json.dump(data, data_file)
                 print(data[announcer[:-4]][-1])
