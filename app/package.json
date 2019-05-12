@@ -1,0 +1,20 @@
+{
+  "name": "StudentsReviewMe2",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --write src/**/*.{js,jsx}",
+    "start": "npm run develop",
+    "serve": "gatsby serve"
+  },
+  "dependencies": {
+    "gatsby": "^2.4.3",
+    "gatsby-source-mongodb": "^2.0.18",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "slugify": "^1.3.4"
+  },
+  "devDependencies": {
+    "prettier": "^1.17.0"
+  }
+}
