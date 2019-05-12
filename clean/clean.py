@@ -2,6 +2,12 @@ import os
 import json
 from tabula import read_pdf
 
+from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['StudentsReview']
+classes = db['classes']
+
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
     aliases = json.load(alias_file)
 data = {}
@@ -75,6 +81,17 @@ for announcer in os.listdir(data_path):
             if all(field == '' for field in data[announcer[:-4]][-1].values()) or all(x == y for (x, y) in data[announcer[:-4]][-1].items()):
                 data[announcer[:-4]].remove(data[announcer[:-4]][-1])
             else:
-                with open(os.path.join(os.path.dirname(__file__), 'data.json'), 'w') as data_file:
-                    json.dump(data, data_file)
                 print(data[announcer[:-4]][-1])
+
+for x in range(234, 242):
+    data['Fall2014'][x]['Room'] = 'Library'
+
+for x in range(301, 303):
+    data['Spring2015'][x]['Teacher'] = 'Matthew Bell'
+
+data['Fall2015'][400]['Teacher'] = 'Pollak'
+
+for semester in data:
+    for class_ in data[semester]:
+        class_['Semester'] = semester
+        classes.insert_one(class_)
