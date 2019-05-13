@@ -8,6 +8,8 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['StudentsReview']
 classes = db['classes']
 
+classes.drop()
+
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
     aliases = json.load(alias_file)
 data = {}
@@ -93,5 +95,35 @@ data['Fall2015'][400]['Teacher'] = 'Pollak'
 
 for semester in data:
     for class_ in data[semester]:
+        if class_['Course Name'] == 'CHIN151A':
+            class_['Course Name'] = 'Chinese 1'
+
+        if any(test.lower() in class_['Course Name'].lower() for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
+            class_['Department'] = 'Math'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Computer']):
+            class_['Department'] = 'Computer Science'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Research', 'Geology', 'Science']):
+            class_['Department'] = 'Science'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
+            class_['Department'] = 'Social Science'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire']):
+            class_['Department'] = 'English'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
+            class_['Department'] = 'Foreign Language'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
+            class_['Department'] = 'Visual Performing Arts'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Training', 'Soccer', 'Yoga', 'Dance']):
+            class_['Department'] = 'Physical Education'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['JROTC']):
+            class_['Department'] = 'JROTC'
+        else:
+            class_['Department'] = 'Miscellaneous'
+
+        if class_['Teacher'] == 'Chan':
+            if class_['Department'] == 'Visual Performing Arts':
+                class_['Teacher'] = 'Jason Chan'
+            elif class_['Department'] == 'Math':
+                class_['Teacher'] = 'Tom'
+
         class_['Semester'] = semester
         classes.insert_one(class_)

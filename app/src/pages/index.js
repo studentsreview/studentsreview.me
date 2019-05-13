@@ -25,8 +25,8 @@ export default ({ data }) => {
         } }>
             <TextField
                 style={ {
-                    width: '70vw',
-                    maxWidth: 760
+                    width: 760,
+                    maxWidth: '70w'
                 } }
                 inputRef={ inputRef }
                 value={ value }
