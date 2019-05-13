@@ -1,0 +1,13 @@
+html, body, #___gatsby, div[role=group] {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Helvetica, serif;
+}
+
+a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+    color: black;
+}
