@@ -45,7 +45,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
             <h3 style={ { display: 'inline' } }>{ name }</h3>
             <Chip
                 style={ {
-                    margin: 10,
+                    marginLeft: 10,
                     background: {
                         Science: 'lightgreen',
                         Math: 'lightblue',
@@ -54,7 +54,8 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                         'Physical Education': 'pink',
                         JROTC: '#b5651d',
                         'Visual Performing Arts': 'beige',
-                        'Social Science': 'gold'
+                        'Social Science': 'gold',
+                        'Foreign Language': '#e6e6fa'
                     }[data.allMongodbStudentsReviewClasses.nodes[0].Department]
                 } }
                 label={ data.allMongodbStudentsReviewClasses.nodes[0].Department }
@@ -65,6 +66,9 @@ const TeacherPage = ({ pageContext, data, classes }) => {
             <br/>
             {
                 codes.map((code, idx) => <Chip
+                    style={ {
+                        marginTop: 10
+                    } }
                     key={ idx }
                     label={ code }
                 />)

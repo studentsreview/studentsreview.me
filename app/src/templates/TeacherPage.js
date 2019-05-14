@@ -52,7 +52,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
             <h3 style={ { display: 'inline' } }>{ name }</h3>
             <Chip
                 style={ {
-                    margin: 10
+                    marginLeft: 10
                 } }
                 label={ `${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
             />
@@ -61,6 +61,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                 departments.map((department, idx) => <Chip
                     key={ idx }
                     style={ {
+                        marginTop: 10,
                         background: {
                             Science: 'lightgreen',
                             Math: 'lightblue',
@@ -69,7 +70,8 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                             'Physical Education': 'pink',
                             JROTC: '#b5651d',
                             'Visual Performing Arts': 'beige',
-                            'Social Science': 'gold'
+                            'Social Science': 'gold',
+                            'Foreign Language': '#e6e6fa'
                         }[department]
                     } }
                     label={ department }
