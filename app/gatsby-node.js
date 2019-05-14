@@ -15,13 +15,15 @@ module.exports.createPages = async ({ graphql, actions }) => {
     `);
 
     (new Set(teachers.data.allMongodbStudentsReviewClasses.nodes.map(node => node.Teacher))).forEach(name => {
-        createPage({
-            path: `/teachers/${ slugify(name, { lower: true }) }`,
-            component: path.resolve('./src/templates/TeacherPage.js'),
-            context: {
-                name
-            }
-        });
+        if (name !== 'Undetermined') {
+            createPage({
+                path: `/teachers/${ slugify(name, { lower: true }) }`,
+                component: path.resolve('./src/templates/TeacherPage.js'),
+                context: {
+                    name
+                }
+            });
+        }
     });
 
     let courses = await graphql(`

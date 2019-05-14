@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react'
 import { graphql } from 'gatsby';
-import { Paper, withStyles } from '@material-ui/core';
+import {
+    Chip,
+    Grid,
+    MenuItem,
+    Paper,
+    Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    withStyles,
+} from '@material-ui/core'
 import Layout from '../components/layout';
+
+import { navigate } from '@reach/router';
+import slugify from 'slugify';
 
 import { card } from '../styles/styles';
 
 const TeacherPage = ({ pageContext, data, classes }) => {
     const { name } = pageContext;
+
+    const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
+    [1, 2, 3, 4, 5, 6, 7, 8].forEach(block => {
+        if (!blocks.includes(String(block))) {
+            blocks.push(String(block));
+        }
+    });
+    blocks.sort();
 
     const departments = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Department)));
 
@@ -14,13 +36,73 @@ const TeacherPage = ({ pageContext, data, classes }) => {
         departments.splice(departments.indexOf('Miscellaneous'), 1);
     }
 
-    return <Layout gridStyle={ {
+    const semesters = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Semester))).sort((a, b) => {
+        a = /(Spring|Fall)(\d{4})/.exec(a);
+        b = /(Spring|Fall)(\d{4})/.exec(b);
+        return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
+    });
+
+    const [semester, setSemester] = useState(semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ? `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }` : semesters[0]);
+
+    return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
     } }>
         <Paper className={ classes.card }>
             <h3>{ name }</h3>
             <p>{ departments.join(', ') } Teacher</p>
+            <p>
+                {
+                    semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ?
+                        `Teaching since ${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') }` :
+                        `Taught from ${/(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } to ${/(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }`
+                }
+            </p>
         </Paper>
+        <div className={ classes.card }>
+            <Grid container direction='column' justify='center'>
+                <Select value={ semester }
+                        renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
+                        onChange={ (_, child) => setSemester(child.props.value) }
+                        style={ { width: '33%' } }
+                >
+                    <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
+                    {
+                        semesters
+                            .slice(0, semesters.indexOf(semester))
+                            .concat(semesters.slice(semesters.indexOf(semester) + 1))
+                            .map((semester, idx) => <MenuItem
+                                value={ semester }
+                                key={ idx }
+                            >
+                                { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
+                            </MenuItem>)
+                    }
+                </Select>
+                <Table>
+                    <TableBody>
+                        {
+                            blocks.map((block, idx) => <TableRow key={ idx }>
+                                <TableCell>Period { block }</TableCell>
+                                <TableCell>
+                                    {
+                                        Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes
+                                            .filter(node => node.Block === block && node.Semester === semester)
+                                            .map(node => node.Course_Name)
+                                        ))
+                                            .map((course, idx) =>
+                                                <Chip
+                                                    key={ idx }
+                                                    label={ course }
+                                                    onClick={ () => navigate(`/courses/${ slugify(course, { lower: true }) }`) }
+                                                />)
+                                    }
+                                </TableCell>
+                            </TableRow>)
+                        }
+                    </TableBody>
+                </Table>
+            </Grid>
+        </div>
     </Layout>;
 }
 
@@ -34,7 +116,10 @@ export const query = graphql`
             }
         }) {
             nodes {
-                Department
+                Department,
+                Semester,
+                Course_Name,
+                Block
             }
         }
     }

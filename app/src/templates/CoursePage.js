@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { graphql } from 'gatsby';
-import { Paper, Grid, Select, MenuItem, Chip, Table, TableBody, TableRow, TableCell, withStyles } from '@material-ui/core'
+import {
+    Paper,
+    Grid,
+    Select,
+    MenuItem,
+    Chip,
+    Table,
+    TableBody,
+    TableRow,
+    TableCell,
+    withStyles
+} from '@material-ui/core'
 import Layout from '../components/layout';
 
 import { navigate } from '@reach/router';
@@ -25,7 +36,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
         return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
     });
 
-    const [semester, setSemester] = useState(semesters[0]);
+    const [semester, setSemester] = useState(semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ? `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }` : semesters[0]);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
@@ -34,6 +45,13 @@ const TeacherPage = ({ pageContext, data, classes }) => {
             <h3>{ name }</h3>
             <p>Course Code: { codes.join(', ') }</p>
             <p>Department: { data.allMongodbStudentsReviewClasses.nodes[0].Department }</p>
+            <p>
+                {
+                    semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ?
+                        `Offered since ${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') }` :
+                        `Offered from ${/(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } to ${/(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }`
+                }
+            </p>
         </Paper>
         <div className={ classes.card }>
             <Grid container direction='column' justify='center'>
@@ -59,15 +77,18 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                     <TableBody>
                         {
                             blocks.map((block, idx) => <TableRow key={ idx }>
-                                <TableCell>{ block }</TableCell>
+                                <TableCell>Period { block }</TableCell>
                                 <TableCell>
                                     {
                                         Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes
-                                            .filter(node => node.Block === block && node.Teacher !== 'Undetermined' && node.Semester === semester)
+                                            .filter(node => node.Block === block && node.Semester === semester)
                                             .map(node => node.Teacher)
                                         ))
                                             .map((teacher, idx) =>
-                                                <Chip
+                                                teacher === 'Undetermined' ? <Chip
+                                                    key={ idx }
+                                                    label={ teacher }
+                                                /> : <Chip
                                                     key={ idx }
                                                     label={ teacher.split(' ')[teacher.split(' ').length - 1] }
                                                     onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`) }
