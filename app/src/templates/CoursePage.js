@@ -17,7 +17,7 @@ import Layout from '../components/layout';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
-import { card } from '../styles/styles';
+import styles from '../styles/styles';
 
 const TeacherPage = ({ pageContext, data, classes }) => {
     const { name } = pageContext;
@@ -60,18 +60,36 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                 } }
                 label={ data.allMongodbStudentsReviewClasses.nodes[0].Department }
             />
+            {
+                name.includes('Honors') ? <Chip
+                    style={ {
+                        background: '#602f6b'
+                    } }
+                    label='Honors'
+                /> : null
+            }
+            {
+                name.includes('AP') ? <Chip
+                    style={ {
+                        background: '#cfb53b'
+                    } }
+                    label='AP'
+                /> : null
+            }
             <Chip
                 label={ `${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
             />
             <br/>
             {
-                codes.map((code, idx) => <Chip
-                    style={ {
-                        marginTop: 10
-                    } }
-                    key={ idx }
-                    label={ code }
-                />)
+                codes
+                    .filter(code => !code.endsWith('A') && !code.endsWith('B'))
+                    .map((code, idx) => <Chip
+                        style={ {
+                            marginTop: 10
+                        } }
+                        key={ idx }
+                        label={ code }
+                    />)
             }
         </Paper>
         <div className={ classes.card }>
@@ -125,7 +143,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
     </Layout>;
 }
 
-export default withStyles({ card })(TeacherPage);
+export default withStyles(styles)(TeacherPage);
 
 export const query = graphql`
     query($name: String!) {

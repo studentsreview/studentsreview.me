@@ -10,15 +10,14 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    withStyles,
-    colors
+    withStyles
 } from '@material-ui/core'
 import Layout from '../components/layout';
 
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
-import { card } from '../styles/styles';
+import styles  from '../styles/styles';
 
 const TeacherPage = ({ pageContext, data, classes }) => {
     const { name } = pageContext;
@@ -126,7 +125,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
     </Layout>;
 }
 
-export default withStyles({ card })(TeacherPage);
+export default withStyles(styles)(TeacherPage);
 
 export const query = graphql`
     query($name: String!) {
