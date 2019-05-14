@@ -97,7 +97,6 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                 <Select value={ semester }
                         renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
                         onChange={ (_, child) => setSemester(child.props.value) }
-                        style={ { width: '33%' } }
                 >
                     <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
                     {
