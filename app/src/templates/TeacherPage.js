@@ -15,7 +15,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
     }
 
     return <Layout gridStyle={ {
-        minHeight: 'calc(70% - 64px)'
+        minHeight: '70%'
     } }>
         <Paper className={ classes.card }>
             <h3>{ name }</h3>

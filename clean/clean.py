@@ -82,8 +82,6 @@ for announcer in os.listdir(data_path):
                     data[announcer[:-4]][-1][header] = alias
             if all(field == '' for field in data[announcer[:-4]][-1].values()) or all(x == y for (x, y) in data[announcer[:-4]][-1].items()):
                 data[announcer[:-4]].remove(data[announcer[:-4]][-1])
-            else:
-                print(data[announcer[:-4]][-1])
 
 for x in range(234, 242):
     data['Fall2014'][x]['Room'] = 'Library'
@@ -123,7 +121,11 @@ for semester in data:
             if class_['Department'] == 'Visual Performing Arts':
                 class_['Teacher'] = 'Jason Chan'
             elif class_['Department'] == 'Math':
-                class_['Teacher'] = 'Tom'
+                class_['Teacher'] = 'Tom Chan'
+
+        if class_['Teacher'] == 'Yu Li':
+            if class_['Department'] == 'Math':
+                class_['Teacher'] = 'Ernest Li'
 
         class_['Semester'] = semester
         classes.insert_one(class_)

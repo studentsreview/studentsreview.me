@@ -1,5 +1,6 @@
 export const card = {
-    padding: 25,
-    width: 600,
-    maxWidth: '70w'
+    padding: 15,
+    margin: 20,
+    width: 500,
+    maxWidth: '45vw'
 };

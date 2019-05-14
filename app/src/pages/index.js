@@ -14,6 +14,7 @@ export default ({ data }) => {
     const inputRef = useRef(null);
 
     const teachers = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Teacher)));
+    teachers.splice(teachers.indexOf('Undetermined'), 1);
     const courses = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Course_Name)));
 
     const items = teachers.concat(courses);
@@ -21,7 +22,7 @@ export default ({ data }) => {
     const suggestions = items.filter(item => !isEqual(match(item, value), [])).sort((a, b) => match(b, value).length - match(a, value).length).slice(0, 5);
     return (
         <Layout gridStyle={ {
-            height: '70%'
+            minHeight: '70%'
         } }>
             <TextField
                 style={ {
@@ -50,9 +51,7 @@ export default ({ data }) => {
                 <Paper
                     style={ { width: inputRef.current ? inputRef.current.clientWidth : null } }>
                     {
-                        suggestions.map((suggestion, idx) => <MenuItem key={ idx } onClick={ () => {
-                                setValue(suggestion);
-                            } } style={ { cursor: 'pointer' } }>{
+                        suggestions.map((suggestion, idx) => <MenuItem key={ idx } onClick={ () => setValue(suggestion) } style={ { cursor: 'pointer' } }>{
                                 parse(suggestion, match(suggestion, value)).map((match, idx) => <span key={ idx } style={ {
                                     opacity: match.highlight ? 1 : 0.5,
                                     whiteSpace: 'pre'
