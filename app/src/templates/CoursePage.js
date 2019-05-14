@@ -42,16 +42,33 @@ const TeacherPage = ({ pageContext, data, classes }) => {
         minHeight: '70%'
     } }>
         <Paper className={ classes.card }>
-            <h3>{ name }</h3>
-            <p>Course Code: { codes.join(', ') }</p>
-            <p>Department: { data.allMongodbStudentsReviewClasses.nodes[0].Department }</p>
-            <p>
-                {
-                    semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ?
-                        `Offered since ${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') }` :
-                        `Offered from ${/(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } to ${/(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }`
-                }
-            </p>
+            <h3 style={ { display: 'inline' } }>{ name }</h3>
+            <Chip
+                style={ {
+                    margin: 10,
+                    background: {
+                        Science: 'lightgreen',
+                        Math: 'lightblue',
+                        'Computer Science': 'orange',
+                        English: '#e0e0e0',
+                        'Physical Education': 'pink',
+                        JROTC: '#b5651d',
+                        'Visual Performing Arts': 'beige',
+                        'Social Science': 'gold'
+                    }[data.allMongodbStudentsReviewClasses.nodes[0].Department]
+                } }
+                label={ data.allMongodbStudentsReviewClasses.nodes[0].Department }
+            />
+            <Chip
+                label={ `${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
+            />
+            <br/>
+            {
+                codes.map((code, idx) => <Chip
+                    key={ idx }
+                    label={ code }
+                />)
+            }
         </Paper>
         <div className={ classes.card }>
             <Grid container direction='column' justify='center'>
