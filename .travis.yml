@@ -1,7 +1,7 @@
-language: node_js
-node_js:
-  - 11.14.0
-
+dist: xenial
+language: python
+python: '3.7'
+services: mongodb
 branches:
   only:
     - master
@@ -12,10 +12,12 @@ cache:
     - node_modules
 
 before_script:
-  - cd app
-  - yarn
+  - nvm install 11.14.0
 
 script:
+  - python clean/clean.py
+  - cd app
+  - yarn
   - yarn build
 
 deploy:
