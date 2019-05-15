@@ -13,6 +13,7 @@ cache:
 
 before_script:
   - cd app
+  - yarn
 
 script:
   - yarn build
