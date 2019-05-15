@@ -23,7 +23,7 @@ const TeacherPage = ({ pageContext, data, classes }) => {
     const { name } = pageContext;
 
     const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
-    [1, 2, 3, 4, 5, 6, 7, 8].forEach(block => {
+    ['1', '2', '3', '4', '5', '6', '7', '8'].forEach(block => {
         if (!blocks.includes(String(block))) {
             blocks.push(String(block));
         }
@@ -44,15 +44,18 @@ const TeacherPage = ({ pageContext, data, classes }) => {
 
     const [semester, setSemester] = useState(semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ? `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }` : semesters[0]);
 
+    const semesterCourses = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes))
+        .filter(node => node.Semester === semester);
+
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
     } }>
         <Paper className={ classes.card }>
-            <h3 style={ { display: 'inline' } }>{ name }</h3>
+            <h3 style={ {
+                display: 'inline',
+                marginRight: 10
+            } }>{ name }</h3>
             <Chip
-                style={ {
-                    marginLeft: 10
-                } }
                 label={ `${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
             />
             <br/>
@@ -99,23 +102,23 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                 <Table>
                     <TableBody>
                         {
-                            blocks.map((block, idx) => <TableRow key={ idx }>
-                                <TableCell>Period { block }</TableCell>
-                                <TableCell>
-                                    {
-                                        Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes
-                                            .filter(node => node.Block === block && node.Semester === semester)
-                                            .map(node => node.Course_Name)
-                                        ))
-                                            .map((course, idx) =>
-                                                <Chip
-                                                    key={ idx }
-                                                    label={ course }
-                                                    onClick={ () => navigate(`/courses/${ slugify(course, { lower: true }) }`) }
-                                                />)
-                                    }
-                                </TableCell>
-                            </TableRow>)
+                            blocks
+                                .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
+                                .map((block, idx) => <TableRow key={ idx }>
+                                    <TableCell>Period { block }</TableCell>
+                                    <TableCell>
+                                        {
+                                            semesterCourses
+                                                .filter(node => node.Block === block)
+                                                .map((node, idx) =>
+                                                    <Chip
+                                                        key={ idx }
+                                                        label={ node.Course_Name }
+                                                        onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`) }
+                                                    />)
+                                        }
+                                    </TableCell>
+                                </TableRow>)
                         }
                     </TableBody>
                 </Table>

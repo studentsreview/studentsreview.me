@@ -66,9 +66,9 @@ export default ({ data }) => {
             <Button onClick={ () => {
                 if (items.includes(value)) {
                     if (teachers.includes(value)) {
-                        navigate(`teachers/${ slugify(value, { lower: true }) }`);
+                        navigate(`/teachers/${ slugify(value, { lower: true }) }`);
                     } else if (courses.includes(value)) {
-                        navigate(`courses/${ slugify(value, { lower: true }) }`);
+                        navigate(`/courses/${ slugify(value, { lower: true }) }`);
                     }
                 }
             } }>Select</Button>

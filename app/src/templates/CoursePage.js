@@ -42,10 +42,12 @@ const TeacherPage = ({ pageContext, data, classes }) => {
         minHeight: '70%'
     } }>
         <Paper className={ classes.card }>
-            <h3 style={ { display: 'inline' } }>{ name }</h3>
+            <h3 style={ {
+                display: 'inline',
+                marginLeft: 10
+            } }>{ name }</h3>
             <Chip
                 style={ {
-                    marginLeft: 10,
                     background: {
                         Science: 'lightgreen',
                         Math: 'lightblue',
