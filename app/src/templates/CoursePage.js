@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { graphql } from 'gatsby';
+import Layout from '../components/layout';
 import {
     Paper,
     Grid,
@@ -11,9 +11,10 @@ import {
     TableRow,
     TableCell,
     withStyles
-} from '@material-ui/core'
-import Layout from '../components/layout';
+} from '@material-ui/core';
+import { Helmet } from 'react-helmet';
 
+import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
@@ -41,10 +42,13 @@ const TeacherPage = ({ pageContext, data, classes }) => {
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
     } }>
+        <Helmet>
+            <title>{ name }</title>
+        </Helmet>
         <Paper className={ classes.card }>
             <h3 style={ {
                 display: 'inline',
-                marginLeft: 10
+                marginRight: 10
             } }>{ name }</h3>
             <Chip
                 style={ {

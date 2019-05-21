@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import Layout from '../components/layout';
 import { Button, MenuItem, Paper, Popper, TextField } from '@material-ui/core';
+import { Helmet } from 'react-helmet';
 
 import { graphql } from 'gatsby';
 import slugify from 'slugify';
@@ -24,6 +25,9 @@ export default ({ data }) => {
         <Layout gridStyle={ {
             minHeight: '70%'
         } }>
+            <Helmet>
+                <title>Students Review</title>
+            </Helmet>
             <TextField
                 style={ {
                     width: 760,
