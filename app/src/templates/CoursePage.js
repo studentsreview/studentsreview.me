@@ -37,7 +37,7 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
         return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
     });
 
-    const initialSemester = location.state ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
+    const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
