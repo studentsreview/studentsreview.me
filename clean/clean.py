@@ -100,12 +100,12 @@ for semester in data:
             class_['Department'] = 'Math'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['Computer']):
             class_['Department'] = 'Computer Science'
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire']):
+            class_['Department'] = 'English'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Research', 'Geology', 'Science']):
             class_['Department'] = 'Science'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
             class_['Department'] = 'Social Science'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire']):
-            class_['Department'] = 'English'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
             class_['Department'] = 'Foreign Language'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
@@ -126,6 +126,9 @@ for semester in data:
         if class_['Teacher'] == 'Yu Li':
             if class_['Department'] == 'Math':
                 class_['Teacher'] = 'Ernest Li'
+
+        if class_['Course Name'] == 'AP Enivronmental Science':
+            class_['Course Name'] = 'AP Environmental Science'
 
         class_['Semester'] = semester
         classes.insert_one(class_)

@@ -20,7 +20,7 @@ import slugify from 'slugify';
 
 import styles  from '../styles/styles';
 
-const TeacherPage = ({ pageContext, data, classes }) => {
+const TeacherPage = ({ pageContext, data, classes, location }) => {
     const { name } = pageContext;
 
     const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
@@ -43,7 +43,8 @@ const TeacherPage = ({ pageContext, data, classes }) => {
         return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
     });
 
-    const [semester, setSemester] = useState(semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) ? `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }` : semesters[0]);
+    const initialSemester = location.state ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
+    const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes))
         .filter(node => node.Semester === semester);
@@ -118,7 +119,11 @@ const TeacherPage = ({ pageContext, data, classes }) => {
                                                     <Chip
                                                         key={ idx }
                                                         label={ node.Course_Name }
-                                                        onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`) }
+                                                        onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
+                                                            state: {
+                                                                semester
+                                                            }
+                                                        }) }
                                                     />)
                                         }
                                     </TableCell>
