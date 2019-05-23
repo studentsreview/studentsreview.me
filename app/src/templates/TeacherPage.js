@@ -10,17 +10,19 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    withStyles
-} from '@material-ui/core'
+    withStyles,
+    withWidth,
+} from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 
+import { isWidthDown } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles  from '../styles/styles';
 
-const TeacherPage = ({ pageContext, data, classes, location }) => {
+const TeacherPage = ({ pageContext, data, classes, location, width }) => {
     const { name } = pageContext;
 
     const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
@@ -117,6 +119,9 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
                                                 .filter(node => node.Block === block)
                                                 .map((node, idx) =>
                                                     <Chip
+                                                        style={ node.Course_Name.length > 25 && isWidthDown('xs', width) ? {
+                                                            fontSize: '1.75vw'
+                                                        } : null }
                                                         key={ idx }
                                                         label={ node.Course_Name }
                                                         onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
@@ -136,7 +141,7 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
     </Layout>;
 }
 
-export default withStyles(styles)(TeacherPage);
+export default withWidth()(withStyles(styles)(TeacherPage));
 
 export const query = graphql`
     query($name: String!) {

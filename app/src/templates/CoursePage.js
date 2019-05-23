@@ -70,7 +70,7 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
             {
                 name.includes('Honors') ? <Chip
                     style={ {
-                        background: '#602f6b'
+                        background: '#6a4f6b'
                     } }
                     label='Honors'
                 /> : null
