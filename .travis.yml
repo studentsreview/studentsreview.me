@@ -19,6 +19,7 @@ script:
   - cd app
   - yarn
   - yarn build
+  - cd public
   - echo "studentsreview.me" > CNAME
 
 deploy:
