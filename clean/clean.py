@@ -89,7 +89,7 @@ for x in range(234, 242):
 for x in range(301, 303):
     data['Spring2015'][x]['Teacher'] = 'Matthew Bell'
 
-data['Fall2015'][400]['Teacher'] = 'Pollak'
+data['Fall2015'][400]['Teacher'] = 'Julian Pollak'
 
 for semester in data:
     for class_ in data[semester]:
