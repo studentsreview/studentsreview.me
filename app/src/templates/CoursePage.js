@@ -25,12 +25,13 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
 
     const codes = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Course_Code)));
     const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
-    [1, 2, 3, 4, 5, 6, 7, 8].forEach(block => {
+    ['1', '2', '3', '4', '5', '6', '7', '8'].forEach(block => {
         if (!blocks.includes(String(block))) {
             blocks.push(String(block));
         }
     });
-    blocks.sort();
+    blocks.sort((a, b) => +a - +b);
+
     const semesters = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Semester))).sort((a, b) => {
         a = /(Spring|Fall)(\d{4})/.exec(a);
         b = /(Spring|Fall)(\d{4})/.exec(b);
@@ -39,6 +40,9 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
+
+    const semesterCourses = data.allMongodbStudentsReviewClasses.nodes
+        .filter(node => node.Semester === semester);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
@@ -121,29 +125,32 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
                 <Table>
                     <TableBody>
                         {
-                            blocks.map((block, idx) => <TableRow key={ idx }>
-                                <TableCell>Period { block }</TableCell>
-                                <TableCell>
-                                    {
-                                        Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes
-                                            .filter(node => node.Block === block && node.Semester === semester)
-                                            .map(node => node.Teacher)
-                                        ))
-                                            .map((teacher, idx) =>
-                                                teacher === 'Undetermined' ? <Chip
-                                                    key={ idx }
-                                                    label={ teacher }
-                                                /> : <Chip
-                                                    key={ idx }
-                                                    label={ teacher.split(' ')[teacher.split(' ').length - 1] }
-                                                    onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
-                                                        state: {
-                                                            semester
-                                                        }
-                                                    }) }
-                                                />)
-                                    }
-                                </TableCell>
+                            blocks
+                                .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
+                                .map((block, idx) => <TableRow key={ idx }>
+                                    <TableCell>Period { block }</TableCell>
+                                    <TableCell>
+                                        {
+                                            Array.from(new Set(
+                                                semesterCourses
+                                                    .filter(node => node.Block === block)
+                                                    .map(node => node.Teacher)
+                                            ))
+                                                .map((teacher, idx) =>
+                                                    teacher === 'Undetermined' ? <Chip
+                                                        key={ idx }
+                                                        label={ teacher }
+                                                    /> : <Chip
+                                                        key={ idx }
+                                                        label={ teacher.split(' ')[teacher.split(' ').length - 1] }
+                                                        onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
+                                                            state: {
+                                                                semester
+                                                            }
+                                                        }) }
+                                                    />)
+                                        }
+                                    </TableCell>
                             </TableRow>)
                         }
                     </TableBody>

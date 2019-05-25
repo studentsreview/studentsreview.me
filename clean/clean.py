@@ -102,7 +102,7 @@ for semester in data:
             class_['Department'] = 'Computer Science'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire']):
             class_['Department'] = 'English'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Research', 'Geology', 'Science']):
+        elif any(test.lower() in class_['Course Name'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             class_['Department'] = 'Science'
         elif any(test.lower() in class_['Course Name'].lower() for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
             class_['Department'] = 'Social Science'
