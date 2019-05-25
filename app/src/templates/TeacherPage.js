@@ -31,13 +31,15 @@ const TeacherPage = ({ pageContext, data, classes, location, width }) => {
             blocks.push(String(block));
         }
     });
-    blocks.sort();
+    blocks.sort((a, b) => +a - +b);
 
     const departments = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Department)));
 
     if (departments.includes('Miscellaneous') && departments.length > 1) {
         departments.splice(departments.indexOf('Miscellaneous'), 1);
     }
+
+    const rooms = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Room)));
 
     const semesters = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Semester))).sort((a, b) => {
         a = /(Spring|Fall)(\d{4})/.exec(a);
@@ -48,7 +50,7 @@ const TeacherPage = ({ pageContext, data, classes, location, width }) => {
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
-    const semesterCourses = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes))
+    const semesterCourses = data.allMongodbStudentsReviewClasses.nodes
         .filter(node => node.Semester === semester);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
@@ -63,7 +65,7 @@ const TeacherPage = ({ pageContext, data, classes, location, width }) => {
                 marginRight: 10
             } }>{ name }</h3>
             <Chip
-                label={ `${ /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
+                label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') : 'Pre-Fall 2014' } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
             />
             <br/>
             {
@@ -86,6 +88,20 @@ const TeacherPage = ({ pageContext, data, classes, location, width }) => {
                     label={ department }
                 />)
             }
+            <h4>Fun Facts</h4>
+            <p>
+                Favorite Room: { rooms.reduce((acc, cur) => {
+                const count = data.allMongodbStudentsReviewClasses.nodes.map(node => node.Room).filter(room => room === cur).length;
+                if (count > data.allMongodbStudentsReviewClasses.nodes.map(node => node.Room).filter(room => room === acc).length) {
+                    return cur;
+                } else {
+                    return acc;
+                }
+            }) }
+            </p>
+            <p>
+                Classes per Semester: { (data.allMongodbStudentsReviewClasses.nodes.length / semesters.length).toFixed(2) }
+            </p>
         </Paper>
         <div className={ classes.card }>
             <Grid container direction='column' justify='center'>
@@ -154,7 +170,8 @@ export const query = graphql`
                 Department,
                 Semester,
                 Course_Name,
-                Block
+                Block,
+                Room
             }
         }
     }
