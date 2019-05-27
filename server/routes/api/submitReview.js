@@ -4,7 +4,8 @@ module.exports = (req, res) => {
     if (req.body && req.body.teacher && req.body.text) {
         const newReview = new Review({
             Teacher: req.body.teacher,
-            Text: req.body.text
+            Text: req.body.text,
+            Timestamp: new Date()
         });
 
         newReview

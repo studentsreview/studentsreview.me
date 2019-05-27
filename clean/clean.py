@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from tabula import read_pdf
 
 from pymongo import MongoClient
@@ -11,9 +12,7 @@ reviews = db['reviews']
 
 classes.delete_many({})
 reviews.delete_many({
-    'new': {
-        '$exists': False
-    }
+    'version': 1
 })
 
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
@@ -147,5 +146,7 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')
         for review in review_data[teacher]['reviews']:
             reviews.insert_one({
                 'Teacher': teacher,
-                'Text': review
+                'Text': review,
+                'Timestamp': datetime(1, 1, 1),
+                'version': 1
             })

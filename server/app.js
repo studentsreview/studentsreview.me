@@ -27,8 +27,6 @@ const rebuild = () => {
         });
 };
 
-rebuild();
-
 (async () => {
     mongoose.connect(mongo_url, { useNewUrlParser: true })
         .then(() => {
@@ -44,7 +42,9 @@ function register(app) {
     app.use(express.static('public', { root: __dirname }));
     app.post('/api/submitreview', (...args) => {
         submitReview(...args);
-        rebuild();
+        if (!isDev) {
+            rebuild();
+        }
     });
     app.get('*', (req, res) => {
         res.status(404).sendFile(path.join('public', '404', 'index.html'), { root: __dirname });
@@ -55,12 +55,13 @@ const http_server = express();
 register(http_server);
 
 if (!isDev) {
+    rebuild();
     http_server.get('*', (req, res) => {
         res.redirect('https://' + req.headers.host + req.url);
     });
     const options = {
-        key: fs.readFileSync('/home/ec2-user/.acme.sh/studentsreview.me/studentsreview.me.key'),
-        cert: fs.readFileSync('/home/ec2-user/.acme.sh/studentsreview.me/studentsreview.me.cer')
+        key: fs.readFileSync('/etc/letsencrypt/live/studentsreview.me/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/studentsreview.me/fullchain.pem')
     };
     let https_server = express();
     register(https_server);

@@ -168,7 +168,9 @@ export const query = graphql`
             }
         }) {
             nodes {
-                Text
+                Text,
+                Timestamp,
+                version
             }
         }
     }

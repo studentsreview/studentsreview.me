@@ -19,9 +19,13 @@ const reviewSchema = new mongoose.Schema({
     Text: {
         type: String,
         minlength: 100
+    },
+    Timestamp: {
+        type: Date,
+        required: true
     }
 }, {
-    versionKey: 'new'
+    versionKey: 'version'
 });
 
 module.exports = mongoose.model('Review', reviewSchema, 'reviews');
