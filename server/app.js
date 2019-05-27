@@ -15,9 +15,15 @@ const isDev = process.env.NODE_ENV === 'development';
 const port = isDev ? 8080 : 80;
 const mongo_url = 'mongodb://localhost:27017/StudentsReview';
 
+let child;
+
 const rebuild = () => {
     console.log('Rebuilding!');
-    child_process
+    if (child && child.connected) {
+        console.log('Killing Previous Build');
+        child.kill('SIGKILL');
+    }
+    child = child_process
         .exec('yarn build', {
             cwd: path.join(__dirname, '..', 'app')
         }, err => {
