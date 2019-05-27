@@ -11,9 +11,12 @@
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "autosuggest-highlight": "^3.1.1",
+    "axios": "^0.18.0",
     "gatsby": "^2.4.3",
+    "gatsby-plugin-google-analytics": "^2.0.20",
     "gatsby-plugin-jss": "^2.0.9",
     "gatsby-plugin-material-ui": "^1.2.5",
+    "gatsby-plugin-remove-trailing-slashes": "^2.0.11",
     "gatsby-source-mongodb": "^2.0.18",
     "lodash": "^4.17.11",
     "react": "^16.8.6",
