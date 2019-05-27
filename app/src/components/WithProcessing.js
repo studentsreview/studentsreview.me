@@ -36,6 +36,10 @@ const WithProcessing = () => component => props => {
         processed.courses = data.allMongodbStudentsReviewClasses.nodes;
     }
 
+    if (data.allMongodbStudentsReviewReviews) {
+        processed.reviews = data.allMongodbStudentsReviewReviews.nodes.map(node => node.Text);
+    }
+
     return createElement(component, Object.freeze(Object.assign(props, processed)));
 };
 

@@ -7,8 +7,10 @@ from pymongo import MongoClient
 client = MongoClient('mongodb://localhost:27017/')
 db = client['StudentsReview']
 classes = db['classes']
+reviews = db['reviews']
 
 classes.drop()
+reviews.drop()
 
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
     aliases = json.load(alias_file)
@@ -30,6 +32,8 @@ header_on_every_page = {
 
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
 for announcer in os.listdir(data_path):
+    if announcer == 'teachers.json':
+        continue
     print(announcer)
     data[announcer[:-4]] = []
     pages = read_pdf(
@@ -132,3 +136,12 @@ for semester in data:
 
         class_['Semester'] = semester
         classes.insert_one(class_)
+
+with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')) as reviews_file:
+    review_data = json.load(reviews_file)
+    for teacher in review_data:
+        for review in review_data[teacher]['reviews']:
+            reviews.insert_one({
+                'Teacher': teacher,
+                'Text': review
+            })
