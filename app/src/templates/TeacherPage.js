@@ -20,11 +20,10 @@ import withProcessing from '../components/WithProcessing';
 import ReviewForm from '../components/ReviewForm';
 import DepartmentChip from '../components/DepartmentChip';
 
-import { isWidthDown } from '@material-ui/core/withWidth';
+import { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { isMobile } from 'react-device-detect';
 
 import styles  from '../styles/styles';
 
@@ -67,7 +66,7 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                 />
             </Paper>
             {
-                !isMobile ? <div className={ classes.card }>
+                isWidthUp('sm', width) ? <div className={ classes.card }>
                     <Grid container direction='column' justify='center'>
                         <Select value={ semester }
                                 renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }

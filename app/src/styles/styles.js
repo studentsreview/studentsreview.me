@@ -7,7 +7,7 @@ export default theme => createStyles({
         marginBottom: 0,
         width: 600,
         maxWidth: 'calc(100vw - 30px)',
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up('sm')]: {
             maxWidth: 'calc(50vw - 30px)'
         }
     }

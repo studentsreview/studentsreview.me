@@ -21,19 +21,20 @@ let child;
 
 const rebuild = () => {
     console.log('Rebuilding!');
-    rimraf(path.join(__dirname, '..', 'app', 'public'));
-    if (processExists(child.pid)) {
-        console.log('Killing Previous Build');
-        child.kill('SIGKILL');
-    }
-    child = child_process
-        .exec('yarn build', {
-            cwd: path.join(__dirname, '..', 'app')
-        }, err => {
-            if (err) return console.log(err);
-            console.log('Rebuild Successful!');
-            ncp(path.join(__dirname, '..', 'app', 'public'), 'public');
-        });
+    rimraf(path.join(__dirname, '..', 'app', '.cache'), () => {
+        if (child && processExists(child.pid)) {
+            console.log('Killing Previous Build');
+            child.kill('SIGKILL');
+        }
+        child = child_process
+            .exec('yarn build', {
+                cwd: path.join(__dirname, '..', 'app')
+            }, err => {
+                if (err) return console.log(err);
+                console.log('Rebuild Successful!');
+                ncp(path.join(__dirname, '..', 'app', 'public'), 'public');
+            });
+    });
 };
 
 (async () => {
