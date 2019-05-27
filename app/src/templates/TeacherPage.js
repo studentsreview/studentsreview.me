@@ -34,17 +34,20 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
     const semesterCourses = courses
         .filter(node => node.Semester === semester);
 
-    if (!/page=([0-9])+/.test(location.search)) {
-        navigate(`${ location.href }?page=0`, {
+    let initialPage = 0;
+
+    if (!/page=([0-9]+)/.test(location.search)) {
+        navigate(`${ location.pathname }?page=0`, {
             replace: true
         });
     } else if (+/page=([0-9]+)/.exec(location.search)[1] * 5 > reviews.length) {
-        navigate(location.href.replace(/page=([0-9]+)/, `page=0`), {
+        initialPage = Math.floor(reviews.length / 5);
+        navigate(`${ location.pathname }?page=${ initialPage }`, {
             replace: true
         });
     }
 
-    const [pageNumber, setPageNumber] = useState(/page=([0-9]+)/.test(location.search) && +/page=([0-9]+)/.exec(location.search)[1] * 5 > reviews.length ? 0 : +(/page=([0-9]+)/.exec(location.search)[1]));
+    const [pageNumber, setPageNumber] = useState(/page=([0-9]+)/.test(location.search) && +/page=([0-9]+)/.exec(location.search)[1] * 5 > reviews.length ? initialPage : +(/page=([0-9]+)/.exec(location.search)[1]));
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
@@ -147,13 +150,13 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
             <Grid container className={ classes.card } direction='row' justify='space-between'>
                 <Button disabled={ pageNumber === 0 } onClick={ () => {
                     setPageNumber(pageNumber - 1);
-                    navigate(location.href.replace(/page=([0-9]+)/, `page=${ pageNumber - 1 }`), {
+                    navigate(`${ location.pathname }?page=${ pageNumber - 1 }`, {
                         replace: true
                     });
                 } }>Previous Page</Button>
                 <Button disabled={ (pageNumber + 1) * 5 > reviews.length } onClick={ () => {
                     setPageNumber(pageNumber + 1);
-                    navigate(location.href.replace(/page=([0-9]+)/, `page=${ pageNumber + 1 }`), {
+                    navigate(`${ location.pathname }?page=${ pageNumber + 1 }`, {
                         replace: true
                     });
                 } }>Next Page</Button>
