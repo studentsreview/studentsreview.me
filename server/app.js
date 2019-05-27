@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
+const rimraf = require('rimraf');
 const child_process = require('child_process');
+const processExists = require('process-exists');
 const ncp = require('ncp').ncp;
 
 const express = require('express');
@@ -19,7 +21,8 @@ let child;
 
 const rebuild = () => {
     console.log('Rebuilding!');
-    if (child && child.connected) {
+    rimraf(path.join(__dirname, '..', 'app', 'public'));
+    if (processExists(child.pid)) {
         console.log('Killing Previous Build');
         child.kill('SIGKILL');
     }
