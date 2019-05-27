@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout';
 import {
+    Button,
     Chip,
+    Divider,
     Grid,
     MenuItem,
     Paper,
@@ -12,7 +14,7 @@ import {
     TableRow,
     withStyles,
     withWidth,
-} from '@material-ui/core';
+} from '@material-ui/core'
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/WithProcessing';
 
@@ -31,6 +33,18 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
 
     const semesterCourses = courses
         .filter(node => node.Semester === semester);
+
+    if (!/page=([0-9])+/.test(location.search)) {
+        navigate(`${ location.href }?page=0`, {
+            replace: true
+        });
+    } else if (+/page=([0-9]+)/.exec(location.search)[1] * 5 > reviews.length) {
+        navigate(location.href.replace(/page=([0-9]+)/, `page=0`), {
+            replace: true
+        });
+    }
+
+    const [pageNumber, setPageNumber] = useState(/page=([0-9]+)/.test(location.search) && +/page=([0-9]+)/.exec(location.search)[1] * 5 > reviews.length ? 0 : +(/page=([0-9]+)/.exec(location.search)[1]));
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
@@ -122,14 +136,28 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
             </div>
         </Grid>
         <Grid>
-            <h3 className={ classes.card }>Reviews</h3>
+            <h3 className={ classes.card } style={ { textAlign: 'center' } }>Reviews</h3>
             {
-                reviews.map((review, idx) => <Paper key={ idx} className={ classes.card }>
+                reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) => <p key={ idx } className={ classes.card }>
                     {
                         review.replace(/Submitted by a student$/, '')
                     }
-                </Paper>)
+                </p>).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
+            <Grid container className={ classes.card } direction='row' justify='space-between'>
+                <Button disabled={ pageNumber === 0 } onClick={ () => {
+                    setPageNumber(pageNumber - 1);
+                    navigate(location.href.replace(/page=([0-9]+)/, `page=${ pageNumber - 1 }`), {
+                        replace: true
+                    });
+                } }>Previous Page</Button>
+                <Button disabled={ (pageNumber + 1) * 5 > reviews.length } onClick={ () => {
+                    setPageNumber(pageNumber + 1);
+                    navigate(location.href.replace(/page=([0-9]+)/, `page=${ pageNumber + 1 }`), {
+                        replace: true
+                    });
+                } }>Next Page</Button>
+            </Grid>
         </Grid>
     </Layout>;
 }
