@@ -3,7 +3,7 @@ import { AppBar, Grid, Toolbar } from '@material-ui/core';
 import { Link } from 'gatsby';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import blue from '@material-ui/core/colors/blue';
+import red from '@material-ui/core/colors/red';
 import { white } from '@material-ui/core/colors/common';
 
 import '../styles/layout.css';
@@ -13,9 +13,12 @@ const theme = createMuiTheme({
         useNextVariants: true,
     },
     palette: {
-        type: 'light',
-        primary: blue,
-        secondary: white
+        primary: {
+            light: red[700],
+            main: red[800],
+            dark: red[900],
+            contrastText: white
+        }
     }
 });
 

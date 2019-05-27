@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/WithProcessing';
+import DepartmentChip from '../components/DepartmentChip';
 
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
@@ -43,21 +44,8 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, semester
                 display: 'inline',
                 marginRight: 10
             } }>{ name }</h3>
-            <Chip
-                style={ {
-                    background: {
-                        Science: 'lightgreen',
-                        Math: 'lightblue',
-                        'Computer Science': 'orange',
-                        English: '#e0e0e0',
-                        'Physical Education': 'pink',
-                        JROTC: '#b5651d',
-                        'Visual Performing Arts': 'beige',
-                        'Social Science': 'gold',
-                        'Foreign Language': '#e6e6fa'
-                    }[courses[0].Department]
-                } }
-                label={ courses[0].Department }
+            <DepartmentChip
+                department={ courses[0].Department }
             />
             {
                 name.includes('Honors') ? <Chip

@@ -9,8 +9,12 @@ db = client['StudentsReview']
 classes = db['classes']
 reviews = db['reviews']
 
-classes.drop()
-reviews.drop()
+classes.delete_many({})
+reviews.delete_many({
+    'new': {
+        '$exists': False
+    }
+})
 
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
     aliases = json.load(alias_file)

@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev": "NODE_ENV=development node app.js",
+    "prod": "NODE_ENV=production node app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.5.11",
+    "ncp": "^2.0.0"
+  }
+}

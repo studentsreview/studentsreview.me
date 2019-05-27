@@ -12,12 +12,13 @@ import {
     TableBody,
     TableCell,
     TableRow,
-//    TextField,
     withStyles,
     withWidth
 } from '@material-ui/core'
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/WithProcessing';
+import ReviewForm from '../components/ReviewForm';
+import DepartmentChip from '../components/DepartmentChip';
 
 import { isWidthDown } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
@@ -56,37 +57,14 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                 />
                 <br/>
                 {
-                    departments.map((department, idx) => <Chip
+                    departments.map((department, idx) => <DepartmentChip
                         key={ idx }
-                        style={ {
-                            marginTop: 10,
-                            background: {
-                                Science: 'lightgreen',
-                                Math: 'lightblue',
-                                'Computer Science': 'orange',
-                                English: '#e0e0e0',
-                                'Physical Education': 'pink',
-                                JROTC: '#b5651d',
-                                'Visual Performing Arts': 'beige',
-                                'Social Science': 'gold',
-                                'Foreign Language': '#e6e6fa'
-                            }[department]
-                        } }
-                        label={ department }
+                        department={ department }
                     />)
                 }
-                { /*
-                <TextField
-                    style={ {
-                        width: '100%'
-                    } }
-                    rows={ 5 }
-                    placeholder='Write a Review...'
-                    multiline
-                    margin='normal'
+                <ReviewForm
+                    teacher={ name }
                 />
-                <Button>Submit Review</Button>
-                */ }
             </Paper>
             {
                 !isMobile ? <div className={ classes.card }>
@@ -145,7 +123,9 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
         <Grid>
             <h3 ref={ reviewsRef } className={ classes.card } style={ { textAlign: 'center' } }>Reviews</h3>
             {
-                reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) => <p key={ idx } className={ classes.card }>
+                reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) => <p key={ idx } className={ classes.card } style={ {
+                    wordWrap: 'break-word'
+                } }>
                     {
                         review.replace(/Submitted by a student$/, '')
                     }
