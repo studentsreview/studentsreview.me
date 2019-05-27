@@ -46,7 +46,7 @@ const ReviewForm = ({ teacher }) => {
                     )
                 }
             </span>
-            <p style={ { fontSize: 10 } }>Reviews may a few minutes to appear.</p>
+            <p style={ { fontSize: 10 } }>Reviews may take a few minutes to appear.</p>
         </Fragment>
     );
 };
