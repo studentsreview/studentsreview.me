@@ -14,6 +14,7 @@ import {
     withWidth,
 } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
+import withProcessing from '../components/WithProcessing';
 
 import { isWidthDown } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
@@ -22,35 +23,13 @@ import slugify from 'slugify';
 
 import styles  from '../styles/styles';
 
-const TeacherPage = ({ pageContext, data, classes, location, width }) => {
+const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, departments, semesters }) => {
     const { name } = pageContext;
-
-    const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
-    ['1', '2', '3', '4', '5', '6', '7', '8'].forEach(block => {
-        if (!blocks.includes(String(block))) {
-            blocks.push(String(block));
-        }
-    });
-    blocks.sort((a, b) => +a - +b);
-
-    const departments = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Department)));
-
-    if (departments.includes('Miscellaneous') && departments.length > 1) {
-        departments.splice(departments.indexOf('Miscellaneous'), 1);
-    }
-
-    const rooms = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Room)));
-
-    const semesters = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Semester))).sort((a, b) => {
-        a = /(Spring|Fall)(\d{4})/.exec(a);
-        b = /(Spring|Fall)(\d{4})/.exec(b);
-        return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
-    });
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
-    const semesterCourses = data.allMongodbStudentsReviewClasses.nodes
+    const semesterCourses = courses
         .filter(node => node.Semester === semester);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
@@ -88,20 +67,6 @@ const TeacherPage = ({ pageContext, data, classes, location, width }) => {
                     label={ department }
                 />)
             }
-            <h4>Fun Facts</h4>
-            <p>
-                Favorite Room: { rooms.reduce((acc, cur) => {
-                const count = data.allMongodbStudentsReviewClasses.nodes.map(node => node.Room).filter(room => room === cur).length;
-                if (count > data.allMongodbStudentsReviewClasses.nodes.map(node => node.Room).filter(room => room === acc).length) {
-                    return cur;
-                } else {
-                    return acc;
-                }
-            }) }
-            </p>
-            <p>
-                Classes per Semester: { (data.allMongodbStudentsReviewClasses.nodes.length / semesters.length).toFixed(2) }
-            </p>
         </Paper>
         <div className={ classes.card }>
             <Grid container direction='column' justify='center'>
@@ -157,7 +122,7 @@ const TeacherPage = ({ pageContext, data, classes, location, width }) => {
     </Layout>;
 }
 
-export default withWidth()(withStyles(styles)(TeacherPage));
+export default withProcessing()(withWidth()(withStyles(styles)(TeacherPage)));
 
 export const query = graphql`
     query($name: String!) {

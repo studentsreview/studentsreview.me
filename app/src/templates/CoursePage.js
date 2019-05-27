@@ -13,6 +13,7 @@ import {
     withStyles
 } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
+import withProcessing from '../components/WithProcessing';
 
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
@@ -20,28 +21,15 @@ import slugify from 'slugify';
 
 import styles from '../styles/styles';
 
-const TeacherPage = ({ pageContext, data, classes, location }) => {
+const TeacherPage = ({ pageContext, classes, location, courses, blocks, semesters }) => {
     const { name } = pageContext;
 
-    const codes = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Course_Code)));
-    const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Block)));
-    ['1', '2', '3', '4', '5', '6', '7', '8'].forEach(block => {
-        if (!blocks.includes(String(block))) {
-            blocks.push(String(block));
-        }
-    });
-    blocks.sort((a, b) => +a - +b);
-
-    const semesters = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Semester))).sort((a, b) => {
-        a = /(Spring|Fall)(\d{4})/.exec(a);
-        b = /(Spring|Fall)(\d{4})/.exec(b);
-        return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
-    });
+    const codes = Array.from(new Set(courses.map(node => node.Course_Code)));
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
-    const semesterCourses = data.allMongodbStudentsReviewClasses.nodes
+    const semesterCourses = courses
         .filter(node => node.Semester === semester);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
@@ -67,9 +55,9 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
                         'Visual Performing Arts': 'beige',
                         'Social Science': 'gold',
                         'Foreign Language': '#e6e6fa'
-                    }[data.allMongodbStudentsReviewClasses.nodes[0].Department]
+                    }[courses[0].Department]
                 } }
-                label={ data.allMongodbStudentsReviewClasses.nodes[0].Department }
+                label={ courses[0].Department }
             />
             {
                 name.includes('Honors') ? <Chip
@@ -160,7 +148,7 @@ const TeacherPage = ({ pageContext, data, classes, location }) => {
     </Layout>;
 }
 
-export default withStyles(styles)(TeacherPage);
+export default withProcessing()(withStyles(styles)(TeacherPage));
 
 export const query = graphql`
     query($name: String!) {
