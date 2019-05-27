@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Layout from '../components/layout';
 import {
     Button,
@@ -12,8 +12,9 @@ import {
     TableBody,
     TableCell,
     TableRow,
+//    TextField,
     withStyles,
-    withWidth,
+    withWidth
 } from '@material-ui/core'
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/WithProcessing';
@@ -22,6 +23,7 @@ import { isWidthDown } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
+import { isMobile } from 'react-device-detect';
 
 import styles  from '../styles/styles';
 
@@ -35,6 +37,7 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
         .filter(node => node.Semester === semester);
 
     const [pageNumber, setPageNumber] = useState(0);
+    const reviewsRef = useRef(null);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
@@ -72,61 +75,75 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                         label={ department }
                     />)
                 }
+                { /*
+                <TextField
+                    style={ {
+                        width: '100%'
+                    } }
+                    rows={ 5 }
+                    placeholder='Write a Review...'
+                    multiline
+                    margin='normal'
+                />
+                <Button>Submit Review</Button>
+                */ }
             </Paper>
-            <div className={ classes.card }>
-                <Grid container direction='column' justify='center'>
-                    <Select value={ semester }
-                            renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
-                            onChange={ (_, child) => setSemester(child.props.value) }
-                    >
-                        <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
-                        {
-                            semesters
-                                .slice(0, semesters.indexOf(semester))
-                                .concat(semesters.slice(semesters.indexOf(semester) + 1))
-                                .map((semester, idx) => <MenuItem
-                                    value={ semester }
-                                    key={ idx }
-                                >
-                                    { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
-                                </MenuItem>)
-                        }
-                    </Select>
-                    <Table>
-                        <TableBody>
+            {
+                !isMobile ? <div className={ classes.card }>
+                    <Grid container direction='column' justify='center'>
+                        <Select value={ semester }
+                                renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
+                                onChange={ (_, child) => setSemester(child.props.value) }
+                        >
+                            <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
                             {
-                                blocks
-                                    .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
-                                    .map((block, idx) => <TableRow key={ idx }>
-                                        <TableCell>Period { block }</TableCell>
-                                        <TableCell>
-                                            {
-                                                semesterCourses
-                                                    .filter(node => node.Block === block)
-                                                    .map((node, idx) =>
-                                                        <Chip
-                                                            style={ node.Course_Name.length > 25 && isWidthDown('xs', width) ? {
-                                                                fontSize: '1.75vw'
-                                                            } : null }
-                                                            key={ idx }
-                                                            label={ node.Course_Name }
-                                                            onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
-                                                                state: {
-                                                                    semester
-                                                                }
-                                                            }) }
-                                                        />)
-                                            }
-                                        </TableCell>
-                                    </TableRow>)
+                                semesters
+                                    .slice(0, semesters.indexOf(semester))
+                                    .concat(semesters.slice(semesters.indexOf(semester) + 1))
+                                    .map((semester, idx) => <MenuItem
+                                        value={ semester }
+                                        key={ idx }
+                                    >
+                                        { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
+                                    </MenuItem>)
                             }
-                        </TableBody>
-                    </Table>
-                </Grid>
-            </div>
+                        </Select>
+                        <Table>
+                            <TableBody>
+                                {
+                                    blocks
+                                        .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
+                                        .map((block, idx) => <TableRow key={ idx }>
+                                            <TableCell>Period { block }</TableCell>
+                                            <TableCell>
+                                                {
+                                                    semesterCourses
+                                                        .filter(node => node.Block === block)
+                                                        .map((node, idx) =>
+                                                            <Chip
+                                                                style={ node.Course_Name.length > 25 && isWidthDown('xs', width) ? {
+                                                                    fontSize: '1.75vw'
+                                                                } : null }
+                                                                key={ idx }
+                                                                label={ node.Course_Name }
+                                                                onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
+                                                                    state: {
+                                                                        semester
+                                                                    }
+                                                                }) }
+                                                            />)
+                                                }
+                                            </TableCell>
+                                        </TableRow>)
+                                }
+                            </TableBody>
+                        </Table>
+                    </Grid>
+                </div> : null
+            }
         </Grid>
         <Grid>
-            <h3 className={ classes.card } style={ { textAlign: 'center' } }>Reviews</h3>
+            <h3 ref={ reviewsRef } className={ classes.card } style={ { textAlign: 'center' } }>Reviews</h3>
             {
                 reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) => <p key={ idx } className={ classes.card }>
                     {
@@ -137,13 +154,11 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
             <Grid container className={ classes.card } direction='row' justify='space-between'>
                 <Button disabled={ pageNumber === 0 } onClick={ () => {
                     setPageNumber(pageNumber - 1);
-                    document.body.scrollTop = 0;
-                    document.documentElement.scrollTop = 0;
+                    reviewsRef.current.scrollIntoView();
                 } }>Previous Page</Button>
-                <Button disabled={ (pageNumber + 1) * 5 > reviews.length } onClick={ () => {
+                <Button disabled={ (pageNumber + 1) * 5 >= reviews.length } onClick={ () => {
                     setPageNumber(pageNumber + 1);
-                    document.body.scrollTop = 0;
-                    document.documentElement.scrollTop = 0;
+                    reviewsRef.current.scrollIntoView();
                 } }>Next Page</Button>
             </Grid>
         </Grid>
