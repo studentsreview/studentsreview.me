@@ -1,6 +1,5 @@
 import React, { Fragment, useRef, useState } from 'react';
 import { Button, Divider, Grid, withStyles } from '@material-ui/core';
-import StarRatings from 'react-star-ratings';
 
 import styles from '../styles/styles';
 

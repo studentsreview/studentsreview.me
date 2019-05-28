@@ -11,8 +11,7 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    withStyles,
-    withWidth,
+    withStyles
 } from '@material-ui/core'
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
@@ -22,14 +21,13 @@ import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
 
-import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles  from '../styles/styles';
 
-const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, departments, semesters, rating, reviews }) => {
+const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews }) => {
     const { name } = pageContext;
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
@@ -87,59 +85,57 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                     </Modal>
                 </div>
             </Paper>
-            {
-                isWidthUp('sm', width) ? <div className={ classes.card }>
-                    <Grid container direction='column' justify='center'>
-                        <Select value={ semester }
-                                renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
-                                onChange={ (_, child) => setSemester(child.props.value) }
-                        >
-                            <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
+            <div className={ classes.card }>
+                <Grid container direction='column' justify='center'>
+                    <Select value={ semester }
+                            renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
+                            onChange={ (_, child) => setSemester(child.props.value) }
+                    >
+                        <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
+                        {
+                            semesters
+                                .slice(0, semesters.indexOf(semester))
+                                .concat(semesters.slice(semesters.indexOf(semester) + 1))
+                                .map((semester, idx) => <MenuItem
+                                    value={ semester }
+                                    key={ idx }
+                                >
+                                    { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
+                                </MenuItem>)
+                        }
+                    </Select>
+                    <Table>
+                        <TableBody>
                             {
-                                semesters
-                                    .slice(0, semesters.indexOf(semester))
-                                    .concat(semesters.slice(semesters.indexOf(semester) + 1))
-                                    .map((semester, idx) => <MenuItem
-                                        value={ semester }
-                                        key={ idx }
-                                    >
-                                        { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
-                                    </MenuItem>)
+                                blocks
+                                    .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
+                                    .map((block, idx) => <TableRow key={ idx }>
+                                        <TableCell>Period { block }</TableCell>
+                                        <TableCell>
+                                            {
+                                                semesterCourses
+                                                    .filter(node => node.Block === block)
+                                                    .map((node, idx) =>
+                                                        <Chip
+                                                            key={ idx }
+                                                            style={ node.Course_Name.length > 25 ? {
+                                                                fontSize: '1vw'
+                                                            } : null }
+                                                            label={ node.Course_Name }
+                                                            onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
+                                                                state: {
+                                                                    semester
+                                                                }
+                                                            }) }
+                                                        />)
+                                            }
+                                        </TableCell>
+                                    </TableRow>)
                             }
-                        </Select>
-                        <Table>
-                            <TableBody>
-                                {
-                                    blocks
-                                        .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
-                                        .map((block, idx) => <TableRow key={ idx }>
-                                            <TableCell>Period { block }</TableCell>
-                                            <TableCell>
-                                                {
-                                                    semesterCourses
-                                                        .filter(node => node.Block === block)
-                                                        .map((node, idx) =>
-                                                            <Chip
-                                                                key={ idx }
-                                                                style={ node.Course_Name.length > 25 ? {
-                                                                    fontSize: '1vw'
-                                                                } : null }
-                                                                label={ node.Course_Name }
-                                                                onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
-                                                                    state: {
-                                                                        semester
-                                                                    }
-                                                                }) }
-                                                            />)
-                                                }
-                                            </TableCell>
-                                        </TableRow>)
-                                }
-                            </TableBody>
-                        </Table>
-                    </Grid>
-                </div> : null
-            }
+                        </TableBody>
+                    </Table>
+                </Grid>
+            </div>
         </Grid>
         <Grid>
             <ReviewDisplay reviews={ reviews }/>
@@ -147,7 +143,7 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
     </Layout>;
 }
 
-export default withProcessing()(withWidth()(withStyles(styles)(TeacherPage)));
+export default withProcessing()(withStyles(styles)(TeacherPage));
 
 export const query = graphql`
     query($name: String!) {
