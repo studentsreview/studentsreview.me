@@ -15,7 +15,8 @@ import {
 } from '@material-ui/core'
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
-import withProcessing from '../components/WithProcessing';
+import IosClose from 'react-ionicons/lib/IosClose';
+import withProcessing from '../components/withProcessing';
 import ReviewForm from '../components/ReviewForm';
 import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
@@ -79,8 +80,8 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                     <Button variant='contained' color='primary' onClick={ () => setModalExposed(true) }>Write a Review</Button>
                     <Modal shown={ modalExposed }>
                         <Paper className={ classes.card }>
-                            <span onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }>✕</span>
-                            <ReviewForm teacher={ name } onSubmit={ () => setModalExposed(false) }/>
+                            <IosClose onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
+                            <ReviewForm teacher={ name } onClose={ () => setModalExposed(false) }/>
                         </Paper>
                     </Modal>
                 </div>

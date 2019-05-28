@@ -13,7 +13,7 @@ import {
     withStyles
 } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
-import withProcessing from '../components/WithProcessing';
+import withProcessing from '../components/withProcessing';
 import DepartmentChip from '../components/DepartmentChip';
 
 import { graphql } from 'gatsby';

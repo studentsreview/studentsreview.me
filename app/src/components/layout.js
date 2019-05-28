@@ -25,7 +25,7 @@ const theme = createMuiTheme({
 const Layout = ({ children, gridStyle, direction, justify, alignItems }) => <MuiThemeProvider theme={ theme }>
     <AppBar position='static'>
         <Toolbar>
-            <Link to='/' style={ { color: 'white' } }>Students Review Me</Link>
+            <Link to='/' style={ { color: 'white' } }>Students Review</Link>
         </Toolbar>
     </AppBar>
     <Grid container direction={ direction || 'column' } justify={ justify || 'center' } alignItems={ alignItems || 'center' } style={ gridStyle }>
