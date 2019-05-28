@@ -3,7 +3,6 @@ import { Chip } from '@material-ui/core'
 
 const DepartmentChip = ({ department }) => <Chip
     style={ {
-        marginTop: 5,
         background: {
             Science: 'lightgreen',
             Math: 'lightblue',

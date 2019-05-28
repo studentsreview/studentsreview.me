@@ -33,11 +33,14 @@ const WithProcessing = () => component => props => {
             return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
         });
 
+        processed.codes = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Course_Code)));
+
         processed.courses = data.allMongodbStudentsReviewClasses.nodes;
     }
 
     if (data.allMongodbStudentsReviewReviews) {
         processed.reviews = data.allMongodbStudentsReviewReviews.nodes.sort((a, b) => +new Date(b.Timestamp) - +new Date(a.Timestamp)).map(node => node.Text);
+        processed.rating = data.allMongodbStudentsReviewReviews.nodes.reduce((acc, cur) => acc + cur.Rating, 0) / data.allMongodbStudentsReviewReviews.nodes.length;
     }
 
     return createElement(component, Object.freeze(Object.assign(props, processed)));

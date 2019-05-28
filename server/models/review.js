@@ -23,6 +23,12 @@ const reviewSchema = new mongoose.Schema({
     Timestamp: {
         type: Date,
         required: true
+    },
+    Rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        required: true
     }
 }, {
     versionKey: 'version'

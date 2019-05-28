@@ -22,10 +22,8 @@ import slugify from 'slugify';
 
 import styles from '../styles/styles';
 
-const TeacherPage = ({ pageContext, classes, location, courses, blocks, semesters }) => {
+const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, semesters }) => {
     const { name } = pageContext;
-
-    const codes = Array.from(new Set(courses.map(node => node.Course_Code)));
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);

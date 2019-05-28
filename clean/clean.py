@@ -9,6 +9,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['StudentsReview']
 classes = db['classes']
 reviews = db['reviews']
+teachers = db['teachers']
 
 classes.delete_many({})
 reviews.delete_many({
@@ -148,5 +149,6 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')
                 'Teacher': teacher,
                 'Text': review,
                 'Timestamp': datetime(1, 1, 1),
+                'Rating': float(review_data[teacher]['rating'][0:3]),
                 'version': 1
             })
