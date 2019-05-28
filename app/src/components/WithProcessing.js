@@ -39,8 +39,9 @@ const WithProcessing = () => component => props => {
     }
 
     if (data.allMongodbStudentsReviewReviews) {
-        processed.reviews = data.allMongodbStudentsReviewReviews.nodes.sort((a, b) => +new Date(b.Timestamp) - +new Date(a.Timestamp)).map(node => node.Text);
         processed.rating = data.allMongodbStudentsReviewReviews.nodes.reduce((acc, cur) => acc + cur.Rating, 0) / data.allMongodbStudentsReviewReviews.nodes.length;
+
+        processed.reviews = data.allMongodbStudentsReviewReviews.nodes.sort((a, b) => +new Date(b.Timestamp) - +new Date(a.Timestamp));
     }
 
     return createElement(component, Object.freeze(Object.assign(props, processed)));

@@ -1,5 +1,6 @@
 import React, { Fragment, useRef, useState } from 'react';
 import { Button, Divider, Grid, withStyles } from '@material-ui/core';
+import StarRatings from 'react-star-ratings';
 
 import styles from '../styles/styles';
 
@@ -15,7 +16,7 @@ const ReviewDisplay = ({ classes, reviews }) => {
                     wordWrap: 'break-word'
                 } }>
                     {
-                        review.replace(/Submitted by a student$/, '')
+                        review.Text.replace(/Submitted by a student$/, '')
                     }
                 </p>).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }

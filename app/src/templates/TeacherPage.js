@@ -56,7 +56,7 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                         marginRight: 10,
                     } }>{ name }</h3>
                     <StarRatings
-                        rating={ rating }
+                        rating={ isNaN(rating) ? 0 : rating }
                         starRatedColor='gold'
                         starHoverColor='gold'
                         numberOfStars={ 5 }
@@ -120,7 +120,7 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                                                             <Chip
                                                                 key={ idx }
                                                                 style={ node.Course_Name.length > 25 ? {
-                                                                    fontSize: Math.min(13, width / 100)
+                                                                    fontSize: '1vw'
                                                                 } : null }
                                                                 label={ node.Course_Name }
                                                                 onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
