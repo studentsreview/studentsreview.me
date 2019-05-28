@@ -4,7 +4,7 @@ import StarRatings from 'react-star-ratings';
 
 import axios from 'axios';
 
-const ReviewForm = ({ teacher }) => {
+const ReviewForm = ({ teacher, onSubmit }) => {
     const [reviewText, setReviewText] = useState('');
     const [success, setSuccess] = useState(null);
     const [starRating, setStarRating] = useState(0);
@@ -47,6 +47,9 @@ const ReviewForm = ({ teacher }) => {
                     .catch(() => setSuccess(false));
                 setReviewText('');
                 setStarRating(0);
+                if (typeof onSubmit === 'function') {
+                    onSubmit();
+                }
             } }>Submit Review</Button>
             <span style={ { fontSize: 12 } }>
                 {

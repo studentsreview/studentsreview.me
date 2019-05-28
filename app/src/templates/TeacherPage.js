@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout';
 import {
+    Button,
     Chip,
     Grid,
     MenuItem,
@@ -11,13 +12,15 @@ import {
     TableCell,
     TableRow,
     withStyles,
-    withWidth
-} from '@material-ui/core';
+    withWidth,
+} from '@material-ui/core'
 import { Helmet } from 'react-helmet';
+import StarRatings from 'react-star-ratings';
 import withProcessing from '../components/WithProcessing';
 import ReviewForm from '../components/ReviewForm';
 import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
+import Modal from '../components/Modal';
 
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
@@ -35,6 +38,8 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
     const semesterCourses = courses
         .filter(node => node.Semester === semester);
 
+    const [modalExposed, setModalExposed] = useState(false);
+
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
     } }>
@@ -50,22 +55,35 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                         display: 'inline',
                         marginRight: 10,
                     } }>{ name }</h3>
-                    <Chip
-                        label={ `${ rating.toFixed(1) } out of 5.0` }
-                    />
-                    <Chip
-                        label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') : 'Pre-Fall 2014' } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
+                    <StarRatings
+                        rating={ rating }
+                        starRatedColor='gold'
+                        starHoverColor='gold'
+                        numberOfStars={ 5 }
+                        starDimension={ 25 }
+                        starSpacing={ 2.5 }
                     />
                 </div>
+                <Chip
+                    label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') : 'Pre-Fall 2014' } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
+                />
                 {
                     departments.map((department, idx) => <DepartmentChip
                         key={ idx }
                         department={ department }
                     />)
                 }
-                <ReviewForm
-                    teacher={ name }
-                />
+                <div style={ {
+                    marginTop: 5
+                } }>
+                    <Button variant='contained' color='primary' onClick={ () => setModalExposed(true) }>Write a Review</Button>
+                    <Modal shown={ modalExposed }>
+                        <Paper className={ classes.card }>
+                            <span onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }>✕</span>
+                            <ReviewForm teacher={ name } onSubmit={ () => setModalExposed(false) }/>
+                        </Paper>
+                    </Modal>
+                </div>
             </Paper>
             {
                 isWidthUp('sm', width) ? <div className={ classes.card }>
@@ -101,6 +119,9 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
                                                         .map((node, idx) =>
                                                             <Chip
                                                                 key={ idx }
+                                                                style={ node.Course_Name.length > 25 ? {
+                                                                    fontSize: Math.min(13, width / 100)
+                                                                } : null }
                                                                 label={ node.Course_Name }
                                                                 onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
                                                                     state: {

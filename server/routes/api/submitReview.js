@@ -1,7 +1,7 @@
 const Review = require('../../models/review');
 
 module.exports = (req, res) => {
-    if (req.body && req.body.teacher && req.body.text && req.body.rating) {
+    if (req.body) {
         const newReview = new Review({
             Teacher: req.body.teacher,
             Text: req.body.text,
