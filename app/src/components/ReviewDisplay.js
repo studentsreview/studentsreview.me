@@ -16,7 +16,7 @@ const ReviewDisplay = ({ classes, reviews }) => {
                     wordWrap: 'break-word'
                 } }>
                     {
-                        review.Text.replace(/Submitted by a student$/, '')
+                        review.Text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
                     }
                 </p>).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
