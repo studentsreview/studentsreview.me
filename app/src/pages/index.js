@@ -27,6 +27,8 @@ export default ({ data }) => {
         } }>
             <Helmet>
                 <title>Students Review</title>
+                <meta name='description' content='Browse and rate teachers and course at Lowell High School'/>
+                <meta name='keywords' content={ ['Education', 'Lowell High School'].join(',') }/>
             </Helmet>
             <TextField
                 style={ {

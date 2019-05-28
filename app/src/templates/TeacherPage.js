@@ -45,6 +45,8 @@ const TeacherPage = ({ pageContext, classes, location, width, courses, blocks, d
     } }>
         <Helmet>
             <title>{ name }</title>
+            <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
+            <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher']).join(',') }/>
         </Helmet>
         <Grid>
             <Paper className={ classes.card }>

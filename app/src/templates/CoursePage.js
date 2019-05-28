@@ -36,6 +36,8 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
     } }>
         <Helmet>
             <title>{ name }</title>
+            <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
+            <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', courses[0].Department].join(',') }/>
         </Helmet>
         <Paper className={ classes.card }>
             <h3 style={ {
