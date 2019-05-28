@@ -27,8 +27,8 @@ export default ({ data }) => {
         } }>
             <Helmet>
                 <title>Students Review</title>
-                <meta name='description' content='Browse and rate teachers and course at Lowell High School'/>
-                <meta name='keywords' content={ ['Education', 'Lowell High School'].join(',') }/>
+                <meta name='description' content='Students Review Me is a web application for Lowell High School students to learn more about and share their opinions on the different teaching styles and techniques of teachers at Lowell.'/>
+                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review'].join(',') }/>
             </Helmet>
             <TextField
                 style={ {

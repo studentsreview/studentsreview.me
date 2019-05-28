@@ -12,7 +12,8 @@ module.exports = {
         },
         `gatsby-plugin-jss`,
         `gatsby-plugin-material-ui`,
-        `gatsby-plugin-remove-trailing-slashes`
+        `gatsby-plugin-remove-trailing-slashes`,
+        `gatsby-plugin-react-helmet`
     ],
     proxy: {
         prefix: `/api`,
