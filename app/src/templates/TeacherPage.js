@@ -11,8 +11,9 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    withStyles
-} from '@material-ui/core'
+    withStyles,
+    withWidth
+} from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
@@ -22,13 +23,14 @@ import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
 
+import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles  from '../styles/styles';
 
-const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews }) => {
+const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews, width }) => {
     const { name } = pageContext;
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
@@ -119,7 +121,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                                                     .map((node, idx) =>
                                                         <Chip
                                                             key={ idx }
-                                                            style={ node.Course_Name.length > 25 ? {
+                                                            style={ node.Course_Name.length > 25 && isWidthUp('sm', width) ? {
                                                                 fontSize: '1vw'
                                                             } : null }
                                                             label={ node.Course_Name }
@@ -144,7 +146,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     </Layout>;
 }
 
-export default withProcessing()(withStyles(styles)(TeacherPage));
+export default withWidth()(withProcessing()(withStyles(styles)(TeacherPage)));
 
 export const query = graphql`
     query($name: String!) {

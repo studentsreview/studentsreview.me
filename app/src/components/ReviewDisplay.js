@@ -1,5 +1,8 @@
 import React, { Fragment, useRef, useState } from 'react';
 import { Button, Divider, Grid, withStyles } from '@material-ui/core';
+import StarRatings from 'react-star-ratings';
+
+import moment from 'moment';
 
 import styles from '../styles/styles';
 
@@ -14,6 +17,25 @@ const ReviewDisplay = ({ classes, reviews }) => {
                 reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) => <p key={ idx } className={ classes.card } style={ {
                     wordWrap: 'break-word'
                 } }>
+                    {
+                        review.version === 0 ? <Fragment>
+                            <StarRatings
+                                rating={ review.Rating }
+                                starRatedColor='gold'
+                                starHoverColor='gold'
+                                numberOfStars={ 5 }
+                                starDimension={ 12.5 }
+                                starSpacing={ 1.25 }
+                            />
+                            <span style={ {
+                                marginLeft: 2.5,
+                                fontSize: 12.5
+                            } }>{ moment(review.Timestamp).format('MMM Do YYYY') }</span>
+                        </Fragment> : <span style={ {
+                            fontSize: 12.5
+                        } }>Restored from ratemyteachers.com</span>
+                    }
+                    <br/>
                     {
                         review.Text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
                     }
