@@ -18,7 +18,7 @@ const reviewSchema = new mongoose.Schema({
     },
     Text: {
         type: String,
-        minlength: 100
+        minlength: 50
     },
     Timestamp: {
         type: Date,
