@@ -1,14 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, withStyles } from '@material-ui/core';
 import StarRatings from 'react-star-ratings';
 import IosCheckmarkCircleOutline from 'react-ionicons/lib/IosCheckmarkCircleOutline';
 import IosCloseCircleOutline from 'react-ionicons/lib/IosCloseCircleOutline';
+import IosInfinite from 'react-ionicons/lib/IosInfinite';
 
 import axios from 'axios';
 
-const ReviewForm = ({ teacher, onClose }) => {
+import styles from '../styles/styles';
+
+const ReviewForm = ({ classes, teacher, onClose }) => {
     const [reviewText, setReviewText] = useState('');
-    const [success, setSuccess] = useState(true);
+    const [submissionState, setSubmissionState] = useState(null);
     const [starRating, setStarRating] = useState(0);
 
     const minCharacters = 50;
@@ -26,26 +29,22 @@ const ReviewForm = ({ teacher, onClose }) => {
         return () => window.removeEventListener('keydown', keyDownHandler);
     });
 
-    if (success === false) {
+    if (submissionState === 'Pending') {
+        return <IosInfinite className={ classes.blockIcon } fontSize='100px' rotate={ true }/>;
+    } else if (submissionState === false) {
         return (
             <Fragment>
-                <IosCloseCircleOutline color='red' fontSize='100px' style={ {
-                    display: 'block',
-                    margin: 'auto'
-                } }/>
+                <IosCloseCircleOutline className={ classes.blockIcon } color='red' fontSize='100px'/>
                 <p style={ {
                     textAlign: 'center',
                     color: 'red'
                 } }>Unable to submit review.</p>
             </Fragment>
         );
-    } else if (success === true) {
+    } else if (submissionState === true) {
         return (
             <Fragment>
-                <IosCheckmarkCircleOutline color='green' fontSize='100px' style={ {
-                    display: 'block',
-                    margin: 'auto'
-                } }/>
+                <IosCheckmarkCircleOutline className={ classes.blockIcon } color='green' fontSize='100px'/>
                 <p style={ {
                     textAlign: 'center',
                     color: 'green'
@@ -62,7 +61,7 @@ const ReviewForm = ({ teacher, onClose }) => {
                     value={ reviewText }
                     onChange={ e => {
                         setReviewText(e.target.value);
-                        setSuccess(null);
+                        setSubmissionState(null);
                     } }
                     rows={ 5 }
                     placeholder={ `Write a review for ${ teacher }...` }
@@ -85,10 +84,11 @@ const ReviewForm = ({ teacher, onClose }) => {
                         text: reviewText,
                         rating: starRating
                     })
-                        .then(res => setSuccess(res.data.success))
-                        .catch(() => setSuccess(false));
+                        .then(res => setSubmissionState(res.data.success))
+                        .catch(() => setSubmissionState(false));
                     setReviewText('');
                     setStarRating(0);
+                    setSubmissionState('Pending');
                 } }>Submit Review</Button>
                 <span style={ { fontSize: 12 } }>
                 {
@@ -103,4 +103,4 @@ const ReviewForm = ({ teacher, onClose }) => {
     }
 };
 
-export default ReviewForm;
+export default withStyles(styles)(ReviewForm);

@@ -10,5 +10,9 @@ export default theme => createStyles({
         [theme.breakpoints.up('sm')]: {
             maxWidth: 'calc(50vw - 30px)'
         }
+    },
+    blockIcon: {
+        display: 'block',
+        margin: 'auto'
     }
 });

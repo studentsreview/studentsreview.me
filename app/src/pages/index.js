@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Layout from '../components/layout';
 import { Button, MenuItem, Paper, Popper, TextField } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
@@ -21,6 +21,22 @@ export default ({ data }) => {
     const items = teachers.concat(courses);
 
     const suggestions = items.filter(item => !isEqual(match(item, value), [])).sort((a, b) => match(b, value).length - match(a, value).length).slice(0, 5);
+
+    const keyDownHandler = e => {
+        if (e.key === 'Enter') {
+            if (teachers.includes(value)) {
+                navigate(`/teachers/${ slugify(value, { lower: true }) }`);
+            } else if (courses.includes(value)) {
+                navigate(`/courses/${ slugify(value, { lower: true }) }`);
+            }
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('keydown', keyDownHandler);
+        return () => window.removeEventListener('keydown', keyDownHandler);
+    });
+
     return (
         <Layout gridStyle={ {
             minHeight: '70%'
@@ -40,14 +56,15 @@ export default ({ data }) => {
                 onChange={ e => setValue(e.target.value) }
                 inputProps={ {
                     onKeyDown: e => {
-                        if (e.keyCode === 13) {
+                        if (e.key === 'Enter') {
                             if (teachers.includes(value)) {
-                                navigate(`teachers/${ slugify(value, { lower: true }) }`);
+                                navigate(`/teachers/${ slugify(value, { lower: true }) }`);
                             } else if (courses.includes(value)) {
-                                navigate(`courses/${ slugify(value, { lower: true }) }`);
+                                navigate(`/courses/${ slugify(value, { lower: true }) }`);
                             } else {
                                 setValue(suggestions[0]);
                             }
+                            e.stopPropagation();
                         }
                     }
                 } }
