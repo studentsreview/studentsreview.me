@@ -23,6 +23,7 @@
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "react": "^16.8.6",
+    "react-device-detect": "^1.6.2",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
     "react-ionicons": "^3.0.1",

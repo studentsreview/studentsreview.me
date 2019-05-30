@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import { IconButton, Paper, MenuItem, Popper, withStyles } from '@material-ui/core';
+import { ClickAwayListener, IconButton, Paper, MenuItem, Popper, withStyles } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import StarRatings from 'react-star-ratings';
+import { isIOS } from 'react-device-detect';
 
 import moment from 'moment';
 
@@ -36,22 +37,35 @@ const Review = ({ classes, review }) => {
             <Popper
                 anchorEl={ anchorEl.current }
                 open={ open }
+                onBlur={ () => setOpen(false) }
             >
-                <Paper style={ {
-                    width: 200
-                } } onClick={ e => {
-                    const textField = document.createElement('textarea');
-                    e.target.appendChild(textField);
-                    textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ review.mongodb_id }`;
-                    textField.select();
-                    document.execCommand('copy');
-                    textField.remove();
-                    setOpen(false);
-                } }>
-                    <MenuItem>
-                        Copy Link
-                    </MenuItem>
-                </Paper>
+                <ClickAwayListener onClickAway={ () => setOpen(false) }>
+                    <Paper style={ {
+                        padding: 5,
+                        width: 200
+                    } } onClick={ e => {
+                        const textField = document.createElement('textarea');
+                        e.target.appendChild(textField);
+                        textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ review.mongodb_id }`;
+                        if (isIOS) {
+                            const range = document.createRange();
+                            range.selectNodeContents(textField);
+                            const selection = window.getSelection();
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                            textField.setSelectionRange(0, 999999);
+                        } else {
+                            textField.select();
+                        }
+                        document.execCommand('copy');
+                        textField.remove();
+                        setOpen(false);
+                    } }>
+                        <MenuItem>
+                            Copy Link
+                        </MenuItem>
+                    </Paper>
+                </ClickAwayListener>
             </Popper>
             {
                 review.version === 0 ? <Fragment>
