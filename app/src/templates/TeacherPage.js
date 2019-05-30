@@ -28,7 +28,7 @@ import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
-import styles  from '../styles/styles';
+import styles from '../styles/styles';
 
 const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews, width }) => {
     const { name } = pageContext;
@@ -172,7 +172,8 @@ export const query = graphql`
                 text,
                 timestamp,
                 rating,
-                version
+                version,
+                mongodb_id
             }
         }
     }

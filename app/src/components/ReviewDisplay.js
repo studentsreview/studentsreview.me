@@ -1,45 +1,29 @@
 import React, { Fragment, useRef, useState } from 'react';
 import { Button, Divider, Grid, withStyles } from '@material-ui/core';
-import StarRatings from 'react-star-ratings';
-
-import moment from 'moment';
+import Review from './Review';
 
 import styles from '../styles/styles';
 
 const ReviewDisplay = ({ classes, reviews }) => {
-    const [pageNumber, setPageNumber] = useState(0);
+    let initialPage = 0;
+
+    if (window && window.location.hash) {
+        const idx = reviews.findIndex(review => review.mongodb_id === window.location.hash.substr(1));
+        if (idx !== -1) {
+            initialPage = Math.floor(idx / 5);
+        }
+    }
+
+    const [pageNumber, setPageNumber] = useState(initialPage);
     const reviewsRef = useRef(null);
 
     return (
         <Fragment>
             <h3 ref={ reviewsRef } className={ classes.card } style={ { textAlign: 'center' } }>Reviews</h3>
             {
-                reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) => <p key={ idx } className={ classes.card } style={ {
-                    wordWrap: 'break-word'
-                } }>
-                    {
-                        review.version === 0 ? <Fragment>
-                            <StarRatings
-                                rating={ review.rating }
-                                starRatedColor='gold'
-                                starHoverColor='gold'
-                                numberOfStars={ 5 }
-                                starDimension={ 12.5 }
-                                starSpacing={ 1.25 }
-                            />
-                            <span style={ {
-                                marginLeft: 2.5,
-                                fontSize: 12.5
-                            } }>{ moment(review.timestamp).format('MMM Do YYYY') }</span>
-                        </Fragment> : <span style={ {
-                            fontSize: 12.5
-                        } }>Restored from ratemyteachers.com</span>
-                    }
-                    <br/>
-                    {
-                        review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
-                    }
-                </p>).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
+                reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) =>
+                    <Review key={ idx } review={ review }/>
+                ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
             <Grid container className={ classes.card } direction='row' justify='space-between'>
                 <Button disabled={ pageNumber === 0 } onClick={ () => {
