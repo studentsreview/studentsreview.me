@@ -13,7 +13,8 @@ const reviewSchema = new mongoose.Schema({
                     semester: `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`
                 })
                 .limit(1)
-                .then(res => resolve(!!res))
+                .then(res => resolve(res.length === 1))
+                .catch(reject)
         })
     },
     teacherKey: {
