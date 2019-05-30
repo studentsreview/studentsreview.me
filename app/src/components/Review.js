@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { IconButton, MenuItem, Menu, withStyles } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import StarRatings from 'react-star-ratings';
@@ -8,10 +8,9 @@ import moment from 'moment';
 import styles from '../styles/styles';
 
 const Review = ({ classes, review }) => {
-    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [initialized, setInitialized] = useState(false);
-    const anchorEl = useRef(null);
-    const dummyEl = useRef(null);
+    const open = !!anchorEl;
 
     useEffect(() => {
         if (!initialized && window.location.hash.substr(1) === review.mongodb_id) {
@@ -25,34 +24,34 @@ const Review = ({ classes, review }) => {
             wordWrap: 'break-word',
             background: window.location.hash.substr(1) === review.mongodb_id ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
+
             <IconButton style={ {
                 float: 'right'
             } }
                 buttonRef={ anchorEl }
-                onClick={ () => setOpen(true) }
+                onClick={ e => setAnchorEl(e.target) }
             >
                 <MoreVert fontSize='small'/>
             </IconButton>
             <Menu
-                anchorEl={ anchorEl.current }
+                anchorEl={ anchorEl }
                 open={ open }
-                onClose={ () => setOpen(false) }
+                onClose={ () => setAnchorEl(null) }
                 PaperProps={ {
                     style: {
                         width: 200
                     }
                 } }
             >
-                <MenuItem onClick={ () => {
+                <MenuItem onClick={ e => {
                     const textField = document.createElement('textarea');
-                    dummyEl.current.appendChild(textField);
+                    e.target.appendChild(textField);
                     textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ review.mongodb_id }`;
                     textField.select();
                     document.execCommand('copy');
                     textField.remove();
-                    setOpen(false);
+                    setAnchorEl(null);
                 } }>
-                    <div ref={ dummyEl }/>
                     Copy Link
                 </MenuItem>
             </Menu>
