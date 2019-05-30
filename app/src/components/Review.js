@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { IconButton, MenuItem, Menu, withStyles } from '@material-ui/core';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
+import { IconButton, Paper, MenuItem, Popper, withStyles } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import StarRatings from 'react-star-ratings';
 
@@ -8,9 +8,9 @@ import moment from 'moment';
 import styles from '../styles/styles';
 
 const Review = ({ classes, review }) => {
-    const [anchorEl, setAnchorEl] = useState(null);
+    const anchorEl = useRef(null);
+    const [open, setOpen] = useState(false);
     const [initialized, setInitialized] = useState(false);
-    const open = !!anchorEl;
 
     useEffect(() => {
         if (!initialized && window.location.hash.substr(1) === review.mongodb_id) {
@@ -29,32 +29,30 @@ const Review = ({ classes, review }) => {
                 float: 'right'
             } }
                 buttonRef={ anchorEl }
-                onClick={ e => setAnchorEl(e.target) }
+                onClick={ () => setOpen(!open) }
             >
                 <MoreVert fontSize='small'/>
             </IconButton>
-            <Menu
-                anchorEl={ anchorEl }
+            <Popper
+                anchorEl={ anchorEl.current }
                 open={ open }
-                onClose={ () => setAnchorEl(null) }
-                PaperProps={ {
-                    style: {
-                        width: 200
-                    }
-                } }
             >
-                <MenuItem onClick={ e => {
+                <Paper style={ {
+                    width: 200
+                } } onClick={ e => {
                     const textField = document.createElement('textarea');
                     e.target.appendChild(textField);
                     textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ review.mongodb_id }`;
                     textField.select();
                     document.execCommand('copy');
                     textField.remove();
-                    setAnchorEl(null);
+                    setOpen(false);
                 } }>
-                    Copy Link
-                </MenuItem>
-            </Menu>
+                    <MenuItem>
+                        Copy Link
+                    </MenuItem>
+                </Paper>
+            </Popper>
             {
                 review.version === 0 ? <Fragment>
                     <StarRatings

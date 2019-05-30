@@ -41,7 +41,9 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
 
     const [modalExposed, setModalExposed] = useState(false);
 
-    return <Layout direction='row' justify='space-between' alignItems='baseline'>
+    return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
+        minHeight: '70%'
+    } }>
         <Helmet>
             <title>{ name }</title>
             <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
@@ -88,57 +90,53 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
             </Paper>
             <div className={ classes.card }>
                 <Grid container direction='column' justify='center'>
-                    {
-                        isWidthUp('sm', width) ? <Fragment>
-                            <Select value={ semester }
-                                    renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
-                                    onChange={ (_, child) => setSemester(child.props.value) }
-                            >
-                                <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
-                                {
-                                    semesters
-                                        .slice(0, semesters.indexOf(semester))
-                                        .concat(semesters.slice(semesters.indexOf(semester) + 1))
-                                        .map((semester, idx) => <MenuItem
-                                            value={ semester }
-                                            key={ idx }
-                                        >
-                                            { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
-                                        </MenuItem>)
-                                }
-                            </Select>
-                            <Table>
-                                <TableBody>
-                                    {
-                                        blocks
-                                            .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
-                                            .map((block, idx) => <TableRow key={ idx }>
-                                                <TableCell>Period { block }</TableCell>
-                                                <TableCell>
-                                                    {
-                                                        semesterCourses
-                                                            .filter(node => node.block === block)
-                                                            .map((node, idx) =>
-                                                                <Chip
-                                                                    key={ idx }
-                                                                    style={ node.courseName.length > 25 && isWidthUp('sm', width) ? {
-                                                                        fontSize: '1vw'
-                                                                    } : null }
-                                                                    label={ node.courseName }
-                                                                    onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
-                                                                        state: {
-                                                                            semester
-                                                                        }
-                                                                    }) }
-                                                                />)
-                                                    }
-                                                </TableCell>
-                                            </TableRow>)
-                                    }
-                                </TableBody>
-                            </Table>
-                        </Fragment> : null
-                    }
+                    <Select value={ semester }
+                            renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
+                            onChange={ (_, child) => setSemester(child.props.value) }
+                    >
+                        <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
+                        {
+                            semesters
+                                .slice(0, semesters.indexOf(semester))
+                                .concat(semesters.slice(semesters.indexOf(semester) + 1))
+                                .map((semester, idx) => <MenuItem
+                                    value={ semester }
+                                    key={ idx }
+                                >
+                                    { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
+                                </MenuItem>)
+                        }
+                    </Select>
+                    <Table>
+                        <TableBody>
+                            {
+                                blocks
+                                    .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
+                                    .map((block, idx) => <TableRow key={ idx }>
+                                        <TableCell>Period { block }</TableCell>
+                                        <TableCell>
+                                            {
+                                                semesterCourses
+                                                    .filter(node => node.block === block)
+                                                    .map((node, idx) =>
+                                                        <Chip
+                                                            key={ idx }
+                                                            style={ node.courseName.length > 25 && isWidthUp('sm', width) ? {
+                                                                fontSize: '1vw'
+                                                            } : null }
+                                                            label={ node.courseName }
+                                                            onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
+                                                                state: {
+                                                                    semester
+                                                                }
+                                                            }) }
+                                                        />)
+                                            }
+                                        </TableCell>
+                                    </TableRow>)
+                            }
+                        </TableBody>
+                    </Table>
                 </Grid>
             </div>
         </Grid>
