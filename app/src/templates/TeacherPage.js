@@ -121,8 +121,8 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                                                     .map((node, idx) =>
                                                         <Chip
                                                             key={ idx }
-                                                            style={ node.courseName.length > 25 && isWidthUp('sm', width) ? {
-                                                                fontSize: '1vw'
+                                                            style={ node.courseName.length > 25 ? {
+                                                                fontSize: isWidthUp('sm', width) ? '1vw' : '2vw'
                                                             } : null }
                                                             label={ node.courseName }
                                                             onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
