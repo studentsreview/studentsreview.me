@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout';
-import {
-    Button,
-    Chip,
-    Grid,
-    MenuItem,
-    Paper,
-    Select,
-    Table,
-    TableBody,
-    TableCell,
-    TableRow,
-    withStyles,
-    withWidth
-} from '@material-ui/core';
+import { Button, Chip, Grid, Paper, withStyles, withWidth } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
@@ -22,6 +9,7 @@ import ReviewForm from '../components/ReviewForm';
 import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
+import SemesterSelect from '../components/SemesterSelect';
 
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
@@ -29,6 +17,7 @@ import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles from '../styles/styles';
+import ScheduleTable from '../components/ScheduleTable'
 
 const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews, width }) => {
     const { name } = pageContext;
@@ -95,53 +84,30 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
             </Paper>
             <div className={ classes.card }>
                 <Grid container direction='column' justify='center'>
-                    <Select value={ semester }
-                            renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
-                            onChange={ (_, child) => setSemester(child.props.value) }
-                    >
-                        <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
-                        {
-                            semesters
-                                .slice(0, semesters.indexOf(semester))
-                                .concat(semesters.slice(semesters.indexOf(semester) + 1))
-                                .map((semester, idx) => <MenuItem
-                                    value={ semester }
+                    <SemesterSelect
+                        semesters={ semesters }
+                        value={ semester }
+                        onChange={ setSemester }
+                    />
+                    <ScheduleTable
+                        blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
+                        component={ ({ block }) => semesterCourses
+                            .filter(node => node.block === block)
+                            .map((node, idx) =>
+                                <Chip
                                     key={ idx }
-                                >
-                                    { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
-                                </MenuItem>)
+                                    style={ node.courseName.length > 25 ? {
+                                        fontSize: isWidthUp('sm', width) ? '1vw' : '2vw'
+                                    } : null }
+                                    label={ node.courseName }
+                                    onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
+                                        state: {
+                                            semester
+                                        }
+                                    }) }
+                                />)
                         }
-                    </Select>
-                    <Table>
-                        <TableBody>
-                            {
-                                blocks
-                                    .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
-                                    .map((block, idx) => <TableRow key={ idx }>
-                                        <TableCell>Period { block }</TableCell>
-                                        <TableCell>
-                                            {
-                                                semesterCourses
-                                                    .filter(node => node.block === block)
-                                                    .map((node, idx) =>
-                                                        <Chip
-                                                            key={ idx }
-                                                            style={ node.courseName.length > 25 ? {
-                                                                fontSize: isWidthUp('sm', width) ? '1vw' : '2vw'
-                                                            } : null }
-                                                            label={ node.courseName }
-                                                            onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
-                                                                state: {
-                                                                    semester
-                                                                }
-                                                            }) }
-                                                        />)
-                                            }
-                                        </TableCell>
-                                    </TableRow>)
-                            }
-                        </TableBody>
-                    </Table>
+                    />
                 </Grid>
             </div>
         </Grid>

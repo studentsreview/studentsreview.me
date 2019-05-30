@@ -1,26 +1,17 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout';
-import {
-    Paper,
-    Grid,
-    Select,
-    MenuItem,
-    Chip,
-    Table,
-    TableBody,
-    TableRow,
-    TableCell,
-    withStyles
-} from '@material-ui/core';
+import { Paper, Grid, Chip, withStyles } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/withProcessing';
 import DepartmentChip from '../components/DepartmentChip';
+import SemesterSelect from '../components/SemesterSelect';
 
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles from '../styles/styles';
+import ScheduleTable from '../components/ScheduleTable'
 
 const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, semesters }) => {
     const { name } = pageContext;
@@ -81,56 +72,32 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
         </Paper>
         <div className={ classes.card }>
             <Grid container direction='column' justify='center'>
-                <Select value={ semester }
-                        renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
-                        onChange={ (_, child) => setSemester(child.props.value) }
-                >
-                    <MenuItem value={ semester }>{ /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }</MenuItem>
-                    {
-                        semesters
-                            .slice(0, semesters.indexOf(semester))
-                            .concat(semesters.slice(semesters.indexOf(semester) + 1))
-                            .map((semester, idx) => <MenuItem
-                                value={ semester }
+                <SemesterSelect
+                    semesters={ semesters }
+                    value={ semester }
+                    onChange={ setSemester }
+                />
+                <ScheduleTable
+                    blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
+                    component={ ({ block }) => Array.from(new Set(
+                        semesterCourses
+                            .filter(node => node.block === block)
+                            .map(node => node.teacher)
+                    ))
+                        .map((teacher, idx) =>
+                            teacher === 'Undetermined' ? <Chip
                                 key={ idx }
-                            >
-                                { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
-                            </MenuItem>)
-                    }
-                </Select>
-                <Table>
-                    <TableBody>
-                        {
-                            blocks
-                                .filter(block => ['1', '2', '3', '4', '5', '6', '7', '8'].includes(block) || semesterCourses.some(node => node.Block === block))
-                                .map((block, idx) => <TableRow key={ idx }>
-                                    <TableCell>Period { block }</TableCell>
-                                    <TableCell>
-                                        {
-                                            Array.from(new Set(
-                                                semesterCourses
-                                                    .filter(node => node.block === block)
-                                                    .map(node => node.teacher)
-                                            ))
-                                                .map((teacher, idx) =>
-                                                    teacher === 'Undetermined' ? <Chip
-                                                        key={ idx }
-                                                        label={ teacher }
-                                                    /> : <Chip
-                                                        key={ idx }
-                                                        label={ teacher.split(' ')[teacher.split(' ').length - 1] }
-                                                        onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
-                                                            state: {
-                                                                semester
-                                                            }
-                                                        }) }
-                                                    />)
-                                        }
-                                    </TableCell>
-                            </TableRow>)
-                        }
-                    </TableBody>
-                </Table>
+                                label={ teacher }
+                            /> : <Chip
+                                key={ idx }
+                                label={ teacher.split(' ')[teacher.split(' ').length - 1] }
+                                onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
+                                    state: {
+                                        semester
+                                    }
+                                }) }
+                            />) }
+                />
             </Grid>
         </div>
     </Layout>;
