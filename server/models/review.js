@@ -9,9 +9,8 @@ const reviewSchema = new mongoose.Schema({
         validate: v => new Promise((resolve, reject) => {
             Class
                 .find({
-                    Teacher: {
-                        $eq: v
-                    }
+                    teacher: v,
+                    semester: `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`
                 })
                 .limit(1)
                 .then(res => resolve(!!res))

@@ -79,7 +79,12 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                 <div style={ {
                     marginTop: 5
                 } }>
-                    <Button variant='contained' color='primary' onClick={ () => setModalExposed(true) }>Write a Review</Button>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        disabled={ !semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) }
+                        onClick={ () => setModalExposed(true) }
+                    >Write a Review</Button>
                     <Modal shown={ modalExposed }>
                         <Paper className={ classes.card }>
                             <IosClose onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
