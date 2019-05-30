@@ -2,8 +2,8 @@ const Class = require('../../models/class');
 
 module.exports = (req, res, next) => {
     Class
-        .find({}, { Semester: 1, _id: 0 })
-        .distinct('Semester')
+        .find({}, { semester: 1, _id: 0 })
+        .distinct('semester')
         .then(data => res.json({
             status: 200,
             data

@@ -2,7 +2,7 @@ const Class = require('../../models/class');
 
 module.exports = (req, res) => {
     Class
-        .find({ Semester: req.params.semester }, { _id: 0 })
+        .find({ semester: req.params.semester }, { _id: 0 })
         .then(data => res.json({
             status: 200,
             data
