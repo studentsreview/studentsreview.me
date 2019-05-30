@@ -29,7 +29,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
-        .filter(node => node.Semester === semester);
+        .filter(node => node.semester === semester);
 
     return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
         minHeight: '70%'
@@ -45,7 +45,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                 marginRight: 10
             } }>{ name }</h3>
             <DepartmentChip
-                department={ courses[0].Department }
+                department={ courses[0].department }
             />
             {
                 name.includes('Honors') ? <Chip
