@@ -110,21 +110,21 @@ for semester in data:
 
         if any(test.lower() in class_['courseName'].lower() for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
             class_['department'] = 'Math'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['Computer']):
+        elif any(test in class_['courseName'] for test in ['Computer']):
             class_['department'] = 'Computer Science'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
+        elif any(test in class_['courseName'] for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
             class_['department'] = 'English'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
+        elif any(test in class_['courseName'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             class_['department'] = 'Science'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
+        elif any(test in class_['courseName'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
             class_['department'] = 'Social Science'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
+        elif any(test in class_['courseName'] for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
             class_['department'] = 'Foreign Language'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
+        elif any(test in class_['courseName'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
             class_['department'] = 'Visual Performing Arts'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Training', 'Soccer', 'Yoga', 'Dance']):
+        elif any(test in class_['courseName'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga', 'Dance']):
             class_['department'] = 'Physical Education'
-        elif any(test.lower() in class_['courseName'].lower() for test in ['JROTC']):
+        elif any(test in class_['courseName'] for test in ['JROTC']):
             class_['department'] = 'JROTC'
         else:
             class_['department'] = 'Miscellaneous'
