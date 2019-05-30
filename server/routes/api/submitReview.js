@@ -1,29 +1,27 @@
 const Review = require('../../models/review');
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
     if (req.body) {
         const newReview = new Review({
-            Teacher: req.body.teacher,
-            Text: req.body.text,
-            Rating: req.body.rating,
-            Timestamp: new Date()
+            teacher: req.body.teacher,
+            text: req.body.text,
+            rating: req.body.rating
         });
 
         newReview
-            .save(err => {
-                if (err) {
-                    res.send({
-                        success: false
-                    });
-                } else {
-                    res.send({
-                        success: true
-                    });
-                }
+            .save()
+            .then(() => res.json({
+                status: 200
+            }))
+            .catch(err => {
+                console.log(err);
+                err = new Error('Schema validation failed.');
+                err.status = 400;
+                next(err);
             });
     } else {
-        res.send({
-            success: false
-        });
+        const err = new Error('No request body found.');
+        err.status = 400;
+        next(err);
     }
 }

@@ -9,9 +9,21 @@ import axios from 'axios';
 
 import styles from '../styles/styles';
 
+const PENDING = 'PENDING';
+const SUCCESS = 'SUCCESS';
+const FAILURE = 'FAILURE';
+const NONE = 'NONE';
+
+const SubmissionState = {
+    PENDING,
+    SUCCESS,
+    FAILURE,
+    NONE
+};
+
 const ReviewForm = ({ classes, teacher, onClose }) => {
     const [reviewText, setReviewText] = useState('');
-    const [submissionState, setSubmissionState] = useState(null);
+    const [submissionState, setSubmissionState] = useState(SubmissionState.NONE);
     const [starRating, setStarRating] = useState(0);
 
     const minCharacters = 50;
@@ -29,9 +41,9 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
         return () => window.removeEventListener('keydown', keyDownHandler);
     });
 
-    if (submissionState === 'Pending') {
+    if (submissionState === SubmissionState.PENDING) {
         return <IosInfinite className={ classes.blockIcon } fontSize='100px' rotate={ true }/>;
-    } else if (submissionState === false) {
+    } else if (submissionState === SubmissionState.FAILURE) {
         return (
             <Fragment>
                 <IosCloseCircleOutline className={ classes.blockIcon } color='red' fontSize='100px'/>
@@ -41,7 +53,7 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                 } }>Unable to submit review.</p>
             </Fragment>
         );
-    } else if (submissionState === true) {
+    } else if (submissionState === SubmissionState.SUCCESS) {
         return (
             <Fragment>
                 <IosCheckmarkCircleOutline className={ classes.blockIcon } color='green' fontSize='100px'/>
@@ -61,7 +73,7 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                     value={ reviewText }
                     onChange={ e => {
                         setReviewText(e.target.value);
-                        setSubmissionState(null);
+                        setSubmissionState(SubmissionState.NONE);
                     } }
                     rows={ 5 }
                     placeholder={ `Write a review for ${ teacher }...` }
@@ -84,11 +96,11 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                         text: reviewText,
                         rating: starRating
                     })
-                        .then(res => setSubmissionState(res.data.success))
-                        .catch(() => setSubmissionState(false));
+                        .then(res => setSubmissionState(res.data.status === 200 ? SubmissionState.SUCCESS : SubmissionState.FAILURE))
+                        .catch(res => setSubmissionState(res.data.status === 200 ? SubmissionState.SUCCESS : SubmissionState.FAILURE));
                     setReviewText('');
                     setStarRating(0);
-                    setSubmissionState('Pending');
+                    setSubmissionState(SubmissionState.PENDING);
                 } }>Submit Review</Button>
                 <span style={ { fontSize: 12 } }>
                 {

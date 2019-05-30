@@ -11,6 +11,9 @@ const https = require('https');
 const mongoose = require('mongoose');
 
 const submitReview = require('./routes/api/submitReview');
+const courses = require('./routes/api/courses');
+const semesters = require('./routes/api/semesters');
+const reviews = require('./routes/api/reviews');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -49,15 +52,28 @@ const rebuild = () => {
 
 function register(app) {
     app.use(express.json());
-    app.use(express.static('public', { root: __dirname }));
     app.post('/api/submitreview', (...args) => {
         submitReview(...args);
         if (!isDev) {
             rebuild();
         }
     });
+    app.get('/api/semesters', semesters);
+    app.get('/api/courses/:semester', courses);
+    app.get('/api/reviews/:teacherKey', reviews);
+    app.get('/api/*', (req, res) => res.send({
+        status: 404,
+        message: 'Requested resource not found.'
+    }));
+    app.use(express.static('public', { root: __dirname }));
     app.get('*', (req, res) => {
         res.status(404).sendFile(path.join('public', '404', 'index.html'), { root: __dirname });
+    });
+    app.use((err, req, res, next) => {
+        res.json({
+            status: err.status,
+            message: err.message
+        });
     });
 }
 

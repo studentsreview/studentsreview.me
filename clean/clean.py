@@ -1,5 +1,6 @@
 import os
 import json
+import string
 from datetime import datetime
 from tabula import read_pdf
 
@@ -34,6 +35,9 @@ header_on_every_page = {
     'Fall2019': True
 }
 
+def slugify(x):
+    return '-'.join(x.translate(str.maketrans('', '', string.punctuation)).split()).lower()
+
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
 for announcer in os.listdir(data_path):
     if announcer == 'teachers.json':
@@ -56,7 +60,7 @@ for announcer in os.listdir(data_path):
             aliases[header['text']] = alias
             with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
                 json.dump(aliases, alias_file)
-        if alias not in ['Course Code', 'Course Name', 'Room', 'Block', 'Teacher']:
+        if alias not in ['courseCode', 'courseName', 'room', 'block', 'teacher']:
             alias = ''
         headers.append(alias)
 
@@ -92,53 +96,55 @@ for announcer in os.listdir(data_path):
                 data[announcer[:-4]].remove(data[announcer[:-4]][-1])
 
 for x in range(234, 242):
-    data['Fall2014'][x]['Room'] = 'Library'
+    data['Fall2014'][x]['room'] = 'Library'
 
 for x in range(301, 303):
-    data['Spring2015'][x]['Teacher'] = 'Matthew Bell'
+    data['Spring2015'][x]['teacher'] = 'Matthew Bell'
 
-data['Fall2015'][400]['Teacher'] = 'Julian Pollak'
+data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
 for semester in data:
     for class_ in data[semester]:
-        if class_['Course Name'] == 'CHIN151A':
-            class_['Course Name'] = 'Chinese 1'
+        if class_['courseName'] == 'CHIN151A':
+            class_['courseName'] = 'Chinese 1'
 
-        if any(test.lower() in class_['Course Name'].lower() for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
-            class_['Department'] = 'Math'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Computer']):
-            class_['Department'] = 'Computer Science'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
-            class_['Department'] = 'English'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
-            class_['Department'] = 'Science'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
-            class_['Department'] = 'Social Science'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
-            class_['Department'] = 'Foreign Language'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
-            class_['Department'] = 'Visual Performing Arts'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Training', 'Soccer', 'Yoga', 'Dance']):
-            class_['Department'] = 'Physical Education'
-        elif any(test.lower() in class_['Course Name'].lower() for test in ['JROTC']):
-            class_['Department'] = 'JROTC'
+        if any(test.lower() in class_['courseName'].lower() for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
+            class_['department'] = 'Math'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['Computer']):
+            class_['department'] = 'Computer Science'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
+            class_['department'] = 'English'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
+            class_['department'] = 'Science'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
+            class_['department'] = 'Social Science'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
+            class_['department'] = 'Foreign Language'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
+            class_['department'] = 'Visual Performing Arts'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Training', 'Soccer', 'Yoga', 'Dance']):
+            class_['department'] = 'Physical Education'
+        elif any(test.lower() in class_['courseName'].lower() for test in ['JROTC']):
+            class_['department'] = 'JROTC'
         else:
-            class_['Department'] = 'Miscellaneous'
+            class_['department'] = 'Miscellaneous'
 
-        if class_['Teacher'] == 'Chan':
-            if class_['Department'] == 'Visual Performing Arts':
-                class_['Teacher'] = 'Jason Chan'
-            elif class_['Department'] == 'Math':
-                class_['Teacher'] = 'Tom Chan'
+        if class_['teacher'] == 'Chan':
+            if class_['department'] == 'Visual Performing Arts':
+                class_['teacher'] = 'Jason Chan'
+            elif class_['department'] == 'Math':
+                class_['teacher'] = 'Tom Chan'
 
-        if class_['Teacher'] == 'Yu Li':
-            if class_['Department'] == 'Math':
-                class_['Teacher'] = 'Ernest Li'
+        if class_['teacher'] == 'Yu Li':
+            if class_['department'] == 'Math':
+                class_['teacher'] = 'Ernest Li'
 
-        if class_['Course Name'] == 'AP Enivronmental Science':
-            class_['Course Name'] = 'AP Environmental Science'
+        if class_['courseName'] == 'AP Enivronmental Science':
+            class_['courseName'] = 'AP Environmental Science'
 
-        class_['Semester'] = semester
+        class_['semester'] = semester
+        class_['teacherKey'] = slugify(class_['teacher'])
+        class_['courseKey'] = slugify(class_['courseName'])
         classes.insert_one(class_)
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')) as reviews_file:
@@ -146,9 +152,10 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')
     for teacher in review_data:
         for review in review_data[teacher]['reviews']:
             reviews.insert_one({
-                'Teacher': teacher,
-                'Text': review,
-                'Timestamp': datetime(1, 1, 1),
-                'Rating': float(review_data[teacher]['rating'][0:3]),
+                'teacher': teacher,
+                'teacherKey': slugify(teacher),
+                'text': review,
+                'timestamp': datetime(1, 1, 1),
+                'rating': float(review_data[teacher]['rating'][0:3]),
                 'version': 1
             })

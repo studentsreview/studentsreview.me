@@ -14,9 +14,9 @@ export default ({ data }) => {
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
 
-    const teachers = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Teacher)));
+    const teachers = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.teacher)));
     teachers.splice(teachers.indexOf('Undetermined'), 1);
-    const courses = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.Course_Name)));
+    const courses = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.courseName)));
 
     const items = teachers.concat(courses);
 
@@ -102,8 +102,8 @@ export const query = graphql`
     query {
         allMongodbStudentsReviewClasses {
             nodes {
-                Teacher,
-                Course_Name
+                teacher,
+                courseName
             }
         }
     }

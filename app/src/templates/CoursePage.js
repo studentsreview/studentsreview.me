@@ -109,8 +109,8 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                                         {
                                             Array.from(new Set(
                                                 semesterCourses
-                                                    .filter(node => node.Block === block)
-                                                    .map(node => node.Teacher)
+                                                    .filter(node => node.block === block)
+                                                    .map(node => node.teacher)
                                             ))
                                                 .map((teacher, idx) =>
                                                     teacher === 'Undetermined' ? <Chip
@@ -141,17 +141,17 @@ export default withProcessing()(withStyles(styles)(TeacherPage));
 export const query = graphql`
     query($name: String!) {
         allMongodbStudentsReviewClasses(filter: {
-            Course_Name: {
+            courseName: {
                 eq: $name
             }
         }) {
             nodes {
-                Course_Name,
-                Course_Code,
-                Department,
-                Semester,
-                Teacher,
-                Block
+                courseName,
+                courseCode,
+                department,
+                semester,
+                teacher,
+                block
             }
         }
     }

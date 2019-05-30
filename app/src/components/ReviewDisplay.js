@@ -20,7 +20,7 @@ const ReviewDisplay = ({ classes, reviews }) => {
                     {
                         review.version === 0 ? <Fragment>
                             <StarRatings
-                                rating={ review.Rating }
+                                rating={ review.rating }
                                 starRatedColor='gold'
                                 starHoverColor='gold'
                                 numberOfStars={ 5 }
@@ -30,14 +30,14 @@ const ReviewDisplay = ({ classes, reviews }) => {
                             <span style={ {
                                 marginLeft: 2.5,
                                 fontSize: 12.5
-                            } }>{ moment(review.Timestamp).format('MMM Do YYYY') }</span>
+                            } }>{ moment(review.timestamp).format('MMM Do YYYY') }</span>
                         </Fragment> : <span style={ {
                             fontSize: 12.5
                         } }>Restored from ratemyteachers.com</span>
                     }
                     <br/>
                     {
-                        review.Text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
+                        review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
                     }
                 </p>).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }

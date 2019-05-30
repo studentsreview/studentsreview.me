@@ -37,7 +37,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
-        .filter(node => node.Semester === semester);
+        .filter(node => node.semester === semester);
 
     const [modalExposed, setModalExposed] = useState(false);
 
@@ -117,15 +117,15 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                                         <TableCell>
                                             {
                                                 semesterCourses
-                                                    .filter(node => node.Block === block)
+                                                    .filter(node => node.block === block)
                                                     .map((node, idx) =>
                                                         <Chip
                                                             key={ idx }
-                                                            style={ node.Course_Name.length > 25 && isWidthUp('sm', width) ? {
+                                                            style={ node.courseName.length > 25 && isWidthUp('sm', width) ? {
                                                                 fontSize: '1vw'
                                                             } : null }
-                                                            label={ node.Course_Name }
-                                                            onClick={ () => navigate(`/courses/${ slugify(node.Course_Name, { lower: true }) }`, {
+                                                            label={ node.courseName }
+                                                            onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
                                                                 state: {
                                                                     semester
                                                                 }
@@ -151,27 +151,27 @@ export default withWidth()(withProcessing()(withStyles(styles)(TeacherPage)));
 export const query = graphql`
     query($name: String!) {
         allMongodbStudentsReviewClasses(filter: {
-            Teacher: {
+            teacher: {
                 eq: $name
             }
         }) {
             nodes {
-                Department,
-                Semester,
-                Course_Name,
-                Block,
-                Room
+                department,
+                semester,
+                courseName,
+                block,
+                room
             }
         }
         allMongodbStudentsReviewReviews(filter: {
-            Teacher: {
+            teacher: {
                 eq: $name
             }
         }) {
             nodes {
-                Text,
-                Timestamp,
-                Rating,
+                text,
+                timestamp,
+                rating,
                 version
             }
         }

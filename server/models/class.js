@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 
 const classSchema = new mongoose.Schema({
-    'Course Code': String,
-    'Course Name': String,
-    Block: String,
-    Room: String,
-    Teacher: String,
-    Department: String,
-    Semester: String
+    courseCode: String,
+    courseKey: String,
+    courseName: String,
+    block: String,
+    room: String,
+    teacher: String,
+    teacherKey: String,
+    department: String,
+    semester: String
 });
 
 module.exports = mongoose.model('Class', classSchema, 'classes');
