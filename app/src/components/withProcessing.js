@@ -28,6 +28,10 @@ const withProcessing = () => component => props => {
                     processed.codes = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.courseCode)));
                 }
 
+                if (processed.courses[0].hasOwnProperty('courseName')) {
+                    processed.courseNames = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.courseName)));
+                }
+
                 if (processed.courses[0].hasOwnProperty('department')) {
                     const departments = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.department)));
 

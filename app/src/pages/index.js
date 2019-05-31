@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, MenuItem, Paper, Popper, TextField, Grid, withTheme } from '@material-ui/core';
+import { Button, MenuItem, Paper, Popper, TextField, Grid } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
 import withProcessing from '../components/withProcessing';
@@ -10,7 +10,7 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
 
-const IndexPage = ({ teachers, courses, numClasses, numReviews, theme }) => {
+const IndexPage = ({ teachers, courseNames, numClasses, numReviews }) => {
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
 
@@ -18,14 +18,14 @@ const IndexPage = ({ teachers, courses, numClasses, numReviews, theme }) => {
         teachers.splice(teachers.indexOf('Undetermined'), 1);
     }
 
-    const items = teachers.concat(courses);
+    const items = teachers.concat(courseNames);
     const suggestions = items.filter(item => match(item, value).length > 0).sort((a, b) => match(b, value).length - match(a, value).length).slice(0, 5);
 
     const keyDownHandler = e => {
         if (e.key === 'Enter') {
             if (teachers.includes(value)) {
                 navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-            } else if (courses.includes(value)) {
+            } else if (courseNames.includes(value)) {
                 navigate(`/courses/${ slugify(value, { lower: true }) }`);
             }
         }
@@ -77,7 +77,7 @@ const IndexPage = ({ teachers, courses, numClasses, numReviews, theme }) => {
                             if (e.key === 'Enter') {
                                 if (teachers.includes(value)) {
                                     navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-                                } else if (courses.includes(value)) {
+                                } else if (courseNames.includes(value)) {
                                     navigate(`/courses/${ slugify(value, { lower: true }) }`);
                                 } else {
                                     setValue(suggestions[0]);
@@ -108,7 +108,7 @@ const IndexPage = ({ teachers, courses, numClasses, numReviews, theme }) => {
                     if (items.includes(value)) {
                         if (teachers.includes(value)) {
                             navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-                        } else if (courses.includes(value)) {
+                        } else if (courseNames.includes(value)) {
                             navigate(`/courses/${ slugify(value, { lower: true }) }`);
                         }
                     }
@@ -133,4 +133,4 @@ export const query = graphql`
     }
 `;
 
-export default withProcessing()(withTheme()(IndexPage));
+export default withProcessing()(IndexPage);
