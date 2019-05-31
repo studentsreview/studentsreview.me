@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     plugins: [
         {
@@ -10,10 +12,20 @@ module.exports = {
                 trackingId: `UA-140917974-1`,
             }
         },
+        {
+            resolve: `gatsby-source-filesystem`,
+            options: {
+                name: `images`,
+                path: path.join(__dirname, `src`, `images`),
+            }
+        },
         `gatsby-plugin-jss`,
         `gatsby-plugin-material-ui`,
         `gatsby-plugin-remove-trailing-slashes`,
-        `gatsby-plugin-react-helmet`
+        `gatsby-plugin-react-helmet`,
+        `gatsby-plugin-favicon`,
+        `gatsby-plugin-sharp`,
+        `gatsby-transformer-sharp`
     ],
     proxy: {
         prefix: `/api`,

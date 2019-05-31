@@ -3,7 +3,7 @@ import { Button, TextField, withStyles } from '@material-ui/core';
 import StarRatings from 'react-star-ratings';
 import IosCheckmarkCircleOutline from 'react-ionicons/lib/IosCheckmarkCircleOutline';
 import IosCloseCircleOutline from 'react-ionicons/lib/IosCloseCircleOutline';
-import IosInfinite from 'react-ionicons/lib/IosInfinite';
+import IosIonic from 'react-ionicons/lib/IosIonic';
 
 import axios from 'axios';
 
@@ -42,7 +42,7 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
     });
 
     if (submissionState === SubmissionState.PENDING) {
-        return <IosInfinite className={ classes.blockIcon } fontSize='100px' rotate={ true }/>;
+        return <IosIonic className={ classes.blockIcon } fontSize='100px' rotate={ true }/>;
     } else if (submissionState === SubmissionState.FAILURE) {
         return (
             <Fragment>

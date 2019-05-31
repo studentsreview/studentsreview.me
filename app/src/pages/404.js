@@ -1,10 +1,10 @@
 import React from 'react';
-import Layout from '../components/layout';
+import AppHeader from '../components/AppHeader';
 
-const NotFoundPage = () => <Layout gridStyle={ {
+const NotFoundPage = () => <AppHeader gridStyle={ {
     minHeight: '70%'
 } }>
     <h3>Are You Lost?</h3>
-</Layout>;
+</AppHeader>;
 
 export default NotFoundPage;

@@ -14,6 +14,8 @@ const Review = ({ classes, review }) => {
     const [open, setOpen] = useState(false);
     const [initialized, setInitialized] = useState(false);
 
+    console.log(open);
+
     useEffect(() => {
         if (!initialized && window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10)) {
             anchorEl.current.scrollIntoView();
@@ -22,7 +24,7 @@ const Review = ({ classes, review }) => {
     });
 
     return (
-        <p className={ classes.card } style={ {
+        <div className={ classes.card } style={ {
             wordWrap: 'break-word',
             background: window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
@@ -90,7 +92,7 @@ const Review = ({ classes, review }) => {
             {
                 review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
             }
-        </p>
+        </div>
     );
 }
 

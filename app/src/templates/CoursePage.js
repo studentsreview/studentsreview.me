@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Layout from '../components/layout';
 import { Paper, Grid, Chip, withStyles } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/withProcessing';
@@ -22,7 +21,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
     const semesterCourses = courses
         .filter(node => node.semester === semester);
 
-    return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
+    return <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
         minHeight: '70%'
     } }>
         <Helmet>
@@ -100,7 +99,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                 />
             </Grid>
         </div>
-    </Layout>;
+    </Grid>;
 }
 
 export default withProcessing()(withStyles(styles)(TeacherPage));

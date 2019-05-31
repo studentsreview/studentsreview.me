@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Layout from '../components/layout';
 import { Button, Chip, Grid, Paper, withStyles, withWidth } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
@@ -30,7 +29,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
 
     const [modalExposed, setModalExposed] = useState(false);
 
-    return <Layout direction='row' justify='space-between' alignItems='baseline' gridStyle={ {
+    return <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
         minHeight: '70%'
     } }>
         <Helmet>
@@ -114,7 +113,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
         <Grid>
             <ReviewDisplay reviews={ reviews }/>
         </Grid>
-    </Layout>;
+    </Grid>;
 }
 
 export default withWidth()(withProcessing()(withStyles(styles)(TeacherPage)));
