@@ -4,6 +4,7 @@ import { MoreVert } from '@material-ui/icons';
 import StarRatings from 'react-star-ratings';
 import { isIOS } from 'react-device-detect';
 
+import sha256 from 'sha256';
 import moment from 'moment';
 
 import styles from '../styles/styles';
@@ -14,7 +15,7 @@ const Review = ({ classes, review }) => {
     const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        if (!initialized && window.location.hash.substr(1) === review.mongodb_id) {
+        if (!initialized && window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10)) {
             anchorEl.current.scrollIntoView();
             setInitialized(true);
         }
@@ -23,7 +24,7 @@ const Review = ({ classes, review }) => {
     return (
         <p className={ classes.card } style={ {
             wordWrap: 'break-word',
-            background: window.location.hash.substr(1) === review.mongodb_id ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
+            background: window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
 
             <IconButton style={ {
@@ -46,7 +47,7 @@ const Review = ({ classes, review }) => {
                     } } onClick={ e => {
                         const textField = document.createElement('textarea');
                         e.target.appendChild(textField);
-                        textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ review.mongodb_id }`;
+                        textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) }`;
                         if (isIOS) {
                             const range = document.createRange();
                             range.selectNodeContents(textField);

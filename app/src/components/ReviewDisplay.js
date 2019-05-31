@@ -2,13 +2,15 @@ import React, { Fragment, useRef, useState } from 'react';
 import { Button, Divider, Grid, withStyles } from '@material-ui/core';
 import Review from './Review';
 
+import sha256 from 'sha256';
+
 import styles from '../styles/styles';
 
 const ReviewDisplay = ({ classes, reviews }) => {
     let initialPage = 0;
 
-    if (window && window.location.hash) {
-        const idx = reviews.findIndex(review => review.mongodb_id === window.location.hash.substr(1));
+    if (window.location.hash) {
+        const idx = reviews.findIndex(review => sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) === window.location.hash.substr(1));
         if (idx !== -1) {
             initialPage = Math.floor(idx / 5);
         }

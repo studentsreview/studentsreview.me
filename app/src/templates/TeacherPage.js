@@ -143,8 +143,7 @@ export const query = graphql`
                 text,
                 timestamp,
                 rating,
-                version,
-                mongodb_id
+                version
             }
         }
     }
