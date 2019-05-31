@@ -96,7 +96,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                                 <Chip
                                     key={ idx }
                                     style={ node.courseName.length > 25 ? {
-                                        fontSize: isWidthUp('sm', width) ? '1vw' : '2vw'
+                                        fontSize: isWidthUp('sm', width) ? '0.9vw' : '1.8vw'
                                     } : null }
                                     label={ node.courseName }
                                     onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
