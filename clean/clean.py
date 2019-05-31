@@ -116,7 +116,7 @@ for semester in data:
             class_['department'] = 'English'
         elif any(test in class_['courseName'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             class_['department'] = 'Science'
-        elif any(test in class_['courseName'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography']):
+        elif any(test in class_['courseName'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
             class_['department'] = 'Social Science'
         elif any(test in class_['courseName'] for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
             class_['department'] = 'Foreign Language'
