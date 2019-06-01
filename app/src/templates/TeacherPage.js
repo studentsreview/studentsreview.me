@@ -86,35 +86,33 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         </Modal>
                     </div>
                 </Paper>
-                <div className={ classes.card }>
-                    <Grid container direction='column' justify='center'>
-                        <SemesterSelect
-                            semesters={ semesters }
-                            value={ semester }
-                            onChange={ setSemester }
-                        />
-                        <ScheduleTable
-                            blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
-                        >
-                            { ({ block }) => semesterCourses
-                                .filter(node => node.block === block)
-                                .map((node, idx) =>
-                                    <Chip
-                                        key={ idx }
-                                        style={ node.courseName.length > 25 ? {
-                                            fontSize: isWidthUp('sm', width) ? '0.9vw' : '1.8vw'
-                                        } : null }
-                                        label={ node.courseName }
-                                        onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
-                                            state: {
-                                                semester
-                                            }
-                                        }) }
-                                    />)
-                            }
-                        </ScheduleTable>
-                    </Grid>
-                </div>
+                <Grid container className={ classes.card } direction='column' justify='center'>
+                    <SemesterSelect
+                        semesters={ semesters }
+                        value={ semester }
+                        onChange={ setSemester }
+                    />
+                    <ScheduleTable
+                        blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
+                    >
+                        { ({ block }) => semesterCourses
+                            .filter(node => node.block === block)
+                            .map((node, idx) =>
+                                <Chip
+                                    key={ idx }
+                                    style={ node.courseName.length > 25 ? {
+                                        fontSize: isWidthUp('sm', width) ? '0.9vw' : '1.8vw'
+                                    } : null }
+                                    label={ node.courseName }
+                                    onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
+                                        state: {
+                                            semester
+                                        }
+                                    }) }
+                                />)
+                        }
+                    </ScheduleTable>
+                </Grid>
             </Grid>
             <Grid>
                 <ReviewDisplay reviews={ reviews }/>

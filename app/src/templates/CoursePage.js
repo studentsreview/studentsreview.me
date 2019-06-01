@@ -72,38 +72,36 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                         />)
                 }
             </Paper>
-            <div className={ classes.card }>
-                <Grid container direction='column' justify='center'>
-                    <SemesterSelect
-                        semesters={ semesters }
-                        value={ semester }
-                        onChange={ setSemester }
-                    />
-                    <ScheduleTable
-                        blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
-                    >
-                        { ({ block }) => Array.from(new Set(
-                            semesterCourses
-                                .filter(node => node.block === block)
-                                .map(node => node.teacher)
-                        ))
-                            .map((teacher, idx) =>
-                                teacher === 'Undetermined' ? <Chip
-                                    key={ idx }
-                                    label={ teacher }
-                                /> : <Chip
-                                    key={ idx }
-                                    label={ teacher.split(' ')[teacher.split(' ').length - 1] }
-                                    onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
-                                        state: {
-                                            semester
-                                        }
-                                    }) }
-                                />)
-                        }
-                    </ScheduleTable>
-                </Grid>
-            </div>
+            <Grid container className={ classes.card } direction='column' justify='center'>
+                <SemesterSelect
+                    semesters={ semesters }
+                    value={ semester }
+                    onChange={ setSemester }
+                />
+                <ScheduleTable
+                    blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
+                >
+                    { ({ block }) => Array.from(new Set(
+                        semesterCourses
+                            .filter(node => node.block === block)
+                            .map(node => node.teacher)
+                    ))
+                        .map((teacher, idx) =>
+                            teacher === 'Undetermined' ? <Chip
+                                key={ idx }
+                                label={ teacher }
+                            /> : <Chip
+                                key={ idx }
+                                label={ teacher.split(' ')[teacher.split(' ').length - 1] }
+                                onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
+                                    state: {
+                                        semester
+                                    }
+                                }) }
+                            />)
+                    }
+                </ScheduleTable>
+            </Grid>
         </Grid>
     );
 }

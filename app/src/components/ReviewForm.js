@@ -88,7 +88,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                     starHoverColor='gold'
                     numberOfStars={ 5 }
                     starDimension={ theme.spacing(5) }
-                    starSpacing={ theme(0.5) }
+                    starSpacing={ theme.spacing(0.5) }
                 />
                 <br/>
                 <Button disabled={ reviewText.length < minCharacters && starRating > 0 } onClick={ () => {
