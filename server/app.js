@@ -28,7 +28,7 @@ function register(app) {
     app.post('/api/submitreview', async (...args) => {
         submitReview(...args);
         if (isProd) {
-            await axios.post('BUILD_HOOK_URI', {});
+            await axios.post(BUILD_HOOK_URI, {});
         }
     });
     app.get('/api/semesters', semesters);
