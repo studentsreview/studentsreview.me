@@ -3,7 +3,6 @@ import { Paper, Grid, Chip, Typography, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/hoc/withProcessing';
-import withRoot from '../components/hoc/withRoot';
 import DepartmentChip from '../components/DepartmentChip';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
@@ -106,7 +105,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
     );
 }
 
-export default withRoot(withTheme(withProcessing(withStyles(styles)(TeacherPage))));
+export default withTheme(withProcessing(withStyles(styles)(TeacherPage)));
 
 export const query = graphql`
     query($name: String!) {

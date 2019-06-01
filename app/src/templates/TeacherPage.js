@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
 import withProcessing from '../components/hoc/withProcessing';
-import withRoot from '../components/hoc/withRoot';
 import ReviewForm from '../components/ReviewForm';
 import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
@@ -121,7 +120,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     );
 }
 
-export default withRoot(withWidth()(withTheme(withProcessing(withStyles(styles)(TeacherPage)))));
+export default withWidth()(withTheme(withProcessing(withStyles(styles)(TeacherPage))));
 
 export const query = graphql`
     query($name: String!) {

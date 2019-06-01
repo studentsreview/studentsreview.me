@@ -20,7 +20,7 @@ module.exports = {
             resolve: `gatsby-source-filesystem`,
             options: {
                 name: `images`,
-                path: path.join(__dirname, `src`, `images`),
+                path: path.join(__dirname, `src`),
             }
         },
         `gatsby-plugin-material-ui`,
@@ -29,9 +29,5 @@ module.exports = {
         `gatsby-plugin-favicon`,
         `gatsby-plugin-sharp`,
         `gatsby-transformer-sharp`
-    ],
-    proxy: {
-        prefix: `/api`,
-        url: `http://localhost:8080`
-    }
+    ]
 }

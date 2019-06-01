@@ -9,7 +9,7 @@ import '../styles/layout.css';
 const AppHeader = ({ theme }) => {
     const data = useStaticQuery(graphql`
             query {
-                file(relativePath: { eq: "logo_transparent.png" }) {
+                file(relativePath: { eq: "favicon.png" }) {
                     childImageSharp {
                         fixed(width: 75, height: 75) {
                             ...GatsbyImageSharpFixed

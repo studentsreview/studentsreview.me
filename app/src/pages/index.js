@@ -4,7 +4,6 @@ import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
 import withProcessing from '../components/hoc/withProcessing';
-import withRoot from '../components/hoc/withRoot';
 
 import { graphql } from 'gatsby';
 import slugify from 'slugify';
@@ -132,4 +131,4 @@ export const query = graphql`
     }
 `;
 
-export default withRoot(withTheme(withProcessing(IndexPage)));
+export default withTheme(withProcessing(IndexPage));
