@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Chip, Grid, Paper, withStyles, withWidth, MuiThemeProvider } from '@material-ui/core';
+import { Button, Chip, Grid, Paper, withStyles, withWidth } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
@@ -10,7 +10,7 @@ import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
-import AppHeader from '../components/AppHeader';
+import Layout from '../components/layout';
 
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
@@ -18,7 +18,6 @@ import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles from '../styles/styles';
-import theme from '../styles/theme';
 
 const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews, width }) => {
     const { name } = pageContext;
@@ -32,8 +31,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     const [modalExposed, setModalExposed] = useState(false);
 
     return (
-        <MuiThemeProvider theme={ theme }>
-            <AppHeader/>
+        <Layout>
             <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
                 minHeight: '70%'
             } }>
@@ -119,7 +117,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                     <ReviewDisplay reviews={ reviews }/>
                 </Grid>
             </Grid>
-        </MuiThemeProvider>
+        </Layout>
     );
 }
 

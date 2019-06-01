@@ -4,14 +4,14 @@ html, body, #___gatsby, div[role=group] {
 }
 
 @font-face {
-    font-family: 'Fira Mono';
-    src: url('../fonts/FiraMono-Regular.otf') format('opentype');
+    font-family: 'Proxima Nova';
+    src: url('../fonts/ProximaNova-Regular.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
 
 body {
-    font-family: Fira Mono, Helvetica, sans-serif;
+    font-family: Proxima Nova, Helvetica, sans-serif;
 }
 
 a:link, a:visited, a:hover, a:active {

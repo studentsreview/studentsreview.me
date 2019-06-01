@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, MenuItem, Paper, Popper, TextField, Grid, MuiThemeProvider } from '@material-ui/core';
+import { Button, MenuItem, Paper, Popper, TextField, Grid } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
 import withProcessing from '../components/withProcessing';
-import AppHeader from '../components/AppHeader';
+import Layout from '../components/layout';
 
 import { graphql } from 'gatsby';
 import slugify from 'slugify';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
-
-import theme from '../styles/theme';
 
 const IndexPage = ({ teachers, courseNames, numClasses, numReviews }) => {
     const [value, setValue] = useState('');
@@ -40,8 +38,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews }) => {
     });
 
     return (
-        <MuiThemeProvider theme={ theme }>
-            <AppHeader/>
+        <Layout>
             <Grid container direction='column' justify='center' alignItems='center' style={ {
                 minHeight: '70%',
                 textAlign: 'center'
@@ -59,7 +56,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews }) => {
                     />
                     <CountUp
                         end={ numClasses }
-                        formattingFn={ num => `${ num.toLocaleString() } Courses, ` }
+                        formattingFn={ num => `${ num.toLocaleString() } Classes, ` }
                     />
                     <CountUp
                         end={ numReviews }
@@ -117,7 +114,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews }) => {
                     }
                 } }>Select</Button>
             </Grid>
-        </MuiThemeProvider>
+        </Layout>
     );
 }
 

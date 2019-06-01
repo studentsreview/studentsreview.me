@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Paper, Grid, Chip, withStyles, MuiThemeProvider } from '@material-ui/core';
+import { Paper, Grid, Chip, withStyles } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/withProcessing';
 import DepartmentChip from '../components/DepartmentChip';
 import SemesterSelect from '../components/SemesterSelect';
-import AppHeader from '../components/AppHeader';
+import Layout from '../components/layout';
 import ScheduleTable from '../components/ScheduleTable';
 
 import { graphql } from 'gatsby';
@@ -12,7 +12,6 @@ import { navigate } from '@reach/router';
 import slugify from 'slugify';
 
 import styles from '../styles/styles';
-import theme from '../styles/theme';
 
 const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, semesters }) => {
     const { name } = pageContext;
@@ -24,8 +23,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
         .filter(node => node.semester === semester);
 
     return (
-        <MuiThemeProvider theme={ theme }>
-            <AppHeader/>
+        <Layout>
             <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
                 minHeight: '70%'
             } }>
@@ -105,7 +103,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                     </Grid>
                 </div>
             </Grid>
-        </MuiThemeProvider>
+        </Layout>
     );
 }
 
