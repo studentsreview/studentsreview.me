@@ -1,3 +1,6 @@
+const fs = require('fs');
+const https = require('https');
+
 const express = require('express');
 const mongoose = require('mongoose');
 const axios = require('axios');
@@ -25,16 +28,16 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
 
 function register(app) {
     app.use(express.json());
-    app.post('/api/submitreview', async (...args) => {
+    app.post('/submitreview', async (...args) => {
         submitReview(...args);
         if (isProd) {
             await axios.post(BUILD_HOOK_URI, {});
         }
     });
-    app.get('/api/semesters', semesters);
-    app.get('/api/courses/:semester', courses);
-    app.get('/api/reviews/:teacherKey', reviews);
-    app.get('/api/*', (req, res) => res.send({
+    app.get('/semesters', semesters);
+    app.get('/courses/:semester', courses);
+    app.get('/reviews/:teacherKey', reviews);
+    app.get('*', (req, res) => res.send({
         status: 404,
         message: 'Requested resource not found.'
     }));

@@ -92,7 +92,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                 />
                 <br/>
                 <Button disabled={ reviewText.length < minCharacters && starRating > 0 } onClick={ () => {
-                    axios.post('/api/submitreview', {
+                    axios.post('api.studentsreview.me/submitreview', {
                         teacher: teacher,
                         text: reviewText,
                         rating: starRating
