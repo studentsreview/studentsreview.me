@@ -1,10 +1,11 @@
 import React from 'react';
-import AppHeader from '../components/AppHeader';
+import withRoot from '../components/hoc/withRoot';
 
-const NotFoundPage = () => <AppHeader gridStyle={ {
-    minHeight: '70%'
+const NotFoundPage = () => <div style={ {
+    minHeight: '70%',
+    textAlign: 'center'
 } }>
     <h3>Are You Lost?</h3>
-</AppHeader>;
+</div>;
 
-export default NotFoundPage;
+export default withRoot(NotFoundPage);
