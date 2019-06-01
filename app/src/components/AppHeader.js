@@ -1,5 +1,5 @@
 import React  from 'react';
-import { AppBar, Toolbar } from '@material-ui/core';
+import { AppBar, Breadcrumbs, Toolbar } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import Img from 'gatsby-image';
@@ -22,8 +22,10 @@ const AppHeader = ({ theme }) => {
     return (
         <AppBar position='static'>
             <Toolbar>
-                <Link to='/'><Img fixed={ data.file.childImageSharp.fixed }/></Link>
-                <Link to='/' style={ { color: theme.palette.primary.contrastText, margin: theme.spacing(1) } }>Students Review</Link>
+                <Breadcrumbs separator='/'>
+                    <Link to='/'><Img fixed={ data.file.childImageSharp.fixed }/></Link>
+                    <Link to='/' style={ { color: theme.palette.primary.contrastText, margin: theme.spacing(1) } }>Students Review</Link>
+                </Breadcrumbs>
             </Toolbar>
         </AppBar>
     );

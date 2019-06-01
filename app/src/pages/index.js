@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, MenuItem, Paper, Popper, TextField, Grid } from '@material-ui/core';
+import { Button, MenuItem, Paper, Popper, TextField, Typography, Grid } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
@@ -48,8 +48,8 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
                 <meta name='description' content='Students Review is a education website for students to share and read reviews of courses and teachers at Lowell High School.'/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review'].join(',') }/>
             </Helmet>
-            <h2>Lowell High School Teacher Reviews</h2>
-            <div>
+            <Typography variant='h4'>Lowell High School Teacher Reviews</Typography>
+            <Typography variant='body1'>
                 <CountUp
                     end={ teachers.length }
                     formattingFn={ num => `${ num.toLocaleString() } Teachers, ` }
@@ -62,7 +62,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
                     end={ numReviews }
                     formattingFn={ num => `${ num.toLocaleString() } Reviews` }
                 />
-            </div>
+            </Typography>
             <TextField
                 style={ {
                     marginTop: theme.spacing(10),

@@ -1,5 +1,5 @@
 import React, { Fragment, useRef, useState } from 'react';
-import { Button, Divider, Grid, withStyles } from '@material-ui/core';
+import { Button, Divider, Grid, Typography, withStyles } from '@material-ui/core';
 import Review from './Review';
 
 import sha256 from 'sha256';
@@ -21,7 +21,7 @@ const ReviewDisplay = ({ classes, reviews }) => {
 
     return (
         <Fragment>
-            <h3 ref={ reviewsRef } className={ classes.card } style={ { textAlign: 'center' } }>Reviews</h3>
+            <Typography innerRef={ reviewsRef }  variant='h6' className={ classes.card } style={ { textAlign: 'center' } }>Reviews</Typography>
             {
                 reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) =>
                     <Review key={ idx } review={ review }/>

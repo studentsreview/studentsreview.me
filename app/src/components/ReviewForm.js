@@ -106,11 +106,9 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                 <span style={ { fontSize: 12 } }>
                 {
                     reviewText.length < minCharacters && reviewText.length > 0 ? <span style={ { color: 'red' } }>Reviews must be at least { minCharacters } characters.</span> :
-                        (starRating === 0 && reviewText.length > 0 ? <span style={ { color: 'red' } }>Choose a star rating.</span> : null
-                        )
+                        (starRating === 0 && reviewText.length > 0 ? <span style={ { color: 'red' } }>Choose a star rating.</span> : null)
                 }
                 </span>
-                <p style={ { fontSize: 10 } }>Reviews may take a few minutes to appear.</p>
             </Fragment>
         );
     }

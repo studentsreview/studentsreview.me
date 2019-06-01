@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import { ClickAwayListener, IconButton, Paper, MenuItem, Popper, withStyles } from '@material-ui/core';
+import { ClickAwayListener, IconButton, Paper, MenuItem, Popper, Typography, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { MoreVert } from '@material-ui/icons';
 import StarRatings from 'react-star-ratings';
@@ -79,18 +79,14 @@ const Review = ({ classes, review, theme }) => {
                         starDimension={ theme.spacing(2.5) }
                         starSpacing={ theme.spacing(0.25) }
                     />
-                    <span style={ {
-                        marginLeft: theme.spacing(0.5),
-                        fontSize: 12.5
-                    } }>{ moment(review.timestamp).format('MMM Do YYYY') }</span>
-                </Fragment> : <span style={ {
-                    fontSize: 12.5
-                } }>Restored from ratemyteachers.com</span>
+                    <Typography variant='caption' style={ {
+                        marginLeft: theme.spacing(0.5)
+                    } }>{ moment(review.timestamp).format('MMM Do YYYY') }</Typography>
+                </Fragment> : <Typography variant='caption'>Restored from ratemyteachers.com</Typography>
             }
-            <br/>
-            {
-                review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '')
-            }
+            <Typography variant='body1'>
+                { review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '') }
+            </Typography>
         </div>
     );
 }

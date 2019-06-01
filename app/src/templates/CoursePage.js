@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paper, Grid, Chip, withStyles } from '@material-ui/core';
+import { Paper, Grid, Chip, Typography, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import withProcessing from '../components/hoc/withProcessing';
@@ -33,10 +33,10 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', courses[0].Department, name].join(',') }/>
             </Helmet>
             <Paper className={ classes.card }>
-                <h3 style={ {
+                <Typography variant='h6' style={ {
                     display: 'inline',
                     marginRight: theme.spacing(2)
-                } }>{ name }</h3>
+                } }>{ name }</Typography>
                 <DepartmentChip
                     department={ courses[0].department }
                 />

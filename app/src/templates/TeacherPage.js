@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Chip, Grid, Paper, withStyles, withWidth } from '@material-ui/core';
+import { Button, Chip, Grid, Paper, Typography, withStyles, withWidth } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import StarRatings from 'react-star-ratings';
@@ -47,10 +47,10 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                     <div style={ {
                         marginBottom: theme.spacing(1)
                     } }>
-                        <h3 style={ {
+                        <Typography variant='h6' style={ {
                             display: 'inline',
                             marginRight: theme.spacing(2)
-                        } }>{ name }</h3>
+                        } }>{ name }</Typography>
                         <StarRatings
                             rating={ isNaN(rating) ? 0 : rating }
                             starRatedColor='gold'
