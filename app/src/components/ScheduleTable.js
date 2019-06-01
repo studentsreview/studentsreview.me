@@ -1,7 +1,7 @@
 import React, { createElement } from 'react';
 import { Table, TableBody, TableCell, TableRow } from '@material-ui/core';
 
-const ScheduleTable = ({ blocks, component }) => (
+const ScheduleTable = ({ blocks, children }) => (
     <Table>
         <TableBody>
             {
@@ -9,7 +9,7 @@ const ScheduleTable = ({ blocks, component }) => (
                     .map((block, idx) => <TableRow key={ idx }>
                         <TableCell>Period { block }</TableCell>
                         <TableCell>
-                            { createElement(component, { block }) }
+                            { createElement(children, { block }) }
                         </TableCell>
                     </TableRow>)
             }

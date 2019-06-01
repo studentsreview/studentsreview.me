@@ -1,5 +1,5 @@
 {
-  "name": "StudentsReviewMe2",
+  "name": "studentsreview.me",
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
@@ -9,15 +9,16 @@
     "deploy": "npm run build && node publish.js"
   },
   "dependencies": {
-    "@material-ui/core": "^3.9.3",
+    "@material-ui/core": "^4.0.1",
     "@material-ui/icons": "^4.0.1",
+    "@material-ui/styles": "^4.0.1",
     "autosuggest-highlight": "^3.1.1",
     "axios": "^0.18.0",
     "gatsby": "^2.4.3",
     "gatsby-image": "^2.1.2",
     "gatsby-plugin-favicon": "^3.1.6",
     "gatsby-plugin-google-analytics": "^2.0.20",
-    "gatsby-plugin-material-ui": "^1.2.5",
+    "gatsby-plugin-material-ui": "2.0.1",
     "gatsby-plugin-react-helmet": "^3.0.12",
     "gatsby-plugin-remove-trailing-slashes": "^2.0.11",
     "gatsby-plugin-sharp": "^2.1.3",

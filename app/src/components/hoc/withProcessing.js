@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 
-const withProcessing = () => component => props => {
+const withProcessing = component => props => {
     props = { ...props }; // unfreeze
 
     const { data } = props;

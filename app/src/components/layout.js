@@ -10,6 +10,7 @@ const theme = createMuiTheme({
         useNextVariants: true,
         fontFamily: 'Proxima Nova, Helvetica, sans-serif'
     },
+    spacing: 5,
     palette: {
         primary: {
             light: red[700],

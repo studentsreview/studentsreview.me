@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Button, TextField, withStyles } from '@material-ui/core';
+import { withTheme } from '@material-ui/styles';
 import StarRatings from 'react-star-ratings';
 import IosCheckmarkCircleOutline from 'react-ionicons/lib/IosCheckmarkCircleOutline';
 import IosCloseCircleOutline from 'react-ionicons/lib/IosCloseCircleOutline';
@@ -21,7 +22,7 @@ const SubmissionState = {
     NONE
 };
 
-const ReviewForm = ({ classes, teacher, onClose }) => {
+const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     const [reviewText, setReviewText] = useState('');
     const [submissionState, setSubmissionState] = useState(SubmissionState.NONE);
     const [starRating, setStarRating] = useState(0);
@@ -86,8 +87,8 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                     starRatedColor='gold'
                     starHoverColor='gold'
                     numberOfStars={ 5 }
-                    starDimension={ 25 }
-                    starSpacing={ 2.5 }
+                    starDimension={ theme.spacing(5) }
+                    starSpacing={ theme(0.5) }
                 />
                 <br/>
                 <Button disabled={ reviewText.length < minCharacters && starRating > 0 } onClick={ () => {
@@ -115,4 +116,4 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
     }
 };
 
-export default withStyles(styles)(ReviewForm);
+export default withTheme(withStyles(styles)(ReviewForm));
