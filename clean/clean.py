@@ -6,8 +6,9 @@ from tabula import read_pdf
 
 from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['StudentsReview']
+client = MongoClient('mongodb://localhost:27017/StudentsReview')
+
+db = client.get_database()
 classes = db['classes']
 reviews = db['reviews']
 teachers = db['teachers']

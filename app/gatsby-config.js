@@ -4,7 +4,11 @@ module.exports = {
     plugins: [
         {
             resolve: `gatsby-source-mongodb`,
-            options: { dbName: `StudentsReview`, collection: [`classes`, `reviews`] },
+            options: {
+                connectionString: process.env.MONGODB_URI || 'mongodb://localhost:27017',
+                dbName: `StudentsReview`,
+                collection: [`classes`, `reviews`]
+            }
         },
         {
             resolve: `gatsby-plugin-google-analytics`,
