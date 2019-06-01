@@ -66,59 +66,56 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews }) => {
                         formattingFn={ num => `${ num.toLocaleString() } Reviews` }
                     />
                 </div>
-                <div style={ {
-                    margin: 50
-                } }>
-                    <TextField
-                        style={ {
-                            width: 760,
-                            maxWidth: '75vw'
-                        } }
-                        inputRef={ inputRef }
-                        value={ value }
-                        onChange={ e => setValue(e.target.value) }
-                        inputProps={ {
-                            onKeyDown: e => {
-                                if (e.key === 'Enter') {
-                                    if (teachers.includes(value)) {
-                                        navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-                                    } else if (courseNames.includes(value)) {
-                                        navigate(`/courses/${ slugify(value, { lower: true }) }`);
-                                    } else {
-                                        setValue(suggestions[0]);
-                                    }
-                                    e.stopPropagation();
+                <TextField
+                    style={ {
+                        marginTop: 50,
+                        width: 760,
+                        maxWidth: '75vw'
+                    } }
+                    inputRef={ inputRef }
+                    value={ value }
+                    onChange={ e => setValue(e.target.value) }
+                    inputProps={ {
+                        onKeyDown: e => {
+                            if (e.key === 'Enter') {
+                                if (teachers.includes(value)) {
+                                    navigate(`/teachers/${ slugify(value, { lower: true }) }`);
+                                } else if (courseNames.includes(value)) {
+                                    navigate(`/courses/${ slugify(value, { lower: true }) }`);
+                                } else {
+                                    setValue(suggestions[0]);
                                 }
-                            }
-                        } }
-                        placeholder='Search Teachers and Classes...'
-                    />
-                    <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
-                        <Paper
-                            style={ { width: inputRef.current ? inputRef.current.clientWidth : null } }>
-                            {
-                                suggestions.map((suggestion, idx) => <MenuItem key={ idx } onClick={ () => setValue(suggestion) } style={ { cursor: 'pointer' } }>{
-                                        parse(suggestion, match(suggestion, value)).map((match, idx) => <span key={ idx } style={ {
-                                            opacity: match.highlight ? 1 : 0.5,
-                                            whiteSpace: 'pre'
-                                        } }>
-                                    { match.text }
-                                </span>)
-                                    }</MenuItem>
-                                )
-                            }
-                        </Paper>
-                    </Popper>
-                    <Button onClick={ () => {
-                        if (items.includes(value)) {
-                            if (teachers.includes(value)) {
-                                navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-                            } else if (courseNames.includes(value)) {
-                                navigate(`/courses/${ slugify(value, { lower: true }) }`);
+                                e.stopPropagation();
                             }
                         }
-                    } }>Select</Button>
-                </div>
+                    } }
+                    placeholder='Search Teachers and Classes...'
+                />
+                <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
+                    <Paper
+                        style={ { width: inputRef.current ? inputRef.current.clientWidth : null } }>
+                        {
+                            suggestions.map((suggestion, idx) => <MenuItem key={ idx } onClick={ () => setValue(suggestion) } style={ { cursor: 'pointer' } }>{
+                                    parse(suggestion, match(suggestion, value)).map((match, idx) => <span key={ idx } style={ {
+                                        opacity: match.highlight ? 1 : 0.5,
+                                        whiteSpace: 'pre'
+                                    } }>
+                                    { match.text }
+                                </span>)
+                                }</MenuItem>
+                            )
+                        }
+                    </Paper>
+                </Popper>
+                <Button onClick={ () => {
+                    if (items.includes(value)) {
+                        if (teachers.includes(value)) {
+                            navigate(`/teachers/${ slugify(value, { lower: true }) }`);
+                        } else if (courseNames.includes(value)) {
+                            navigate(`/courses/${ slugify(value, { lower: true }) }`);
+                        }
+                    }
+                } }>Select</Button>
             </Grid>
         </MuiThemeProvider>
     );

@@ -65,12 +65,14 @@ const withProcessing = () => component => props => {
         if (data.allMongodbStudentsReviewReviews.hasOwnProperty('nodes')) {
             processed.reviews = data.allMongodbStudentsReviewReviews.nodes;
 
-            if (processed.reviews[0].hasOwnProperty('timestamp')) {
-                processed.reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
-            }
+            if (processed.reviews.length !== 0) {
+                if (processed.reviews[0].hasOwnProperty('timestamp')) {
+                    processed.reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
+                }
 
-            if (processed.reviews[0].hasOwnProperty('rating')) {
-                processed.rating = processed.reviews.reduce((acc, cur) => acc + cur.rating, 0) / processed.reviews.length;
+                if (processed.reviews[0].hasOwnProperty('rating')) {
+                    processed.rating = processed.reviews.reduce((acc, cur) => acc + cur.rating, 0) / processed.reviews.length;
+                }
             }
         }
 
