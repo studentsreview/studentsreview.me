@@ -91,7 +91,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                     starSpacing={ theme.spacing(0.5) }
                 />
                 <br/>
-                <Button disabled={ reviewText.length < minCharacters && starRating > 0 } onClick={ () => {
+                <Button disabled={ reviewText.length < minCharacters && starRating === 0 } onClick={ () => {
                     axios.post('https://api.studentsreview.me/submitreview', {
                         teacher: teacher,
                         text: reviewText,

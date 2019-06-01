@@ -4,6 +4,7 @@ const https = require('https');
 const express = require('express');
 const mongoose = require('mongoose');
 const axios = require('axios');
+const cors = require('cors');
 
 const submitReview = require('./routes/api/submitReview');
 const courses = require('./routes/api/courses');
@@ -27,6 +28,7 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
 
 
 function register(app) {
+    app.use(cors());
     app.use(express.json());
     app.post('/submitreview', async (...args) => {
         submitReview(...args);
