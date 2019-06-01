@@ -59,8 +59,8 @@ if (isProd) {
         res.redirect('https://' + req.headers.host + req.url);
     });
     const options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/studentsreview.me/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/studentsreview.me/fullchain.pem')
+        key: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/fullchain.pem')
     };
     let https_server = express();
     register(https_server);
