@@ -19,7 +19,6 @@ module.exports = {
                 path: path.join(__dirname, `src`, `images`),
             }
         },
-        `gatsby-plugin-jss`,
         `gatsby-plugin-material-ui`,
         `gatsby-plugin-remove-trailing-slashes`,
         `gatsby-plugin-react-helmet`,

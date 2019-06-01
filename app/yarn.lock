@@ -5164,13 +5164,6 @@ gatsby-plugin-google-analytics@^2.0.20:
   dependencies:
     "@babel/runtime" "^7.0.0"
 
-gatsby-plugin-jss@^2.0.9:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-jss/-/gatsby-plugin-jss-2.0.9.tgz#92fea95c13c20151e886cd5b29b20d315987cae7"
-  integrity sha512-m3eeor3xvjwCtWXF6x+AK8z8t4Xf93xzpl7/WH0sGv3NQ+AlnvItKOCzRMZFBfRko3vWTosrpXcKP5qSoN2xzg==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-
 gatsby-plugin-material-ui@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-material-ui/-/gatsby-plugin-material-ui-1.2.5.tgz#6a6937acc96eb2833c957d5d7cfc16710aecdf1c"
