@@ -23,11 +23,23 @@ module.exports = {
                 path: path.join(__dirname, `src`),
             }
         },
+        {
+            resolve: `gatsby-plugin-manifest`,
+            options: {
+                name: `StudentsReview`,
+                short_name: `StudentsReview`,
+                start_url: `/`,
+                background_color: `#fff`,
+                theme_color: `#c62828`,
+                display: `standalone`
+            }
+        },
+        `gatsby-transformer-sharp`,
         `gatsby-plugin-material-ui`,
         `gatsby-plugin-remove-trailing-slashes`,
         `gatsby-plugin-react-helmet`,
         `gatsby-plugin-favicon`,
         `gatsby-plugin-sharp`,
-        `gatsby-transformer-sharp`
+        `gatsby-plugin-offline`
     ]
 }
