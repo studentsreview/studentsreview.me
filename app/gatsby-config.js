@@ -31,7 +31,8 @@ module.exports = {
                 start_url: `/`,
                 background_color: `#fff`,
                 theme_color: `#c62828`,
-                display: `standalone`
+                display: `standalone`,
+                icon: `src/favicon.png`
             }
         },
         `gatsby-transformer-sharp`,
