@@ -1,11 +1,12 @@
 import os
 import json
+import sys
 from datetime import datetime
 from tabula import read_pdf
 
 from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/StudentsReview')
+client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:27017/StudentsReview')
 
 db = client.get_database()
 courses = db['courses']
@@ -99,6 +100,8 @@ for x in range(301, 303):
 
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
+courses_to_insert = []
+
 for semester in data:
     for course in data[semester]:
         if course['name'] == 'CHIN151A':
@@ -137,18 +140,24 @@ for semester in data:
 
         if course['name'] == 'AP Enivronmental Science':
             course['name'] = 'AP Environmental Science'
-        print(course['teacher'])
+
         course['semester'] = semester
-        courses.insert_one(course)
+        courses_to_insert.append(course)
+
+courses.insert_many(courses_to_insert)
+
+reviews_to_insert = []
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')) as reviews_file:
     review_data = json.load(reviews_file)
     for teacher in review_data:
         for review in review_data[teacher]['reviews']:
-            reviews.insert_one({
+            reviews_to_insert.append({
                 'teacher': teacher,
                 'text': review,
                 'timestamp': datetime(1, 1, 1),
                 'rating': float(review_data[teacher]['rating'][0:3]),
                 'version': 1
             })
+
+reviews.insert_many(reviews_to_insert)
