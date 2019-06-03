@@ -27,10 +27,6 @@ function register(app) {
         schema: GraphQLSchema,
         graphiql: !isProd
     }));
-    app.get('*', (req, res) => res.status(404).send({
-        status: 404,
-        message: 'Requested resource not found.'
-    }));
 }
 
 const http_server = express();
