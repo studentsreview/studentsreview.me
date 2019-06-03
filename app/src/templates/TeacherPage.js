@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Chip, Grid, Paper, Typography, withStyles, withWidth } from '@material-ui/core';
+import { Button, Chip, Grid, Paper, Typography, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
-import { Query, withApollo } from 'react-apollo';
+import { Query } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
 import withProcessing from '../components/hoc/withProcessing';
@@ -12,7 +12,6 @@ import Modal from '../components/Modal';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
 
-import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
@@ -35,7 +34,7 @@ const FIND_MANY_REVIEW = gql`
     }
 `;
 
-const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, width, theme, client }) => {
+const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, theme }) => {
     const { name } = pageContext;
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
@@ -118,9 +117,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                             .map((course, idx) =>
                                 <Chip
                                     key={ idx }
-                                    style={ course.name.length > 25 ? {
-                                        fontSize: isWidthUp('sm', width) ? '0.9vw' : '1.8vw'
-                                    } : null }
+                                    className={ course.name.length > 25 ? classes.scalingText : null }
                                     label={ course.name }
                                     onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`, {
                                         state: {
@@ -152,7 +149,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     );
 }
 
-export default withApollo(withWidth()(withTheme(withProcessing(withStyles(styles)(TeacherPage)))));
+export default withTheme(withProcessing(withStyles(styles)(TeacherPage)));
 
 export const query = graphql`
     query($name: String!) {

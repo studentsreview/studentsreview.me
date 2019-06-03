@@ -13,5 +13,11 @@ export default theme => createStyles({
     blockIcon: {
         display: 'block',
         margin: 'auto'
+    },
+    scalingText: {
+        fontSize: '1.8vw',
+        [theme.breakpoints.up('sm')]: {
+            fontSize: '0.9vw'
+        }
     }
 });

@@ -48,8 +48,6 @@ apollo.applyMiddleware({
 
 let server;
 if (config.ssl) {
-    // Assumes certificates are in .ssl folder from package root. Make sure the files
-    // are secured.
     server = https.createServer(
         {
             key: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/privkey.pem'),
