@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
-
-const Class = require('./class');
+const Course = require('./Course');
 
 const reviewSchema = new mongoose.Schema({
     teacher: {
         type: String,
         validate: v => new Promise((resolve, reject) => {
-            Class
+            Course
                 .find({
                     teacher: v,
                     semester: `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`
@@ -16,10 +14,6 @@ const reviewSchema = new mongoose.Schema({
                 .then(res => resolve(res.length === 1))
                 .catch(reject)
         })
-    },
-    teacherKey: {
-        type: String,
-        required: true
     },
     text: {
         type: String,
@@ -40,7 +34,6 @@ const reviewSchema = new mongoose.Schema({
 });
 
 reviewSchema.pre('validate', function (next) {
-    this.teacherKey = slugify(this.teacher);
     this.timestamp = new Date();
     next();
 });

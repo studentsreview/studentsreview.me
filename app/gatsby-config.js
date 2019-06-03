@@ -3,11 +3,11 @@ const path = require('path');
 module.exports = {
     plugins: [
         {
-            resolve: `gatsby-source-mongodb`,
+            resolve: `gatsby-source-graphql`,
             options: {
-                connectionString: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-                dbName: `StudentsReview`,
-                collection: [`classes`, `reviews`]
+                typeName: `StudentsReview`,
+                fieldName: `srapi`,
+                url: process.env.GRAPHQL_URI || 'http://localhost:8080/graphql'
             }
         },
         {

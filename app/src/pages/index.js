@@ -11,20 +11,20 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
 
-const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => {
+const IndexPage = ({ teacherNames, courseNames, courseKeys, numClasses, numReviews, theme }) => {
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
 
-    if (teachers.indexOf('Undetermined') !== -1) {
-        teachers.splice(teachers.indexOf('Undetermined'), 1);
+    if (teacherNames.indexOf('Undetermined') !== -1) {
+        teacherNames.splice(teacherNames.indexOf('Undetermined'), 1);
     }
 
-    const items = teachers.concat(courseNames);
+    const items = teacherNames.concat(courseNames);
     const suggestions = items.filter(item => match(item, value).length > 0).sort((a, b) => match(b, value).length - match(a, value).length).slice(0, 5);
 
     const keyDownHandler = e => {
         if (e.key === 'Enter') {
-            if (teachers.includes(value)) {
+            if (teacherNames.includes(value)) {
                 navigate(`/teachers/${ slugify(value, { lower: true }) }`);
             } else if (courseNames.includes(value)) {
                 navigate(`/courses/${ slugify(value, { lower: true }) }`);
@@ -50,12 +50,12 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
             <Typography variant='h4'>Lowell High School Teacher Reviews</Typography>
             <Typography variant='body1'>
                 <CountUp
-                    end={ teachers.length }
+                    end={ teacherNames.length }
                     formattingFn={ num => `${ num.toLocaleString() } Teachers, ` }
                 />
                 <CountUp
                     end={ numClasses }
-                    formattingFn={ num => `${ num.toLocaleString() } Classes, ` }
+                    formattingFn={ num => `${ num.toLocaleString() } Courses, ` }
                 />
                 <CountUp
                     end={ numReviews }
@@ -74,7 +74,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
                 inputProps={ {
                     onKeyDown: e => {
                         if (e.key === 'Enter') {
-                            if (teachers.includes(value)) {
+                            if (teacherNames.includes(value)) {
                                 navigate(`/teachers/${ slugify(value, { lower: true }) }`);
                             } else if (courseNames.includes(value)) {
                                 navigate(`/courses/${ slugify(value, { lower: true }) }`);
@@ -85,7 +85,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
                         }
                     }
                 } }
-                placeholder='Search Teachers and Classes...'
+                placeholder='Search Teachers and Courses...'
             />
             <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
                 <Paper
@@ -105,7 +105,7 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
             </Popper>
             <Button onClick={ () => {
                 if (items.includes(value)) {
-                    if (teachers.includes(value)) {
+                    if (teacherNames.includes(value)) {
                         navigate(`/teachers/${ slugify(value, { lower: true }) }`);
                     } else if (courseNames.includes(value)) {
                         navigate(`/courses/${ slugify(value, { lower: true }) }`);
@@ -118,15 +118,13 @@ const IndexPage = ({ teachers, courseNames, numClasses, numReviews, theme }) => 
 
 export const query = graphql`
     query {
-        allMongodbStudentsReviewClasses {
-            totalCount,
-            nodes {
-                teacher,
-                courseName
+        srapi {
+            courseCount
+            reviewCount
+            findManyCourse {
+                teacher
+                name
             }
-        }
-        allMongodbStudentsReviewReviews {
-            totalCount
         }
     }
 `;

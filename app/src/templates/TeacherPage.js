@@ -22,13 +22,11 @@ import styles from '../styles/styles';
 const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews, width, theme }) => {
     const { name } = pageContext;
 
-    console.log(width);
-
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
-        .filter(node => node.semester === semester);
+        .filter(course => course.semester === semester);
 
     const [modalExposed, setModalExposed] = useState(false);
 
@@ -95,15 +93,15 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
                     >
                         { ({ block }) => semesterCourses
-                            .filter(node => node.block === block)
-                            .map((node, idx) =>
+                            .filter(course => course.block === block)
+                            .map((course, idx) =>
                                 <Chip
                                     key={ idx }
-                                    style={ node.courseName.length > 25 ? {
+                                    style={ course.name.length > 25 ? {
                                         fontSize: isWidthUp('sm', width) ? '0.9vw' : '1.8vw'
                                     } : null }
-                                    label={ node.courseName }
-                                    onClick={ () => navigate(`/courses/${ slugify(node.courseName, { lower: true }) }`, {
+                                    label={ course.name }
+                                    onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`, {
                                         state: {
                                             semester
                                         }
@@ -124,28 +122,22 @@ export default withWidth()(withTheme(withProcessing(withStyles(styles)(TeacherPa
 
 export const query = graphql`
     query($name: String!) {
-        allMongodbStudentsReviewClasses(filter: {
-            teacher: {
-                eq: $name
-            }
-        }) {
-            nodes {
-                department,
-                semester,
-                courseName,
-                block,
+        srapi {
+            findManyCourse(filter: {
+                teacher: $name
+            }) {
+                department
+                semester
+                name
+                block
                 room
             }
-        }
-        allMongodbStudentsReviewReviews(filter: {
-            teacher: {
-                eq: $name
-            }
-        }) {
-            nodes {
-                text,
-                timestamp,
-                rating,
+            findManyReview(filter: {
+                teacher: $name
+            }) {
+                text
+                timestamp
+                rating
                 version
             }
         }

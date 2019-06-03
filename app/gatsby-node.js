@@ -6,15 +6,14 @@ module.exports.createPages = async ({ graphql, actions }) => {
 
     const teachers = await graphql(`
         query {
-            allMongodbStudentsReviewClasses {
-                nodes {
+            srapi {
+                findManyCourse {
                     teacher
                 }
             }
         }
     `);
-
-    (new Set(teachers.data.allMongodbStudentsReviewClasses.nodes.map(node => node.teacher))).forEach(name => {
+    (new Set(teachers.data.srapi.findManyCourse.map(course => course.teacher))).forEach(name => {
         if (name !== 'Undetermined') {
             createPage({
                 path: `/teachers/${ slugify(name, { lower: true }) }`,
@@ -28,15 +27,14 @@ module.exports.createPages = async ({ graphql, actions }) => {
 
     let courses = await graphql(`
         query {
-            allMongodbStudentsReviewClasses {
-                nodes {
-                    courseName
+            srapi {
+                findManyCourse {
+                    name
                 }
             }
         }
     `);
-
-    (new Set(courses.data.allMongodbStudentsReviewClasses.nodes.map(node => node.courseName))).forEach(name => {
+    (new Set(courses.data.srapi.findManyCourse.map(course => course.name))).forEach(name => {
         createPage({
             path: `/courses/${ slugify(name, { lower: true }) }`,
             component: path.resolve('./src/templates/CoursePage.js'),

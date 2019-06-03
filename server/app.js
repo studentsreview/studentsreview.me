@@ -3,20 +3,14 @@ const https = require('https');
 
 const express = require('express');
 const mongoose = require('mongoose');
-const axios = require('axios');
+const graphqlHTTP = require('express-graphql');
 const cors = require('cors');
 
-const submitReview = require('./routes/api/submitReview');
-const courses = require('./routes/api/courses');
-const semesters = require('./routes/api/semesters');
-const reviews = require('./routes/api/reviews');
+const GraphQLSchema = require('./graphql/schema')
 
 const isProd = process.env.NODE_ENV === 'production';
-
 const port = isProd ? 80 : 8080;
-
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/StudentsReview';
-const BUILD_HOOK_URI = process.env.BUILD_HOOK_URI;
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
     .then(() => {
@@ -29,26 +23,14 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
 
 function register(app) {
     app.use(cors());
-    app.use(express.json());
-    app.post('/submitreview', async (...args) => {
-        submitReview(...args);
-        if (isProd) {
-            await axios.post(BUILD_HOOK_URI, {});
-        }
-    });
-    app.get('/semesters', semesters);
-    app.get('/courses/:semester', courses);
-    app.get('/reviews/:teacherKey', reviews);
-    app.get('*', (req, res) => res.send({
+    app.use('/', graphqlHTTP({
+        schema: GraphQLSchema,
+        graphiql: !isProd
+    }));
+    app.get('*', (req, res) => res.status(404).send({
         status: 404,
         message: 'Requested resource not found.'
     }));
-    app.use((err, req, res, next) => {
-        res.json({
-            status: err.status,
-            message: err.message
-        });
-    });
 }
 
 const http_server = express();

@@ -20,7 +20,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
-        .filter(node => node.semester === semester);
+        .filter(course => course.semester === semester);
 
     return (
         <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
@@ -82,8 +82,8 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                 >
                     { ({ block }) => Array.from(new Set(
                         semesterCourses
-                            .filter(node => node.block === block)
-                            .map(node => node.teacher)
+                            .filter(course => course.block === block)
+                            .map(course => course.teacher)
                     ))
                         .map((teacher, idx) =>
                             teacher === 'Undetermined' ? <Chip
@@ -109,17 +109,15 @@ export default withTheme(withProcessing(withStyles(styles)(TeacherPage)));
 
 export const query = graphql`
     query($name: String!) {
-        allMongodbStudentsReviewClasses(filter: {
-            courseName: {
-                eq: $name
-            }
-        }) {
-            nodes {
-                courseName,
-                courseCode,
-                department,
-                semester,
-                teacher,
+        srapi {
+            findManyCourse(filter: {
+                name: $name
+            }) {
+                name
+                code
+                department
+                semester
+                teacher
                 block
             }
         }

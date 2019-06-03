@@ -23,7 +23,6 @@ const AppHeader = ({ theme }) => {
         <AppBar position='static'>
             <Toolbar>
                 <Link to='/'><Img fixed={ data.file.childImageSharp.fixed }/></Link>
-                <Link to='/' style={ { color: theme.palette.primary.contrastText, margin: theme.spacing(1) } }>Students Review</Link>
             </Toolbar>
         </AppBar>
     );

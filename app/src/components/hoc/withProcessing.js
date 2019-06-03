@@ -8,13 +8,13 @@ const withProcessing = component => props => {
 
     const processed = {};
 
-    if (data.hasOwnProperty('allMongodbStudentsReviewClasses')) {
-        if (data.allMongodbStudentsReviewClasses.hasOwnProperty('nodes')) {
-            processed.courses = data.allMongodbStudentsReviewClasses.nodes;
+    if (data.hasOwnProperty('srapi')) {
+        if (data.srapi.hasOwnProperty('findManyCourse')) {
+            processed.courses = data.srapi.findManyCourse;
 
-            if (processed.courses.length !== 0) {
+            if (processed.courses.length > 0) {
                 if (processed.courses[0].hasOwnProperty('block')) {
-                    const blocks = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.block)));
+                    const blocks = Array.from(new Set(processed.courses.map(node => node.block)));
                     ['1', '2', '3', '4', '5', '6', '7', '8'].forEach(block => {
                         if (!blocks.includes(String(block))) {
                             blocks.push(String(block));
@@ -24,16 +24,20 @@ const withProcessing = component => props => {
                     processed.blocks = blocks;
                 }
 
-                if (processed.courses[0].hasOwnProperty('courseCode')) {
-                    processed.codes = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.courseCode)));
+                if (processed.courses[0].hasOwnProperty('code')) {
+                    processed.codes = Array.from(new Set(processed.courses.map(node => node.code)));
                 }
 
-                if (processed.courses[0].hasOwnProperty('courseName')) {
-                    processed.courseNames = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.courseName)));
+                if (processed.courses[0].hasOwnProperty('name')) {
+                    processed.courseNames = Array.from(new Set(processed.courses.map(node => node.name)));
+                }
+
+                if (processed.courses[0].hasOwnProperty('key')) {
+                    processed.courseKeys = Array.from(new Set(processed.courses.map(node => node.key)));
                 }
 
                 if (processed.courses[0].hasOwnProperty('department')) {
-                    const departments = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.department)));
+                    const departments = Array.from(new Set(processed.courses.map(node => node.department)));
 
                     if (departments.includes('Miscellaneous') && departments.length > 1) {
                         departments.splice(departments.indexOf('Miscellaneous'), 1);
@@ -43,11 +47,11 @@ const withProcessing = component => props => {
                 }
 
                 if (processed.courses[0].hasOwnProperty('teacher')) {
-                    processed.teachers = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.teacher)));
+                    processed.teacherNames = Array.from(new Set(processed.courses.map(node => node.teacher)));
                 }
 
                 if (processed.courses[0].hasOwnProperty('semester')) {
-                    processed.semesters = Array.from(new Set(data.allMongodbStudentsReviewClasses.nodes.map(node => node.semester))).sort((a, b) => {
+                    processed.semesters = Array.from(new Set(processed.courses.map(node => node.semester))).sort((a, b) => {
                         a = /(Spring|Fall)(\d{4})/.exec(a);
                         b = /(Spring|Fall)(\d{4})/.exec(b);
                         return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
@@ -56,16 +60,10 @@ const withProcessing = component => props => {
             }
         }
 
-        if (data.allMongodbStudentsReviewClasses.hasOwnProperty('totalCount')) {
-            processed.numClasses = data.allMongodbStudentsReviewClasses.totalCount;
-        }
-    }
+        if (data.srapi.hasOwnProperty('findManyReview')) {
+            processed.reviews = data.srapi.findManyReview;
 
-    if (data.hasOwnProperty('allMongodbStudentsReviewReviews')) {
-        if (data.allMongodbStudentsReviewReviews.hasOwnProperty('nodes')) {
-            processed.reviews = data.allMongodbStudentsReviewReviews.nodes;
-
-            if (processed.reviews.length !== 0) {
+            if (processed.reviews.length > 0) {
                 if (processed.reviews[0].hasOwnProperty('timestamp')) {
                     processed.reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
                 }
@@ -76,8 +74,12 @@ const withProcessing = component => props => {
             }
         }
 
-        if (data.allMongodbStudentsReviewReviews.hasOwnProperty('totalCount')) {
-            processed.numReviews = data.allMongodbStudentsReviewReviews.totalCount;
+        if (data.srapi.hasOwnProperty('courseCount')) {
+            processed.numClasses = data.srapi.courseCount;
+        }
+
+        if (data.srapi.hasOwnProperty('reviewCount')) {
+            processed.numReviews = data.srapi.reviewCount;
         }
     }
 
