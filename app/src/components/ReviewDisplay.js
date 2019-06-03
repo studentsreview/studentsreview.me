@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState, useEffect } from 'react';
 import { Button, Divider, Grid, Typography, withStyles } from '@material-ui/core';
 import Review from './Review';
 
@@ -9,17 +9,19 @@ import styles from '../styles/styles';
 const ReviewDisplay = ({ classes, reviews }) => {
     let initialPage = 0;
 
-    if (window.location.hash) {
-        const idx = reviews.findIndex(review => sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) === window.location.hash.substr(1));
-        if (idx !== -1) {
-            initialPage = Math.floor(idx / 5);
-        }
-    }
-
     const [pageNumber, setPageNumber] = useState(initialPage);
     const reviewsRef = useRef(null);
 
     reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
+
+    useEffect(() => {
+        if (window.location.hash) {
+            const idx = reviews.findIndex(review => sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) === window.location.hash.substr(1));
+            if (idx !== -1) {
+                initialPage = Math.floor(idx / 5);
+            }
+        }
+    }, []);
 
     return (
         <Fragment>

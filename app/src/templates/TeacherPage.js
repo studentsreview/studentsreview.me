@@ -11,14 +11,15 @@ import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
+import ReviewDisplay from '../components/ReviewDisplay';
 
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import gql from 'graphql-tag';
+import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../utils';
 
 import styles from '../styles/styles';
-import ReviewDisplay from '../components/ReviewDisplay'
 
 const FIND_MANY_REVIEW = gql`
     query($name: String!) {
@@ -37,7 +38,7 @@ const FIND_MANY_REVIEW = gql`
 const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, theme }) => {
     const { name } = pageContext;
 
-    const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
+    const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
@@ -75,7 +76,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         />
                     </div>
                     <Chip
-                        label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') : 'Pre-Fall 2014' } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
+                        label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? semesters[semesters.length - 1] : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
                     />
                     {
                         departments.map((department, idx) => <DepartmentChip
@@ -89,7 +90,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         <Button
                             variant='contained'
                             color='primary'
-                            disabled={ !semesters.includes(`${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`) }
+                            disabled={ !semesters.includes(getCurrentSemester()) }
                             onClick={ () => setModalExposed(true) }
                         >Write a Review</Button>
                         <Modal shown={ modalExposed }>
@@ -110,7 +111,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         onChange={ setSemester }
                     />
                     <ScheduleTable
-                        blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
+                        blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }
                     >
                         { ({ block }) => semesterCourses
                             .filter(course => course.block === block)

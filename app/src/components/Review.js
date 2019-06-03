@@ -13,14 +13,12 @@ import styles from '../styles/styles';
 const Review = ({ classes, review, theme }) => {
     const anchorEl = useRef(null);
     const [open, setOpen] = useState(false);
-    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        if (!initialized && window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10)) {
+        if (window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10)) {
             anchorEl.current.scrollIntoView();
-            setInitialized(true);
         }
-    });
+    }, []);
 
     return (
         <div className={ classes.card } style={ {

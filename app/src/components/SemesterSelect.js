@@ -1,12 +1,14 @@
 import React from 'react';
 import { MenuItem, Select } from '@material-ui/core';
 
+import { splitSemester } from '../utils';
+
 const SemesterSelect = ({ semesters, value, onChange }) => (
     <Select value={ value }
-            renderValue={ val => <MenuItem>{ /(Spring|Fall)(\d{4})/.exec(val).slice(1).join(' ') }</MenuItem> }
+            renderValue={ val => <MenuItem>{ splitSemester(val) }</MenuItem> }
             onChange={ e => onChange(e.target.value) }
     >
-        <MenuItem value={ value }>{ /(Spring|Fall)(\d{4})/.exec(value).slice(1).join(' ') }</MenuItem>
+        <MenuItem value={ value }>{ splitSemester(value) }</MenuItem>
         {
             semesters
                 .slice(0, semesters.indexOf(value))
@@ -15,7 +17,7 @@ const SemesterSelect = ({ semesters, value, onChange }) => (
                     value={ semester }
                     key={ idx }
                 >
-                    { /(Spring|Fall)(\d{4})/.exec(semester).slice(1).join(' ') }
+                    { splitSemester(semester) }
                 </MenuItem>)
         }
     </Select>

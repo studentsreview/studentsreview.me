@@ -10,13 +10,14 @@ import ScheduleTable from '../components/ScheduleTable';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
+import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../utils';
 
 import styles from '../styles/styles';
 
 const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, semesters, theme }) => {
     const { name } = pageContext;
 
-    const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
+    const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
@@ -56,7 +57,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                     /> : null
                 }
                 <Chip
-                    label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? /(Spring|Fall)(\d{4})/.exec(semesters[semesters.length - 1]).slice(1).join(' ') : 'Pre-Fall 2014' } - ${ /(Spring|Fall)(\d{4})/.exec(semesters[0]).slice(1).join(' ') }` }
+                    label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
                 />
                 <br/>
                 {
@@ -78,13 +79,13 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                     onChange={ setSemester }
                 />
                 <ScheduleTable
-                    blocks={ ['1', '2', '3', '4', '5', '6', '7', '8'].concat(Array.from(new Set(semesterCourses.map(node => node.block).filter(block => block > 8)))) }
+                    blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }
                 >
-                    { ({ block }) => Array.from(new Set(
+                    { ({ block }) => removeDupes(
                         semesterCourses
                             .filter(course => course.block === block)
                             .map(course => course.teacher)
-                    ))
+                    )
                         .map((teacher, idx) =>
                             teacher === 'Undetermined' ? <Chip
                                 key={ idx }
