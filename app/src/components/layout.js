@@ -1,9 +1,13 @@
 import React from 'react';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import AppHeader from './AppHeader';
 
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import red from '@material-ui/core/colors/red';
 import { white } from '@material-ui/core/colors/common';
+
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+import fetch from 'isomorphic-fetch';
 
 const theme = createMuiTheme({
     typography: {
@@ -21,12 +25,18 @@ const theme = createMuiTheme({
     }
 });
 
+const client = new ApolloClient({
+    uri: process.env.GRAPHQL_URI,
+    fetch
+});
 
 const Layout = ({ children }) => (
-    <MuiThemeProvider theme={ theme }>
-        <AppHeader/>
-        { children }
-    </MuiThemeProvider>
-)
+    <ApolloProvider client={ client }>
+        <MuiThemeProvider theme={ theme }>
+            <AppHeader/>
+            { children }
+        </MuiThemeProvider>
+    </ApolloProvider>
+);
 
 export default Layout;

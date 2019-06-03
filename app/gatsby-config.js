@@ -7,7 +7,7 @@ module.exports = {
             options: {
                 typeName: `StudentsReview`,
                 fieldName: `srapi`,
-                url: process.env.GRAPHQL_URI || 'http://localhost:8080/graphql'
+                url: process.env.GRAPHQL_URI || 'http://localhost:8080'
             }
         },
         {

@@ -1,12 +1,11 @@
 import React  from 'react';
 import { AppBar, Toolbar } from '@material-ui/core';
-import { withTheme } from '@material-ui/styles';
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import Img from 'gatsby-image';
 
 import '../styles/layout.css';
 
-const AppHeader = ({ theme }) => {
+const AppHeader = () => {
     const data = useStaticQuery(graphql`
             query {
                 file(relativePath: { eq: "transparent_logo.png" }) {
@@ -28,4 +27,4 @@ const AppHeader = ({ theme }) => {
     );
 };
 
-export default withTheme(AppHeader);
+export default AppHeader;

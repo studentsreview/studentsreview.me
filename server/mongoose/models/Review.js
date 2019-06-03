@@ -17,11 +17,11 @@ const reviewSchema = new mongoose.Schema({
     },
     text: {
         type: String,
-        minlength: 50
+        minlength: 50,
+        required: true
     },
     timestamp: {
         type: Date,
-        required: true
     },
     rating: {
         type: Number,

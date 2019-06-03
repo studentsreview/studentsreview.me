@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Chip, Grid, Paper, Typography, withStyles, withWidth } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
+import { withApollo } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
 import withProcessing from '../components/hoc/withProcessing';
@@ -16,10 +17,25 @@ import { isWidthUp } from '@material-ui/core/withWidth';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
+import gql from 'graphql-tag';
 
 import styles from '../styles/styles';
 
-const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, rating, reviews, width, theme }) => {
+const FIND_MANY_REVIEWS = gql`
+    query($name: String!) {
+        findManyReview(filter: {
+            teacher: $name
+        }) {
+            teacher
+            rating
+            text
+            timestamp
+            version
+        }
+    }
+`;
+
+const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, width, theme, client }) => {
     const { name } = pageContext;
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
@@ -29,6 +45,20 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
         .filter(course => course.semester === semester);
 
     const [modalExposed, setModalExposed] = useState(false);
+
+    const [reviews, setReviews] = useState([]);
+    reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
+    const rating = reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length;
+
+    useEffect(() => {
+        client
+            .query({
+                query: FIND_MANY_REVIEWS,
+                variables: { name }
+            })
+            .then(resp => setReviews(resp.data.findManyReview))
+            .catch(() => {});
+    }, []);
 
     return (
         <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
@@ -78,7 +108,11 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         <Modal shown={ modalExposed }>
                             <Paper className={ classes.card }>
                                 <IosClose onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
-                                <ReviewForm teacher={ name } onClose={ () => setModalExposed(false) }/>
+                                <ReviewForm
+                                    teacher={ name }
+                                    onClose={ () => setModalExposed(false) }
+                                    onCompleted={ data => setReviews([...reviews, data.createReview.record]) }
+                                />
                             </Paper>
                         </Modal>
                     </div>
@@ -118,7 +152,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     );
 }
 
-export default withWidth()(withTheme(withProcessing(withStyles(styles)(TeacherPage))));
+export default withApollo(withWidth()(withTheme(withProcessing(withStyles(styles)(TeacherPage)))));
 
 export const query = graphql`
     query($name: String!) {
@@ -131,14 +165,6 @@ export const query = graphql`
                 name
                 block
                 room
-            }
-            findManyReview(filter: {
-                teacher: $name
-            }) {
-                text
-                timestamp
-                rating
-                version
             }
         }
     }
