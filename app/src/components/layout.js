@@ -5,6 +5,7 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import red from '@material-ui/core/colors/red';
 import { white } from '@material-ui/core/colors/common';
 
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 import fetch from 'isomorphic-fetch';
@@ -25,9 +26,12 @@ const theme = createMuiTheme({
     }
 });
 
+const cache = new InMemoryCache();
+
 const client = new ApolloClient({
     uri: process.env.GRAPHQL_URI,
-    fetch
+    fetch,
+    cache
 });
 
 const Layout = ({ children }) => (

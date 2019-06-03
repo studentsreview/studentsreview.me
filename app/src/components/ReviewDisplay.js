@@ -19,6 +19,8 @@ const ReviewDisplay = ({ classes, reviews }) => {
     const [pageNumber, setPageNumber] = useState(initialPage);
     const reviewsRef = useRef(null);
 
+    reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
+
     return (
         <Fragment>
             <Typography innerRef={ reviewsRef }  variant='h6' className={ classes.card } style={ { textAlign: 'center' } }>Reviews</Typography>

@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Chip, Grid, Paper, Typography, withStyles, withWidth } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
-import { withApollo } from 'react-apollo';
+import { Query, withApollo } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
 import withProcessing from '../components/hoc/withProcessing';
 import ReviewForm from '../components/ReviewForm';
-import ReviewDisplay from '../components/ReviewDisplay';
 import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
 import SemesterSelect from '../components/SemesterSelect';
@@ -20,8 +19,9 @@ import slugify from 'slugify';
 import gql from 'graphql-tag';
 
 import styles from '../styles/styles';
+import ReviewDisplay from '../components/ReviewDisplay'
 
-const FIND_MANY_REVIEWS = gql`
+const FIND_MANY_REVIEW = gql`
     query($name: String!) {
         findManyReview(filter: {
             teacher: $name
@@ -46,19 +46,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
 
     const [modalExposed, setModalExposed] = useState(false);
 
-    const [reviews, setReviews] = useState([]);
-    reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
-    const rating = reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length;
-
-    useEffect(() => {
-        client
-            .query({
-                query: FIND_MANY_REVIEWS,
-                variables: { name }
-            })
-            .then(resp => setReviews(resp.data.findManyReview))
-            .catch(() => {});
-    }, []);
+    const [rating, setRating] = useState(0);
 
     return (
         <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
@@ -111,7 +99,6 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                                 <ReviewForm
                                     teacher={ name }
                                     onClose={ () => setModalExposed(false) }
-                                    onCompleted={ data => setReviews([...reviews, data.createReview.record]) }
                                 />
                             </Paper>
                         </Modal>
@@ -146,7 +133,20 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                 </Grid>
             </Grid>
             <Grid>
-                <ReviewDisplay reviews={ reviews }/>
+                <Query
+                    query={ FIND_MANY_REVIEW }
+                    variables={ { name } }
+                    onCompleted={ data => setRating(data.findManyReview.reduce((acc, cur) => acc + cur.rating, 0) / data.findManyReview.length) }
+                    notifyOnNetworkStatusChange={ true }
+                >
+                    { ({ loading, error, data }) => {
+                        if (loading || error) {
+                            return <ReviewDisplay reviews={ [] }/>
+                        } else {
+                            return <ReviewDisplay reviews={ data.findManyReview }/>
+                        }
+                    } }
+                </Query>
             </Grid>
         </Grid>
     );

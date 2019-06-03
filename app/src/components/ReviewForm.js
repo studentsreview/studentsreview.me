@@ -29,7 +29,21 @@ const CREATE_REVIEW = gql`
     }
 `;
 
-const ReviewForm = ({ classes, teacher, onClose, onCompleted, theme }) => {
+const FIND_MANY_REVIEW = gql`
+    query($name: String!) {
+        findManyReview(filter: {
+            teacher: $name
+        }) {
+            teacher
+            rating
+            text
+            timestamp
+            version
+        }
+    }
+`;
+
+const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     const [reviewText, setReviewText] = useState('');
     const [starRating, setStarRating] = useState(0);
 
@@ -49,7 +63,17 @@ const ReviewForm = ({ classes, teacher, onClose, onCompleted, theme }) => {
     });
     
     return (
-        <Mutation mutation={ CREATE_REVIEW } onCompleted={ onCompleted }>
+        <Mutation
+            mutation={ CREATE_REVIEW }
+            update={ (cache, { data: { createReview } }) => {
+                const { findManyReview } = cache.readQuery({ query: FIND_MANY_REVIEW, variables: { name: teacher } });
+                cache.writeQuery({
+                    query: FIND_MANY_REVIEW,
+                    data: { findManyReview: findManyReview.concat([createReview.record]) },
+                    variables: { name: teacher }
+                });
+            } }
+        >
             { (createReview, { data, error, loading }) => {
                 if (data) {
                     return (

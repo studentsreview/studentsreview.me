@@ -1,15 +1,17 @@
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
+
+const { ApolloServer } = require('apollo-server-express');
+const cors = require('cors');
 
 const express = require('express');
 const mongoose = require('mongoose');
-const graphqlHTTP = require('express-graphql');
-const cors = require('cors');
 
-const GraphQLSchema = require('./graphql/schema')
+const GraphQLSchema = require('./graphql/schema');
 
-const isProd = process.env.NODE_ENV === 'production';
-const port = isProd ? 80 : 8080;
+require('dotenv').config();
+
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/StudentsReview';
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
@@ -20,37 +22,50 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
         console.log(err);
     });
 
+const configurations = {
+    production: { ssl: true, port: 443, hostname: 'api.studentsreview.me' },
+    development: { ssl: false, port: 8080, hostname: 'localhost' }
+};
 
-function register(app) {
-    app.use(cors());
-    app.use('/', graphqlHTTP({
-        schema: GraphQLSchema,
-        graphiql: !isProd
-    }));
-}
+const environment = process.env.NODE_ENV || 'production';
+const config = configurations[environment];
 
-const http_server = express();
-register(http_server);
-
-if (isProd) {
-    http_server.get('*', (req, res) => {
-        res.redirect('https://' + req.headers.host + req.url);
-    });
-    const options = {
-        key: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/fullchain.pem')
-    };
-    let https_server = express();
-    register(https_server);
-    https_server = https.createServer(
-        options,
-        https_server
-    );
-    https_server.listen(443, () => {
-        console.log('https listening on port 443');
-    });
-}
-
-http_server.listen(port, () => {
-    console.log(`http listening on port ${port}`);
+const apollo = new ApolloServer({
+    schema: GraphQLSchema,
+    tracing: true,
+    cacheControl: true,
+    engine: {
+        apiKey: process.env.ENGINE_API_KEY
+    },
+    cors: cors()
 });
+
+const app = express();
+apollo.applyMiddleware({
+    app,
+    path: '/'
+});
+
+let server;
+if (config.ssl) {
+    // Assumes certificates are in .ssl folder from package root. Make sure the files
+    // are secured.
+    server = https.createServer(
+        {
+            key: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/privkey.pem'),
+            cert: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/fullchain.pem')
+        },
+        app
+    )
+} else {
+    server = http.createServer(app)
+}
+
+apollo.installSubscriptionHandlers(server);
+
+server.listen({ port: config.port }, () =>
+    console.log(
+        '🚀 Server ready at',
+        `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${apollo.graphqlPath}`
+    )
+);
