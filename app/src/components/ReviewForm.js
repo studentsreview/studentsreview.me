@@ -7,41 +7,9 @@ import IosCheckmarkCircleOutline from 'react-ionicons/lib/IosCheckmarkCircleOutl
 import IosCloseCircleOutline from 'react-ionicons/lib/IosCloseCircleOutline';
 import IosIonic from 'react-ionicons/lib/IosIonic';
 
-import gql from 'graphql-tag';
+import { FIND_MANY_REVIEW, CREATE_REVIEW } from '../graphql';
 
 import styles from '../styles/styles';
-
-const CREATE_REVIEW = gql`
-    mutation($teacher: String!, $rating: Float!, $text: String!) {
-        createReview(record: {
-            teacher: $teacher,
-            rating: $rating,
-            text: $text
-        }) {
-            record {
-                teacher
-                rating
-                text
-                timestamp
-                version
-            }
-        }
-    }
-`;
-
-const FIND_MANY_REVIEW = gql`
-    query($name: String!) {
-        findManyReview(filter: {
-            teacher: $name
-        }) {
-            teacher
-            rating
-            text
-            timestamp
-            version
-        }
-    }
-`;
 
 const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     const [reviewText, setReviewText] = useState('');
@@ -60,14 +28,14 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);
         return () => window.removeEventListener('keydown', keyDownHandler);
-    });
+    }, []);
     
     return (
         <Mutation
             mutation={ CREATE_REVIEW }
             update={ (cache, { data: { createReview } }) => {
-                const { findManyReview } = cache.readQuery({ query: FIND_MANY_REVIEW, variables: { name: teacher } });
-                cache.writeQuery({
+                const { findManyReview } = cache.readQueryFromStore({ query: FIND_MANY_REVIEW, variables: { name: teacher } });
+                cache.writeQueryToStore({
                     query: FIND_MANY_REVIEW,
                     data: { findManyReview: findManyReview.concat([createReview.record]) },
                     variables: { name: teacher }

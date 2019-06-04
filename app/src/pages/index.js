@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, MenuItem, Paper, Popper, TextField, Typography, Grid } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
+import { withApollo } from 'react-apollo';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
 
+import { FIND_MANY_REVIEW } from '../graphql';
 import { graphql } from 'gatsby';
 import slugify from 'slugify';
 import match from 'autosuggest-highlight/match';
@@ -11,7 +13,7 @@ import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
 import { removeDupes } from '../utils';
 
-const IndexPage = ({ data, theme }) => {
+const IndexPage = ({ data, theme, client }) => {
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
 
@@ -38,7 +40,27 @@ const IndexPage = ({ data, theme }) => {
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);
         return () => window.removeEventListener('keydown', keyDownHandler);
-    });
+    }, []);
+
+    useEffect(() => {
+        if (teacherNames.includes(value)) {
+            client.query({
+                query: FIND_MANY_REVIEW,
+                variables: {
+                    name: value
+                }
+            })
+                .then(data => {
+                    client.cache.writeQueryToStore({
+                        query: FIND_MANY_REVIEW,
+                        data,
+                        variables: {
+                            name: value
+                        }
+                    });
+                });
+        }
+    }, [value]);
 
     return (
         <Grid container direction='column' justify='center' alignItems='center' style={ {
@@ -94,7 +116,11 @@ const IndexPage = ({ data, theme }) => {
                 <Paper
                     style={ { width: inputRef.current ? inputRef.current.clientWidth : null } }>
                     {
-                        suggestions.map((suggestion, idx) => <MenuItem key={ idx } onClick={ () => setValue(suggestion) } style={ { cursor: 'pointer' } }>{
+                        suggestions.map((suggestion, idx) => <MenuItem
+                                key={ idx }
+                                onClick={ () => setValue(suggestion) }
+                                style={ { cursor: 'pointer' } }
+                            >{
                                 parse(suggestion, match(suggestion, value)).map((match, idx) => <span key={ idx } style={ {
                                     opacity: match.highlight ? 1 : 0.5,
                                     whiteSpace: 'pre'
@@ -107,12 +133,10 @@ const IndexPage = ({ data, theme }) => {
                 </Paper>
             </Popper>
             <Button onClick={ () => {
-                if (items.includes(value)) {
-                    if (teacherNames.includes(value)) {
-                        navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-                    } else if (courseNames.includes(value)) {
-                        navigate(`/courses/${ slugify(value, { lower: true }) }`);
-                    }
+                if (teacherNames.includes(value)) {
+                    navigate(`/teachers/${ slugify(value, { lower: true }) }`);
+                } else if (courseNames.includes(value)) {
+                    navigate(`/courses/${ slugify(value, { lower: true }) }`);
                 }
             } }>Select</Button>
         </Grid>
@@ -135,4 +159,4 @@ export const query = graphql`
     }
 `;
 
-export default withTheme(IndexPage);
+export default withApollo(withTheme(IndexPage));

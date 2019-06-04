@@ -15,22 +15,10 @@ import ReviewDisplay from '../components/ReviewDisplay';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import gql from 'graphql-tag';
+import { FIND_MANY_REVIEW } from '../graphql';
 import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../utils';
 
 import styles from '../styles/styles';
-
-const FIND_MANY_REVIEW = gql`
-    query($name: String!) {
-        findManyReview(filter: {
-            teacher: $name
-        } sort: TIMESTAMP_DESC) {
-            timestamp
-            text
-            rating
-        }
-    }
-`;
 
 const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
     const { name } = pageContext;

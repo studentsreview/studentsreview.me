@@ -20,8 +20,6 @@ const Review = ({ classes, review, theme }) => {
         }
     }, []);
 
-    console.log(review);
-
     return (
         <div className={ classes.card } style={ {
             wordWrap: 'break-word',
