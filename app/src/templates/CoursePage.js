@@ -122,7 +122,9 @@ export const query = graphql`
                 teacher
                 block
             }
-            findOneCourse {
+            findOneCourse(filter: {
+                name: $name
+            }) {
                 department
             }
         }
