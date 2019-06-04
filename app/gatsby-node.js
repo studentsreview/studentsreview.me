@@ -7,13 +7,13 @@ module.exports.createPages = async ({ graphql, actions }) => {
     const teachers = await graphql(`
         query {
             srapi {
-                findManyCourse {
-                    teacher
+                findManyTeacher {
+                    name
                 }
             }
         }
     `);
-    (new Set(teachers.data.srapi.findManyCourse.map(course => course.teacher))).forEach(name => {
+    teachers.data.srapi.findManyTeacher.map(teacher => teacher.name).forEach(name => {
         if (name !== 'Undetermined') {
             createPage({
                 path: `/teachers/${ slugify(name, { lower: true }) }`,

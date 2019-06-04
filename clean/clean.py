@@ -11,6 +11,7 @@ client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:
 db = client.get_database()
 courses = db['courses']
 reviews = db['reviews']
+teachers = db['teachers']
 
 courses.delete_many({})
 reviews.delete_many({
@@ -100,6 +101,7 @@ for x in range(301, 303):
 
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
+teachers_to_insert = []
 courses_to_insert = []
 
 for semester in data:
@@ -144,7 +146,13 @@ for semester in data:
         course['semester'] = semester
         courses_to_insert.append(course)
 
+        if all(doc['name'] != course['teacher'] for doc in teachers_to_insert):
+            teachers_to_insert.append({
+                'name': course['teacher']
+            })
+
 courses.insert_many(courses_to_insert)
+teachers.insert_many(teachers_to_insert)
 
 reviews_to_insert = []
 

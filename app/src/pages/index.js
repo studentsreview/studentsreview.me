@@ -15,7 +15,7 @@ const IndexPage = ({ data, theme }) => {
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
 
-    const teacherNames = removeDupes(data.srapi.findManyCourse.map(course => course.teacher));
+    const teacherNames = data.srapi.findManyTeacher.map(teacher => teacher.name);
     const courseNames = removeDupes(data.srapi.findManyCourse.map(course => course.teacher));
 
     if (teacherNames.indexOf('Undetermined') !== -1) {
@@ -53,7 +53,7 @@ const IndexPage = ({ data, theme }) => {
             <Typography variant='h4'>Lowell High School Teacher Reviews</Typography>
             <Typography variant='body1'>
                 <CountUp
-                    end={ teacherNames.length }
+                    end={ data.srapi.teacherCount }
                     formattingFn={ num => `${ num.toLocaleString() } Teachers, ` }
                 />
                 <CountUp
@@ -124,8 +124,11 @@ export const query = graphql`
         srapi {
             courseCount
             reviewCount
+            teacherCount
             findManyCourse {
-                teacher
+                name
+            }
+            findManyTeacher {
                 name
             }
         }
