@@ -48,22 +48,28 @@ apollo.applyMiddleware({
 
 let server;
 if (config.ssl) {
-    server = https.createServer(
+    const https_server = https.createServer(
         {
             key: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/privkey.pem'),
             cert: fs.readFileSync('/etc/letsencrypt/live/api.studentsreview.me/fullchain.pem')
         },
         app
-    )
-} else {
-    server = http.createServer(app)
+    );
+
+    https_server.listen({ port: config.port }, () =>
+        console.log(
+            '🚀 HTTPS server ready at',
+            `https://${config.hostname}:${config.port}${apollo.graphqlPath}`
+        )
+    );
 }
 
+server = http.createServer(app);
 apollo.installSubscriptionHandlers(server);
 
 server.listen({ port: config.port }, () =>
     console.log(
-        '🚀 Server ready at',
-        `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${apollo.graphqlPath}`
+        '🚀 HTTP Server ready at',
+        `http://${config.hostname}:${config.port}${apollo.graphqlPath}`
     )
 );
