@@ -23,8 +23,8 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
     });
 
 const configurations = {
-    production: { ssl: true, port: 443, hostname: 'api.studentsreview.me' },
-    development: { ssl: false, port: 8080, hostname: 'localhost' }
+    production: { ssl: true, hostname: 'api.studentsreview.me' },
+    development: { ssl: false, hostname: 'localhost' }
 };
 
 const environment = process.env.NODE_ENV || 'production';
@@ -56,7 +56,7 @@ if (config.ssl) {
         app
     );
 
-    https_server.listen({ port: config.port }, () =>
+    https_server.listen({ port: 443 }, () =>
         console.log(
             '🚀 HTTPS server ready at',
             `https://${config.hostname}:${config.port}${apollo.graphqlPath}`
@@ -67,7 +67,7 @@ if (config.ssl) {
 server = http.createServer(app);
 apollo.installSubscriptionHandlers(server);
 
-server.listen({ port: config.port }, () =>
+server.listen({ port: 80 }, () =>
     console.log(
         '🚀 HTTP Server ready at',
         `http://${config.hostname}:${config.port}${apollo.graphqlPath}`
