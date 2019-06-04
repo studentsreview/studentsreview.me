@@ -12,8 +12,6 @@ const ReviewDisplay = ({ classes, reviews }) => {
     const [pageNumber, setPageNumber] = useState(initialPage);
     const reviewsRef = useRef(null);
 
-    reviews.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp));
-
     useEffect(() => {
         if (window.location.hash) {
             const idx = reviews.findIndex(review => sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) === window.location.hash.substr(1));

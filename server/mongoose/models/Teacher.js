@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
-const courseSchema = new mongoose.Schema({
-    name: String
+const teacherSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        index: true
+    }
 });
 
-module.exports = mongoose.model('Teacher', courseSchema, 'teachers');
+module.exports = mongoose.model('Teacher', teacherSchema, 'teachers');

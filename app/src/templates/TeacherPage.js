@@ -24,12 +24,10 @@ const FIND_MANY_REVIEW = gql`
     query($name: String!) {
         findManyReview(filter: {
             teacher: $name
-        }) {
-            teacher
-            rating
-            text
+        } sort: TIMESTAMP_DESC) {
             timestamp
-            version
+            text
+            rating
         }
     }
 `;
@@ -39,7 +37,7 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
 
     const courses = data.srapi.findManyCourse;
     const semesters = removeDupes(data.srapi.findManyCourse.map(course => course.semester));
-    const departments = removeDupes(data.srapi.findManyCourse.map(course => course.department));
+    const departments = data.srapi.findOneTeacher.departments;
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
@@ -161,10 +159,14 @@ export const query = graphql`
             findManyCourse(filter: {
                 teacher: $name
             }) {
-                department
                 semester
                 name
                 block
+            }
+            findOneTeacher(filter: {
+                name: $name
+            }) {
+                departments
             }
         }
     }

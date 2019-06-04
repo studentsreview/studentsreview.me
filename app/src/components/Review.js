@@ -20,6 +20,8 @@ const Review = ({ classes, review, theme }) => {
         }
     }, []);
 
+    console.log(review);
+
     return (
         <div className={ classes.card } style={ {
             wordWrap: 'break-word',
@@ -68,7 +70,7 @@ const Review = ({ classes, review, theme }) => {
                 </ClickAwayListener>
             </Popper>
             {
-                review.version === 0 ? <Fragment>
+                new Date(review.timestamp).toString() !== new Date('0001-01-01T00:00:00.000Z').toString() ? <Fragment>
                     <StarRatings
                         rating={ review.rating }
                         starRatedColor='gold'
@@ -89,4 +91,4 @@ const Review = ({ classes, review, theme }) => {
     );
 }
 
-export default withTheme(withStyles(styles)(Review));
+export default withStyles(styles)(withTheme(Review));
