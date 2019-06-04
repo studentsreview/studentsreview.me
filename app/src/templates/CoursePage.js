@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Paper, Grid, Chip, Typography, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
-import withProcessing from '../components/hoc/withProcessing';
 import DepartmentChip from '../components/DepartmentChip';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
@@ -14,8 +13,12 @@ import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../ut
 
 import styles from '../styles/styles';
 
-const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, semesters, theme }) => {
+const TeacherPage = ({ data, pageContext, classes, location, theme }) => {
     const { name } = pageContext;
+
+    const courses = data.srapi.findManyCourse;
+    const semesters = removeDupes(data.srapi.findManyCourse.map(course => course.semester));
+    const codes = removeDupes(data.srapi.findManyCourse.map(course => course.code))
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
@@ -38,7 +41,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
                     marginRight: theme.spacing(2)
                 } }>{ name }</Typography>
                 <DepartmentChip
-                    department={ courses[0].department }
+                    department={ data.srapi.findOneCourse.department }
                 />
                 {
                     name.includes('Honors') ? <Chip
@@ -106,7 +109,7 @@ const TeacherPage = ({ pageContext, classes, codes, location, courses, blocks, s
     );
 }
 
-export default withTheme(withProcessing(withStyles(styles)(TeacherPage)));
+export default withStyles(styles)(withTheme(TeacherPage));
 
 export const query = graphql`
     query($name: String!) {
@@ -114,12 +117,13 @@ export const query = graphql`
             findManyCourse(filter: {
                 name: $name
             }) {
-                name
                 code
-                department
                 semester
                 teacher
                 block
+            }
+            findOneCourse {
+                department
             }
         }
     }

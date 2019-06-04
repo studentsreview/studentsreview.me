@@ -27,6 +27,7 @@ CourseTC.removeField('_id');
 ReviewTC.removeField('_id');
 
 schemaComposer.Query.addFields({
+    findOneCourse: CourseTC.getResolver('findOne'),
     findManyReview: ReviewTC.getResolver('findMany'),
     findManyCourse: CourseTC.getResolver('findMany'),
     reviewCount:  ReviewTC.getResolver('count'),

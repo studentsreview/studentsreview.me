@@ -3,17 +3,20 @@ import { Button, MenuItem, Paper, Popper, TextField, Typography, Grid } from '@m
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
-import withProcessing from '../components/hoc/withProcessing';
 
 import { graphql } from 'gatsby';
 import slugify from 'slugify';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
+import { removeDupes } from '../utils';
 
-const IndexPage = ({ teacherNames, courseNames, courseKeys, numClasses, numReviews, theme }) => {
+const IndexPage = ({ data, theme }) => {
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
+
+    const teacherNames = removeDupes(data.srapi.findManyCourse.map(course => course.teacher));
+    const courseNames = removeDupes(data.srapi.findManyCourse.map(course => course.teacher));
 
     if (teacherNames.indexOf('Undetermined') !== -1) {
         teacherNames.splice(teacherNames.indexOf('Undetermined'), 1);
@@ -54,11 +57,11 @@ const IndexPage = ({ teacherNames, courseNames, courseKeys, numClasses, numRevie
                     formattingFn={ num => `${ num.toLocaleString() } Teachers, ` }
                 />
                 <CountUp
-                    end={ numClasses }
+                    end={ data.srapi.courseCount }
                     formattingFn={ num => `${ num.toLocaleString() } Courses, ` }
                 />
                 <CountUp
-                    end={ numReviews }
+                    end={ data.srapi.reviewCount }
                     formattingFn={ num => `${ num.toLocaleString() } Reviews` }
                 />
             </Typography>
@@ -129,4 +132,4 @@ export const query = graphql`
     }
 `;
 
-export default withTheme(withProcessing(IndexPage));
+export default withTheme(IndexPage);

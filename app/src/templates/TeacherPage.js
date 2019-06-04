@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet';
 import { Query } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 import IosClose from 'react-ionicons/lib/IosClose';
-import withProcessing from '../components/hoc/withProcessing';
 import ReviewForm from '../components/ReviewForm';
 import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
@@ -35,8 +34,12 @@ const FIND_MANY_REVIEW = gql`
     }
 `;
 
-const TeacherPage = ({ pageContext, classes, location, courses, blocks, departments, semesters, theme }) => {
+const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
     const { name } = pageContext;
+
+    const courses = data.srapi.findManyCourse;
+    const semesters = removeDupes(data.srapi.findManyCourse.map(course => course.semester));
+    const departments = removeDupes(data.srapi.findManyCourse.map(course => course.department));
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
@@ -111,7 +114,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
                         onChange={ setSemester }
                     />
                     <ScheduleTable
-                        blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }
+                        blocks={ getBlocks().concat(removeDupes(semesterCourses.map(course => course.block).filter(block => block > 8))) }
                     >
                         { ({ block }) => semesterCourses
                             .filter(course => course.block === block)
@@ -150,7 +153,7 @@ const TeacherPage = ({ pageContext, classes, location, courses, blocks, departme
     );
 }
 
-export default withTheme(withProcessing(withStyles(styles)(TeacherPage)));
+export default withStyles(styles)(withTheme(TeacherPage));
 
 export const query = graphql`
     query($name: String!) {
@@ -162,7 +165,6 @@ export const query = graphql`
                 semester
                 name
                 block
-                room
             }
         }
     }
