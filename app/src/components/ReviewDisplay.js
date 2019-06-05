@@ -29,11 +29,11 @@ const ReviewDisplay = ({ classes, reviews }) => {
             loadMore={ setPageNumber }
             hasMore={ (pageNumber + 1) * 5 < reviews.length }
         >
-            <Typography innerRef={ headerRef } variant='h6' className={ classes.card } style={ { textAlign: 'center' } }>Reviews</Typography>
+            <Typography innerRef={ headerRef } variant='h6' className={ classes.majorCard } style={ { textAlign: 'center' } }>Reviews</Typography>
             {
                 reviews.length > 0 ? reviews.slice(0, (pageNumber + 1) * 5).map((review, idx) =>
                     <Review key={ idx } review={ review }/>
-                ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
+                ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.majorCard } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
             <IosArrowDropup fontSize='50px' onClick={ () => headerRef.current.scrollIntoView({
                 behavior: 'smooth'

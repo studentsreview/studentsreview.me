@@ -4,10 +4,25 @@ export default theme => createStyles({
     card: {
         padding: theme.spacing(3),
         margin: theme.spacing(2),
-        width: 600,
-        maxWidth: `calc(100vw - ${ theme.spacing(10) }px)`,
+        width: `calc(100vw - ${ theme.spacing(15) }px)`,
         [theme.breakpoints.up('sm')]: {
-            maxWidth: `calc(50vw - ${ theme.spacing(10) }px)`
+            width: `calc(50vw - ${ theme.spacing(15) }px)`
+        }
+    },
+    majorCard: {
+        padding: theme.spacing(3),
+        margin: theme.spacing(2),
+        width: `calc(100vw - ${ theme.spacing(15) }px)`,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(60vw - ${ theme.spacing(15) }px)`
+        }
+    },
+    minorCard: {
+        padding: theme.spacing(3),
+        margin: theme.spacing(2),
+        width: `calc(100vw - ${ theme.spacing(15) }px)`,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(40vw - ${ theme.spacing(15) }px)`
         }
     },
     blockIcon: {

@@ -21,9 +21,7 @@ const Review = ({ classes, review, theme }) => {
     }, []);
 
     return (
-        <div className={ classes.card } style={ {
-            width: `calc(60vw - ${ theme.spacing(10) }px)`,
-            maxWidth: `calc(60vw - ${ theme.spacing(10) }px)`,
+        <div className={ classes.majorCard } style={ {
             wordWrap: 'break-word',
             background: window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
