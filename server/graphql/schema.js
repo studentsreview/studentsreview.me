@@ -28,7 +28,6 @@ const ReviewTC = composeWithMongoose(Review, {
 const TeacherTC = composeWithMongoose(Teacher);
 
 CourseTC.removeField('_id');
-ReviewTC.removeField('_id');
 TeacherTC.removeField('_id');
 
 TeacherTC.addFields({
@@ -90,6 +89,7 @@ TeacherTC.setResolver('findOne', TeacherTC
 );
 
 schemaComposer.Query.addFields({
+    findOneReview: ReviewTC.getResolver('findOne'),
     findOneCourse: CourseTC.getResolver('findOne'),
     findOneTeacher: TeacherTC.getResolver('findOne'),
     findManyReview: ReviewTC.getResolver('findMany'),
@@ -97,7 +97,8 @@ schemaComposer.Query.addFields({
     findManyTeacher: TeacherTC.getResolver('findMany'),
     reviewCount:  ReviewTC.getResolver('count'),
     courseCount: CourseTC.getResolver('count'),
-    teacherCount: TeacherTC.getResolver('count')
+    teacherCount: TeacherTC.getResolver('count'),
+    reviewPagination: ReviewTC.getResolver('pagination')
 });
 
 schemaComposer.Mutation.addFields({
