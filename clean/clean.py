@@ -6,7 +6,6 @@ from datetime import datetime
 from tabula import read_pdf
 
 from pymongo import MongoClient
-from pymongo.errors import BulkWriteError
 
 client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:27017/StudentsReview')
 
@@ -16,6 +15,7 @@ reviews = db['reviews']
 teachers = db['teachers']
 
 courses.delete_many({})
+teachers.delete_many({})
 reviews.delete_many({
     'version': 1
 })
@@ -171,7 +171,4 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')
                 'version': 1
             })
 
-try:
-    reviews.insert_many(reviews_to_insert)
-except BulkWriteError as exc:
-    print(exc.details)
+reviews.insert_many(reviews_to_insert)

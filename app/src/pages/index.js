@@ -5,7 +5,7 @@ import { withApollo } from 'react-apollo';
 import { Helmet } from 'react-helmet';
 import CountUp from 'react-countup';
 
-import { FIND_MANY_REVIEW } from '../graphql';
+import { FIND_REVIEWS } from '../graphql';
 import { graphql } from 'gatsby';
 import slugify from 'slugify';
 import match from 'autosuggest-highlight/match';
@@ -45,14 +45,14 @@ const IndexPage = ({ data, theme, client }) => {
     useEffect(() => {
         if (teacherNames.includes(value)) {
             client.query({
-                query: FIND_MANY_REVIEW,
+                query: FIND_REVIEWS,
                 variables: {
                     name: value
                 }
             })
                 .then(data => {
-                    client.cache.writeQueryToStore({
-                        query: FIND_MANY_REVIEW,
+                    client.cache.writeQuery({
+                        query: FIND_REVIEWS,
                         data,
                         variables: {
                             name: value
@@ -159,4 +159,4 @@ export const query = graphql`
     }
 `;
 
-export default withApollo(withTheme(IndexPage));
+export default withTheme(withApollo(IndexPage));

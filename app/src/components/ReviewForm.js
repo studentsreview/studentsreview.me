@@ -7,7 +7,7 @@ import IosCheckmarkCircleOutline from 'react-ionicons/lib/IosCheckmarkCircleOutl
 import IosCloseCircleOutline from 'react-ionicons/lib/IosCloseCircleOutline';
 import IosIonic from 'react-ionicons/lib/IosIonic';
 
-import { FIND_MANY_REVIEW, CREATE_REVIEW } from '../graphql';
+import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
 
 import styles from '../styles/styles';
 
@@ -34,11 +34,25 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
         <Mutation
             mutation={ CREATE_REVIEW }
             update={ (cache, { data: { createReview } }) => {
-                const { findManyReview } = cache.readQueryFromStore({ query: FIND_MANY_REVIEW, variables: { name: teacher } });
-                cache.writeQueryToStore({
-                    query: FIND_MANY_REVIEW,
-                    data: { findManyReview: findManyReview.concat([createReview.record]) },
-                    variables: { name: teacher }
+                const { reviewPagination: { pageInfo, items, __typename }, findOneTeacher } = cache.readQuery({
+                    query: FIND_REVIEWS,
+                    variables: {
+                        name: teacher
+                    }
+                });
+                cache.writeQuery({
+                    query: FIND_REVIEWS,
+                    data: {
+                        reviewPagination: {
+                            pageInfo,
+                            items: [createReview.record].concat(items),
+                            __typename
+                        },
+                        findOneTeacher
+                    },
+                    variables: {
+                        name: teacher
+                    }
                 });
             } }
         >
@@ -115,4 +129,4 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     );
 };
 
-export default withTheme(withStyles(styles)(ReviewForm));
+export default withStyles(styles)(withTheme(ReviewForm));

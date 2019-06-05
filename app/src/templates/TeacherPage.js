@@ -15,7 +15,7 @@ import ReviewDisplay from '../components/ReviewDisplay';
 import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { FIND_MANY_REVIEW } from '../graphql';
+import { FIND_REVIEWS } from '../graphql';
 import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../utils';
 
 import styles from '../styles/styles';
@@ -63,7 +63,7 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                         />
                     </div>
                     <Chip
-                        label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? semesters[semesters.length - 1] : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
+                        label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
                     />
                     {
                         departments.map((department, idx) => <DepartmentChip
@@ -119,18 +119,12 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
             </Grid>
             <Grid>
                 <Query
-                    query={ FIND_MANY_REVIEW }
+                    query={ FIND_REVIEWS }
                     variables={ { name } }
-                    onCompleted={ data => setRating(data.findManyReview.reduce((acc, cur) => acc + cur.rating, 0) / data.findManyReview.length) }
+                    onCompleted={ data => setRating(data.findOneTeacher.rating) }
                     notifyOnNetworkStatusChange={ true }
                 >
-                    { ({ loading, error, data }) => {
-                        if (loading || error) {
-                            return <ReviewDisplay reviews={ [] }/>
-                        } else {
-                            return <ReviewDisplay reviews={ data.findManyReview }/>
-                        }
-                    } }
+                    { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
                 </Query>
             </Grid>
         </Grid>
@@ -142,17 +136,17 @@ export default withStyles(styles)(withTheme(TeacherPage));
 export const query = graphql`
     query($name: String!) {
         srapi {
+            findOneTeacher(filter: {
+                name: $name
+            }) {
+                departments
+            }
             findManyCourse(filter: {
                 teacher: $name
             }) {
                 semester
                 name
                 block
-            }
-            findOneTeacher(filter: {
-                name: $name
-            }) {
-                departments
             }
         }
     }
