@@ -5,18 +5,17 @@ import { MoreVert } from '@material-ui/icons';
 import StarRatings from 'react-star-ratings';
 import { isIOS } from 'react-device-detect';
 
-import sha256 from 'sha256';
 import moment from 'moment';
+import { hashReview } from '../utils';
 
 import styles from '../styles/styles';
 
-const Review = ({ classes, review, theme }) => {
+const Review = ({ classes, review, theme, teacher }) => {
     const anchorEl = useRef(null);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if (window.location.hash.substr(1) === sha256(review.timestamp.concat(review.text)).substr(0, 10)) {
-            console.log(review.timestamp.concat(review.text));
+        if (window.location.hash.substr(1) === hashReview(review, teacher)) {
             anchorEl.current.scrollIntoView({
                 behavior: 'smooth'
             });
@@ -26,7 +25,7 @@ const Review = ({ classes, review, theme }) => {
     return (
         <div className={ classes.majorCard } style={ {
             wordWrap: 'break-word',
-            background: window.location.hash.substr(1) === sha256(review.timestamp.concat(review.text)).substr(0, 10) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
+            background: window.location.hash.substr(1) === hashReview(review, teacher) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
 
             <IconButton style={ {
@@ -49,7 +48,7 @@ const Review = ({ classes, review, theme }) => {
                     } } onClick={ e => {
                         const textField = document.createElement('textarea');
                         e.target.appendChild(textField);
-                        textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) }`;
+                        textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ hashReview(review, teacher) }`;
                         if (isIOS) {
                             const range = document.createRange();
                             range.selectNodeContents(textField);
@@ -71,7 +70,7 @@ const Review = ({ classes, review, theme }) => {
                 </ClickAwayListener>
             </Popper>
             {
-                new Date(review.timestamp).toString() !== new Date('0001-01-01T00:00:00.000Z').toString() ? <Fragment>
+                new Date(review.timestamp).toISOString() !== '0001-01-01T00:00:00.000Z' ? <Fragment>
                     <StarRatings
                         rating={ review.rating }
                         starRatedColor='gold'

@@ -88,6 +88,17 @@ TeacherTC.setResolver('findOne', TeacherTC
     })
 );
 
+ReviewTC.setResolver('findOne', ReviewTC
+    .getResolver('findOne')
+    .addFilterArg({
+        name: 'hash',
+        type: 'String',
+        query: (rawQuery, value) => {
+            rawQuery._id = new RegExp(`^${ value }`);
+        }
+    })
+);
+
 schemaComposer.Query.addFields({
     findOneReview: ReviewTC.getResolver('findOne'),
     findOneCourse: CourseTC.getResolver('findOne'),

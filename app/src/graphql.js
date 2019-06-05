@@ -67,10 +67,25 @@ const LOAD_ADDITIONAL_REVIEWS = gql`
             }
         }
     }
-`
+`;
+
+const FIND_REVIEW_BY_ID = gql`
+    query($hash: String!) {
+        findOneReview(
+            filter: {
+                hash: $hash
+            }
+        ) {
+            timestamp
+            text
+            rating
+        }
+    }
+`;
 
 export {
     CREATE_REVIEW,
     FIND_REVIEWS,
-    LOAD_ADDITIONAL_REVIEWS
+    LOAD_ADDITIONAL_REVIEWS,
+    FIND_REVIEW_BY_ID
 };
