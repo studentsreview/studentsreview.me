@@ -53,7 +53,6 @@ TeacherTC.addFields({
         type: '[String]',
         projection: { name: true },
         resolve: async source => {
-            console.log(source);
             const courses = await CourseTC
                 .getResolver('findMany')
                 .resolve({

@@ -1,5 +1,7 @@
-import React, { Fragment, useRef, useState, useEffect } from 'react';
-import { Button, Divider, Grid, Typography, withStyles } from '@material-ui/core';
+import React, { useRef, useState, useEffect } from 'react';
+import { Divider, Typography, withStyles } from '@material-ui/core';
+import InfiniteScroll from 'react-infinite-scroller';
+import IosArrowDropup from 'react-ionicons/lib/IosArrowDropup';
 import Review from './Review';
 
 import sha256 from 'sha256';
@@ -10,7 +12,7 @@ const ReviewDisplay = ({ classes, reviews }) => {
     let initialPage = 0;
 
     const [pageNumber, setPageNumber] = useState(initialPage);
-    const reviewsRef = useRef(null);
+    const headerRef = useRef(null);
 
     useEffect(() => {
         if (window.location.hash) {
@@ -22,24 +24,26 @@ const ReviewDisplay = ({ classes, reviews }) => {
     }, []);
 
     return (
-        <Fragment>
-            <Typography innerRef={ reviewsRef }  variant='h6' className={ classes.card } style={ { textAlign: 'center' } }>Reviews</Typography>
+        <InfiniteScroll
+            threshold={ 10 }
+            loadMore={ setPageNumber }
+            hasMore={ (pageNumber + 1) * 5 < reviews.length }
+        >
+            <Typography innerRef={ headerRef } variant='h6' className={ classes.card } style={ { textAlign: 'center' } }>Reviews</Typography>
             {
-                reviews.length > 0 ? reviews.slice(pageNumber * 5, (pageNumber + 1) * 5).map((review, idx) =>
+                reviews.length > 0 ? reviews.slice(0, (pageNumber + 1) * 5).map((review, idx) =>
                     <Review key={ idx } review={ review }/>
                 ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.card } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
-            <Grid container className={ classes.card } direction='row' justify='space-between'>
-                <Button disabled={ pageNumber === 0 } onClick={ () => {
-                    setPageNumber(pageNumber - 1);
-                    reviewsRef.current.scrollIntoView();
-                } }>Previous Page</Button>
-                <Button disabled={ (pageNumber + 1) * 5 >= reviews.length } onClick={ () => {
-                    setPageNumber(pageNumber + 1);
-                    reviewsRef.current.scrollIntoView();
-                } }>Next Page</Button>
-            </Grid>
-        </Fragment>
+            <IosArrowDropup fontSize='50px' onClick={ () => headerRef.current.scrollIntoView({
+                behavior: 'smooth'
+            }) } style={ {
+                position: 'fixed',
+                left: 0,
+                bottom: 0,
+                cursor: 'pointer'
+            } }/>
+        </InfiniteScroll>
     );
 }
 

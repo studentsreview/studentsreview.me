@@ -18,7 +18,7 @@ const IndexPage = ({ data, theme, client }) => {
     const inputRef = useRef(null);
 
     const teacherNames = data.srapi.findManyTeacher.map(teacher => teacher.name);
-    const courseNames = removeDupes(data.srapi.findManyCourse.map(course => course.teacher));
+    const courseNames = removeDupes(data.srapi.findManyCourse.map(course => course.name));
 
     if (teacherNames.indexOf('Undetermined') !== -1) {
         teacherNames.splice(teacherNames.indexOf('Undetermined'), 1);

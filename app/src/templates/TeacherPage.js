@@ -47,7 +47,9 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                 <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher', name]).join(',') }/>
             </Helmet>
             <Grid>
-                <Paper className={ classes.card }>
+                <Paper className={ classes.card } style={ {
+                    width: `calc(40vw - ${ theme.spacing(10) }px)`
+                } }>
                     <div style={ {
                         marginBottom: theme.spacing(1)
                     } }>
@@ -93,7 +95,9 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                         </Modal>
                     </div>
                 </Paper>
-                <Grid container className={ classes.card } direction='column' justify='center'>
+                <Grid container className={ classes.card } direction='column' justify='center' style={ {
+                    width: `calc(40vw - ${ theme.spacing(10) }px)`
+                } }>
                     <SemesterSelect
                         semesters={ semesters }
                         value={ semester }
@@ -119,22 +123,20 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                     </ScheduleTable>
                 </Grid>
             </Grid>
-            <Grid>
-                <Query
-                    query={ FIND_MANY_REVIEW }
-                    variables={ { name } }
-                    onCompleted={ data => setRating(data.findManyReview.reduce((acc, cur) => acc + cur.rating, 0) / data.findManyReview.length) }
-                    notifyOnNetworkStatusChange={ true }
-                >
-                    { ({ loading, error, data }) => {
-                        if (loading || error) {
-                            return <ReviewDisplay reviews={ [] }/>
-                        } else {
-                            return <ReviewDisplay reviews={ data.findManyReview }/>
-                        }
-                    } }
-                </Query>
-            </Grid>
+            <Query
+                query={ FIND_MANY_REVIEW }
+                variables={ { name } }
+                onCompleted={ data => setRating(data.findManyReview.reduce((acc, cur) => acc + cur.rating, 0) / data.findManyReview.length) }
+                notifyOnNetworkStatusChange={ true }
+            >
+                { ({ loading, error, data }) => {
+                    if (loading || error) {
+                        return <ReviewDisplay reviews={ [] }/>
+                    } else {
+                        return <ReviewDisplay reviews={ data.findManyReview }/>
+                    }
+                } }
+            </Query>
         </Grid>
     );
 }
