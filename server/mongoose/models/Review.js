@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Course = require('./Course');
+const sha256 = require('sha256');
 
 const reviewSchema = new mongoose.Schema({
+    _id: String,
     teacher: {
         type: String,
         validate: v => new Promise((resolve, reject) => {
@@ -36,6 +38,7 @@ const reviewSchema = new mongoose.Schema({
 
 reviewSchema.pre('validate', function (next) {
     this.timestamp = new Date();
+    this._id = sha256(this.timestamp.toISOString().concat(this.text).concat(this.teacher));
     next();
 });
 

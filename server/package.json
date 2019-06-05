@@ -12,6 +12,8 @@
     "graphql": "^14.3.1",
     "graphql-compose": "^7.0.3",
     "graphql-compose-mongoose": "^7.0.1",
-    "mongoose": "^5.5.12"
+    "graphql-compose-pagination": "^6.0.3",
+    "mongoose": "^5.5.12",
+    "sha256": "^0.2.0"
   }
 }

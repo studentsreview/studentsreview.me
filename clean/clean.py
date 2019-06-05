@@ -1,10 +1,12 @@
 import os
 import json
 import sys
+from hashlib import sha256
 from datetime import datetime
 from tabula import read_pdf
 
 from pymongo import MongoClient
+from pymongo.errors import BulkWriteError
 
 client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:27017/StudentsReview')
 
@@ -161,6 +163,7 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')
     for teacher in review_data:
         for review in review_data[teacher]['reviews']:
             reviews_to_insert.append({
+                '_id': sha256(('0001-01-01T00:00:00.000Z' + review + teacher).encode()).hexdigest(),
                 'teacher': teacher,
                 'text': review,
                 'timestamp': datetime(1, 1, 1),
@@ -168,4 +171,7 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'teachers.json')
                 'version': 1
             })
 
-reviews.insert_many(reviews_to_insert)
+try:
+    reviews.insert_many(reviews_to_insert)
+except BulkWriteError as exc:
+    print(exc.details)

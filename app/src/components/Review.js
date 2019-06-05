@@ -15,15 +15,18 @@ const Review = ({ classes, review, theme }) => {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if (window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10)) {
-            anchorEl.current.scrollIntoView();
+        if (window.location.hash.substr(1) === sha256(review.timestamp.concat(review.text)).substr(0, 10)) {
+            console.log(review.timestamp.concat(review.text));
+            anchorEl.current.scrollIntoView({
+                behavior: 'smooth'
+            });
         }
     }, []);
 
     return (
         <div className={ classes.majorCard } style={ {
             wordWrap: 'break-word',
-            background: window.location.hash.substr(1) === sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
+            background: window.location.hash.substr(1) === sha256(review.timestamp.concat(review.text)).substr(0, 10) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
 
             <IconButton style={ {

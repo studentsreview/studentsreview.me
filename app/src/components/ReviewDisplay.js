@@ -14,21 +14,21 @@ const ReviewDisplay = ({ classes, reviews }) => {
     const [pageNumber, setPageNumber] = useState(initialPage);
     const headerRef = useRef(null);
 
-
     const splitIdx = reviews.findIndex(review => new Date(review.timestamp).toString() === new Date('0001-01-01T00:00:00.000Z').toString());
     reviews = reviews.slice(0, splitIdx).concat(reviews.slice(splitIdx).reverse());
 
     useEffect(() => {
         if (window.location.hash) {
-            const idx = reviews.findIndex(review => sha256(review.timestamp.toString().concat(review.text)).substr(0, 10) === window.location.hash.substr(1));
+            const idx = reviews.findIndex(review => sha256(review.timestamp.concat(review.text)).substr(0, 10) === window.location.hash.substr(1));
             if (idx !== -1) {
                 initialPage = Math.floor(idx / 5);
             }
         }
-    }, []);
+    }, [reviews]);
 
     return (
         <InfiniteScroll
+            startPage={ initialPage }
             threshold={ 10 }
             loadMore={ setPageNumber }
             hasMore={ (pageNumber + 1) * 5 < reviews.length }
