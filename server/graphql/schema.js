@@ -61,7 +61,11 @@ TeacherTC.addFields({
                         }
                     }
                 });
-            return Array.from(new Set(courses.map(course => course.department)));
+            const departments = Array.from(new Set(courses.map(course => course.department)));
+            if (departments.includes('Miscellaneous') && departments.length > 1) {
+                departments.splice(departments.indexOf('Miscellaneous'), 1);
+            }
+            return departments;
         }
     }
 });
