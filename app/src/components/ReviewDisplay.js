@@ -81,15 +81,18 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
                         <Review key={ idx } review={ review } teacher={ teacher }/>
                 ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.majorCard } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
-            <IosArrowDropup fontSize='50px' onClick={ () => headerRef.current.scrollIntoView({
-                behavior: 'smooth'
-            }) } style={ {
-                position: 'fixed',
-                left: 0,
-                bottom: 0,
-                cursor: 'pointer',
-                background: '#fff'
-            } }/>
+            <IosArrowDropup
+                fontSize='50px'
+                onClick={ () => headerRef.current.scrollIntoView({
+                    behavior: 'smooth'
+                }) }
+                style={ {
+                    position: 'fixed',
+                    left: 0,
+                    bottom: 0,
+                    cursor: 'pointer'
+                } }
+            />
         </InfiniteScroll>
     );
 }

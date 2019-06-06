@@ -8,7 +8,11 @@ import { white } from '@material-ui/core/colors/common';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+
 import fetch from 'isomorphic-fetch';
+import smoothscroll from 'smoothscroll-polyfill';
+
+typeof window !== 'undefined' && smoothscroll.polyfill();
 
 const theme = createMuiTheme({
     typography: {
