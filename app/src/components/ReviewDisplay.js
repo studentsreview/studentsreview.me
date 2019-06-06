@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Divider, Typography, withStyles } from '@material-ui/core';
 import { withApollo } from 'react-apollo';
 import InfiniteScroll from 'react-infinite-scroller';
-import IosArrowDropup from 'react-ionicons/lib/IosArrowDropup';
 import Review from './Review';
 
 import { FIND_REVIEWS, LOAD_ADDITIONAL_REVIEWS, FIND_REVIEW_BY_ID } from '../graphql';
@@ -35,7 +34,6 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
     return (
         <InfiniteScroll
             pageStart={ 1 }
-            threshold={ 10 }
             initialLoad={ false }
             loader={ <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading More Reviews...</Typography> }
             loadMore={ page => {
@@ -81,18 +79,6 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
                         <Review key={ idx } review={ review } teacher={ teacher }/>
                 ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.majorCard } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
-            <IosArrowDropup
-                fontSize='50px'
-                onClick={ () => headerRef.current.scrollIntoView({
-                    behavior: 'smooth'
-                }) }
-                style={ {
-                    position: 'fixed',
-                    left: 0,
-                    bottom: 0,
-                    cursor: 'pointer'
-                } }
-            />
         </InfiniteScroll>
     );
 }
