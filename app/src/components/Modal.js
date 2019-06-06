@@ -1,6 +1,9 @@
-import React  from 'react';
+import React from 'react';
+import { Grid, withStyles } from '@material-ui/core';
 
-const Modal = ({ shown, children }) => (
+import styles from '../styles/styles';
+
+const Modal = ({ shown, children, classes }) => (
     shown ? <div style={ {
         position: 'fixed',
         zIndex: 1,
@@ -10,14 +13,11 @@ const Modal = ({ shown, children }) => (
         height: '100%',
         overflow: 'auto',
         backgroundColor: 'rgba(0, 0, 0, 0.4)'
-    } }><div style={ {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+    } }><Grid container alignItems='center' justify='center' alignContent='center' className={ classes.control } style={ {
         height: '100%'
     } }>
         { children }
-    </div></div>: null
+    </Grid></div>: null
 );
 
-export default Modal;
+export default withStyles(styles)(Modal);

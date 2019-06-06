@@ -70,14 +70,14 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             } }
             hasMore={ reviews && reviews.pageInfo.hasNextPage }
         >
-            <Typography innerRef={ headerRef } variant='h6' className={ classes.majorCard } style={ { textAlign: 'center' } }>Reviews</Typography>
+            <Typography innerRef={ headerRef } variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>Reviews</Typography>
             {
                 linkedReview ? <Review review={ linkedReview } teacher={ teacher }/> : null
             }
             {
                 reviews && reviews.items.length > 0 ? reviews.items.map((review, idx) =>
                         <Review key={ idx } review={ review } teacher={ teacher }/>
-                ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.majorCard } style={ { textAlign: 'center' } }>No Reviews Available.</p>
+                ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.control } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }
         </InfiniteScroll>
     );

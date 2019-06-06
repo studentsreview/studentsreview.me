@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Chip, Grid, Paper, Typography, withStyles } from '@material-ui/core';
+import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import { Query } from 'react-apollo';
@@ -42,60 +42,64 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
     const [rating, setRating] = useState(0);
 
     return (
-        <Grid container direction='row' justify='space-between' alignItems='baseline'>
-            <Helmet>
-                <title>{ name }</title>
-                <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
-                <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher', name]).join(',') }/>
-            </Helmet>
-            <Grid>
-                <Paper className={ classes.minorCard }>
-                    <div style={ {
-                        marginBottom: theme.spacing(1)
-                    } }>
-                        <Typography variant='h6' style={ {
-                            display: 'inline',
-                            marginRight: theme.spacing(2)
-                        } }>{ name }</Typography>
-                        <StarRatings
-                            rating={ isNaN(rating) ? 0 : rating }
-                            starRatedColor='gold'
-                            starHoverColor='gold'
-                            numberOfStars={ 5 }
-                            starDimension={ theme.spacing(5) }
-                            starSpacing={ theme.spacing(0.5) }
+        <div className={ classes.root }>
+            <Grid container spacing={ 3 }>
+                <Helmet>
+                    <title>{ name }</title>
+                    <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
+                    <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher', name]).join(',') }/>
+                </Helmet>
+                <Grid item xs={ 12 } sm={ 5 }>
+                    <Paper className={ classes.control }>
+                        <div style={ {
+                            marginBottom: theme.spacing(1)
+                        } }>
+                            <Typography variant='h6' style={ {
+                                display: 'inline',
+                                marginRight: theme.spacing(2)
+                            } }>{ name }</Typography>
+                            <StarRatings
+                                rating={ isNaN(rating) ? 0 : rating }
+                                starRatedColor='gold'
+                                starHoverColor='gold'
+                                numberOfStars={ 5 }
+                                starDimension={ theme.spacing(5) }
+                                starSpacing={ theme.spacing(0.5) }
+                            />
+                        </div>
+                        <Chip
+                            label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
                         />
-                    </div>
-                    <Chip
-                        label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
-                    />
-                    {
-                        departments.map((department, idx) => <DepartmentChip
-                            key={ idx }
-                            department={ department }
-                        />)
-                    }
-                    <div style={ {
-                        marginTop: theme.spacing(1)
-                    } }>
-                        <Button
-                            variant='contained'
-                            color='primary'
-                            disabled={ !semesters.includes(getCurrentSemester()) }
-                            onClick={ () => setModalExposed(true) }
-                        >Write a Review</Button>
-                        <Modal shown={ modalExposed }>
-                            <Paper className={ classes.card }>
-                                <IosClose onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
-                                <ReviewForm
-                                    teacher={ name }
-                                    onClose={ () => setModalExposed(false) }
-                                />
-                            </Paper>
-                        </Modal>
-                    </div>
-                </Paper>
-                <Grid container className={ classes.minorCard } direction='column' justify='center'>
+                        {
+                            departments.map((department, idx) => <DepartmentChip
+                                key={ idx }
+                                department={ department }
+                            />)
+                        }
+                        <div style={ {
+                            marginTop: theme.spacing(1)
+                        } }>
+                            <Button
+                                variant='contained'
+                                color='primary'
+                                disabled={ !semesters.includes(getCurrentSemester()) }
+                                onClick={ () => setModalExposed(true) }
+                            >Write a Review</Button>
+                            <Modal shown={ modalExposed }>
+                                <Grid item xs={ 12 } sm={ 6 }>
+                                    <ClickAwayListener onClickAway={ () => setModalExposed(false) }>
+                                        <Paper className={ classes.control }>
+                                            <IosClose onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
+                                            <ReviewForm
+                                                teacher={ name }
+                                                onClose={ () => setModalExposed(false) }
+                                            />
+                                        </Paper>
+                                    </ClickAwayListener>
+                                </Grid>
+                            </Modal>
+                        </div>
+                    </Paper>
                     <SemesterSelect
                         semesters={ semesters }
                         value={ semester }
@@ -120,18 +124,18 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                         }
                     </ScheduleTable>
                 </Grid>
+                <Grid item xs={ 12 } sm={ 7 }>
+                    <Query
+                        query={ FIND_REVIEWS }
+                        variables={ { name } }
+                        onCompleted={ data => setRating(data.findOneTeacher.rating) }
+                        notifyOnNetworkStatusChange={ true }
+                    >
+                        { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
+                    </Query>
+                </Grid>
             </Grid>
-            <Grid>
-                <Query
-                    query={ FIND_REVIEWS }
-                    variables={ { name } }
-                    onCompleted={ data => setRating(data.findOneTeacher.rating) }
-                    notifyOnNetworkStatusChange={ true }
-                >
-                    { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
-                </Query>
-            </Grid>
-        </Grid>
+        </div>
     );
 }
 

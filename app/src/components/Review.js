@@ -23,7 +23,7 @@ const Review = ({ classes, review, theme, teacher }) => {
     }, []);
 
     return (
-        <div className={ classes.majorCard } style={ {
+        <div className={ classes.control } style={ {
             wordWrap: 'break-word',
             background: window.location.hash.substr(1) === hashReview(review, teacher) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>

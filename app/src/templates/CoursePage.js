@@ -27,85 +27,87 @@ const TeacherPage = ({ data, pageContext, classes, location, theme }) => {
         .filter(course => course.semester === semester);
 
     return (
-        <Grid container direction='row' justify='space-between' alignItems='baseline' style={ {
-            minHeight: '70%'
-        } }>
-            <Helmet>
-                <title>{ name }</title>
-                <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
-                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', courses[0].Department, name].join(',') }/>
-            </Helmet>
-            <Paper className={ classes.card }>
-                <Typography variant='h6' style={ {
-                    display: 'inline',
-                    marginRight: theme.spacing(2)
-                } }>{ name }</Typography>
-                <DepartmentChip
-                    department={ data.srapi.findOneCourse.department }
-                />
-                {
-                    name.includes('Honors') ? <Chip
-                        style={ {
-                            background: '#6a4f6b'
-                        } }
-                        label='Honors'
-                    /> : null
-                }
-                {
-                    name.includes('AP') ? <Chip
-                        style={ {
-                            background: '#cfb53b'
-                        } }
-                        label='AP'
-                    /> : null
-                }
-                <Chip
-                    label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
-                />
-                <br/>
-                {
-                    codes
-                        .filter(code => !code.endsWith('A') && !code.endsWith('B'))
-                        .map((code, idx) => <Chip
-                            style={ {
-                                marginTop: theme.spacing(2)
-                            } }
-                            key={ idx }
-                            label={ code }
-                        />)
-                }
-            </Paper>
-            <Grid container className={ classes.card } direction='column' justify='center'>
-                <SemesterSelect
-                    semesters={ semesters }
-                    value={ semester }
-                    onChange={ setSemester }
-                />
-                <ScheduleTable
-                    blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }
-                >
-                    { ({ block }) => removeDupes(
-                        semesterCourses
-                            .filter(course => course.block === block)
-                            .map(course => course.teacher)
-                    )
-                        .map((teacher, idx) =>
-                            teacher === 'Undetermined' ? <Chip
-                                key={ idx }
-                                label={ teacher }
-                            /> : <Chip
-                                key={ idx }
-                                label={ teacher.split(' ')[teacher.split(' ').length - 1] }
-                                onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
-                                    state: {
-                                        semester
-                                    }
-                                }) }
-                            />)
-                    }
-                </ScheduleTable>
+        <div className={ classes.root }>
+            <Grid container spacing={ 3 }>
+                <Helmet>
+                    <title>{ name }</title>
+                    <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
+                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', courses[0].Department, name].join(',') }/>
+                </Helmet>
+                <Grid item xs={ 12 } sm={ 6 }>
+                    <Paper className={ classes.control }>
+                        <Typography variant='h6' style={ {
+                            display: 'inline',
+                            marginRight: theme.spacing(2)
+                        } }>{ name }</Typography>
+                        <DepartmentChip
+                            department={ data.srapi.findOneCourse.department }
+                        />
+                        {
+                            name.includes('Honors') ? <Chip
+                                style={ {
+                                    background: '#6a4f6b'
+                                } }
+                                label='Honors'
+                            /> : null
+                        }
+                        {
+                            name.includes('AP') ? <Chip
+                                style={ {
+                                    background: '#cfb53b'
+                                } }
+                                label='AP'
+                            /> : null
+                        }
+                        <Chip
+                            label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
+                        />
+                        <br/>
+                        {
+                            codes
+                                .filter(code => !code.endsWith('A') && !code.endsWith('B'))
+                                .map((code, idx) => <Chip
+                                    style={ {
+                                        marginTop: theme.spacing(2)
+                                    } }
+                                    key={ idx }
+                                    label={ code }
+                                />)
+                        }
+                    </Paper>
+                </Grid>
+                <Grid item xs={ 12 } sm={ 6 }>
+                    <SemesterSelect
+                        semesters={ semesters }
+                        value={ semester }
+                        onChange={ setSemester }
+                    />
+                    <ScheduleTable
+                        blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }
+                    >
+                        { ({ block }) => removeDupes(
+                            semesterCourses
+                                .filter(course => course.block === block)
+                                .map(course => course.teacher)
+                        )
+                            .map((teacher, idx) =>
+                                teacher === 'Undetermined' ? <Chip
+                                    key={ idx }
+                                    label={ teacher }
+                                /> : <Chip
+                                    key={ idx }
+                                    label={ teacher.split(' ')[teacher.split(' ').length - 1] }
+                                    onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
+                                        state: {
+                                            semester
+                                        }
+                                    }) }
+                                />)
+                        }
+                    </ScheduleTable>
+                </Grid>
             </Grid>
-        </Grid>
+        </div>
     );
 }
 
