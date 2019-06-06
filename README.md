@@ -6,7 +6,7 @@
 
 [studentsreview.me](https://studentsreview.me) is a teacher review web app for Lowell High School that restores all old teacher reviews from ratemyteachers.com.
 
-#### Development
+### Development
 
 Prerequisites:
 - Python
@@ -27,7 +27,7 @@ Run `yarn dev` inside of `server/` to start the GraphQL server.
 
 Run `yarn develop` inside of `app/` to start the Gatsby development server.
 
-#### Stack
+### Stack
 
 Frontend:
 
@@ -41,7 +41,7 @@ Backend:
 - Mongoose
 - Graphql Compose
 
-#### Custom Frontend Features
+### Custom Frontend Features
 
 - Prefetching dynamic resources
   - Upon typing in or selecting a teacher's name from the dropdown, the website will fetch and write the dynamic data needed for the page into the Apollo cache to avoid elements flashing in after you're already on the page.
