@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Grid, Chip, Typography, withStyles } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
+import { withApollo } from 'react-apollo';
 import { Helmet } from 'react-helmet';
 import DepartmentChip from '../components/DepartmentChip';
 import SemesterSelect from '../components/SemesterSelect';
@@ -10,10 +11,11 @@ import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../utils';
+import { FIND_REVIEWS } from '../graphql';
 
 import styles from '../styles/styles';
 
-const TeacherPage = ({ data, pageContext, classes, location, theme }) => {
+const TeacherPage = ({ data, pageContext, classes, location, theme, client }) => {
     const { name } = pageContext;
 
     const courses = data.srapi.findManyCourse;
@@ -26,13 +28,25 @@ const TeacherPage = ({ data, pageContext, classes, location, theme }) => {
     const semesterCourses = courses
         .filter(course => course.semester === semester);
 
+    useEffect(() => {
+        const teachers = removeDupes(semesterCourses.map(course => course.teacher));
+        for (let teacher of teachers) {
+            client.query({
+                query: FIND_REVIEWS,
+                variables: {
+                    name: teacher
+                }
+            });
+        }
+    }, [semesterCourses]);
+
     return (
         <div className={ classes.root }>
             <Grid container spacing={ 3 }>
                 <Helmet>
                     <title>{ name }</title>
                     <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
-                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', courses[0].Department, name].join(',') }/>
+                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', data.srapi.findOneCourse.department, name].join(',') }/>
                 </Helmet>
                 <Grid item xs={ 12 } sm={ 6 }>
                     <Paper className={ classes.control }>
@@ -99,7 +113,7 @@ const TeacherPage = ({ data, pageContext, classes, location, theme }) => {
                                     label={ teacher.split(' ')[teacher.split(' ').length - 1] }
                                     onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
                                         state: {
-                                            semester
+                                            semester: semester === semesters[0] ? null : semester
                                         }
                                     }) }
                                 />)
@@ -111,7 +125,7 @@ const TeacherPage = ({ data, pageContext, classes, location, theme }) => {
     );
 }
 
-export default withStyles(styles)(withTheme(TeacherPage));
+export default withStyles(styles)(withTheme(withApollo(TeacherPage)));
 
 export const query = graphql`
     query($name: String!) {

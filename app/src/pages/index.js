@@ -49,16 +49,7 @@ const IndexPage = ({ data, theme, client }) => {
                 variables: {
                     name: value
                 }
-            })
-                .then(data => {
-                    client.cache.writeQuery({
-                        query: FIND_REVIEWS,
-                        data,
-                        variables: {
-                            name: value
-                        }
-                    });
-                });
+            });
         }
     }, [value]);
 

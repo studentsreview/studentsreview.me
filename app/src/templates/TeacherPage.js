@@ -47,7 +47,7 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                 <Helmet>
                     <title>{ name }</title>
                     <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
-                    <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher', name]).join(',') }/>
+                    <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher', name].concat(departments)).join(',') }/>
                 </Helmet>
                 <Grid item xs={ 12 } sm={ 5 }>
                     <Paper className={ classes.control }>
@@ -117,7 +117,7 @@ const TeacherPage = ({ pageContext, classes, location, data, theme }) => {
                                     label={ course.name }
                                     onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`, {
                                         state: {
-                                            semester
+                                            semester: semester === semesters[0] ? null : semester
                                         }
                                     }) }
                                 />)
