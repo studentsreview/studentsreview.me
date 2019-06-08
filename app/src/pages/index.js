@@ -105,7 +105,7 @@ const IndexPage = ({ data, theme, client }) => {
             />
             <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
                 <Paper
-                    style={ { width: inputRef.current ? inputRef.current.clientWidth : null } }>
+                    style={ { width: inputRef.current && inputRef.current.clientWidth } }>
                     {
                         suggestions.map((suggestion, idx) => <MenuItem
                                 key={ idx }

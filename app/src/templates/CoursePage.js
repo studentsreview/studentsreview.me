@@ -58,20 +58,20 @@ const TeacherPage = ({ data, pageContext, classes, location, theme, client }) =>
                             department={ data.srapi.findOneCourse.department }
                         />
                         {
-                            name.includes('Honors') ? <Chip
+                            name.includes('Honors') && <Chip
                                 style={ {
                                     background: '#6a4f6b'
                                 } }
                                 label='Honors'
-                            /> : null
+                            />
                         }
                         {
-                            name.includes('AP') ? <Chip
+                            name.includes('AP') && <Chip
                                 style={ {
                                     background: '#cfb53b'
                                 } }
                                 label='AP'
-                            /> : null
+                            />
                         }
                         <Chip
                             label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }

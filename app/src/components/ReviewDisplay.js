@@ -71,9 +71,7 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             hasMore={ reviews && reviews.pageInfo.hasNextPage }
         >
             <Typography innerRef={ headerRef } variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>Reviews</Typography>
-            {
-                linkedReview ? <Review review={ linkedReview } teacher={ teacher }/> : null
-            }
+            { linkedReview && <Review review={ linkedReview } teacher={ teacher }/> }
             {
                 reviews && reviews.items.length > 0 ? reviews.items.map((review, idx) =>
                         <Review key={ idx } review={ review } teacher={ teacher }/>
