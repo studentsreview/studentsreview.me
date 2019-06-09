@@ -27,7 +27,6 @@ const Review = ({ classes, review, theme, teacher }) => {
             wordWrap: 'break-word',
             background: window.location.hash.substr(1) === hashReview(review, teacher) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
-
             <IconButton style={ {
                 float: 'right'
             } }

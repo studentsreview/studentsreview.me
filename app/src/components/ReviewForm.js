@@ -28,7 +28,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);
         return () => window.removeEventListener('keydown', keyDownHandler);
-    }, []);
+    });
     
     return (
         <Mutation

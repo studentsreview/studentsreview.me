@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, MenuItem, Paper, Popper, TextField, Typography, Grid } from '@material-ui/core';
+import { Button, MenuItem, MenuList, Popper, TextField, Typography, Grid, Paper } from '@material-ui/core';
 import { withTheme } from '@material-ui/styles';
 import { withApollo } from 'react-apollo';
 import { Helmet } from 'react-helmet';
@@ -40,7 +40,7 @@ const IndexPage = ({ data, theme, client }) => {
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);
         return () => window.removeEventListener('keydown', keyDownHandler);
-    }, []);
+    });
 
     useEffect(() => {
         if (teacherNames.includes(value)) {
@@ -104,8 +104,7 @@ const IndexPage = ({ data, theme, client }) => {
                 placeholder='Search Teachers and Courses...'
             />
             <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
-                <Paper
-                    style={ { width: inputRef.current && inputRef.current.clientWidth } }>
+                <MenuList style={ { padding: 0, width: inputRef.current && inputRef.current.clientWidth } } component={ Paper }>
                     {
                         suggestions.map((suggestion, idx) => <MenuItem
                                 key={ idx }
@@ -121,7 +120,7 @@ const IndexPage = ({ data, theme, client }) => {
                             }</MenuItem>
                         )
                     }
-                </Paper>
+                </MenuList>
             </Popper>
             <Button onClick={ () => {
                 if (teacherNames.includes(value)) {
