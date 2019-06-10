@@ -1,10 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Button, TextField, withStyles } from '@material-ui/core';
+import { Button, TextField, CircularProgress, withStyles } from '@material-ui/core';
 import { Check, Close } from '@material-ui/icons'
 import { withTheme } from '@material-ui/styles';
 import { Mutation } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
-import IosIonic from 'react-ionicons/lib/IosIonic';
 
 import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
 
@@ -77,7 +76,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                         </Fragment>
                     );
                 } else if (loading) {
-                    return <IosIonic className={ classes.blockIcon } fontSize='100px' rotate={ true }/>;
+                    return <CircularProgress className={ [classes.blockIcon, classes.control] } size={ 100 }/>;
                 } else {
                     return (
                         <Fragment>
