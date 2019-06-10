@@ -63,7 +63,7 @@ const IndexPage = ({ data, theme, client }) => {
                 <meta name='description' content='Students Review is a education website for students to share and read reviews of courses and teachers at Lowell High School.'/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review'].join(',') }/>
             </Helmet>
-            <Typography variant='h4'>Lowell High School Teacher Reviews</Typography>
+            <Typography variant='h4'>LHS Teacher Reviews</Typography>
             <Typography variant='body1'>
                 <CountUp
                     end={ data.srapi.teacherCount }
