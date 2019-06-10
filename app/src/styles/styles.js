@@ -10,7 +10,8 @@ export default theme => createStyles({
     },
     blockIcon: {
         display: 'block',
-        margin: 'auto'
+        margin: 'auto',
+        fontSize: '100px'
     },
     scalingText: {
         fontSize: '1.8vw',

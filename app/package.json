@@ -40,7 +40,6 @@
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
     "react-infinite-scroller": "^1.2.4",
-    "react-ionicons": "^3.0.1",
     "react-star-ratings": "^2.3.0",
     "sha256": "^0.2.0",
     "slugify": "^1.3.4",

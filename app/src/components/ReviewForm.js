@@ -1,10 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Button, TextField, withStyles } from '@material-ui/core';
+import { Check, Close } from '@material-ui/icons'
 import { withTheme } from '@material-ui/styles';
 import { Mutation } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
-import IosCheckmarkCircleOutline from 'react-ionicons/lib/IosCheckmarkCircleOutline';
-import IosCloseCircleOutline from 'react-ionicons/lib/IosCloseCircleOutline';
 import IosIonic from 'react-ionicons/lib/IosIonic';
 
 import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
@@ -60,7 +59,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                 if (data) {
                     return (
                         <Fragment>
-                            <IosCheckmarkCircleOutline className={ classes.blockIcon } color='green' fontSize='100px'/>
+                            <Check className={ classes.blockIcon } htmlColor='green'/>
                             <p style={ {
                                 textAlign: 'center',
                                 color: 'green'
@@ -70,7 +69,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                 } else if (error) {
                     return (
                         <Fragment>
-                            <IosCloseCircleOutline className={ classes.blockIcon } color='red' fontSize='100px'/>
+                            <Close className={ classes.blockIcon } htmlColor='red'/>
                             <p style={ {
                                 textAlign: 'center',
                                 color: 'red'

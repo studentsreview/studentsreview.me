@@ -1,10 +1,10 @@
 import React, { Fragment, useState } from 'react';
 import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, withStyles, withWidth } from '@material-ui/core';
+import { Close } from '@material-ui/icons';
 import { withTheme } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import { Query } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
-import IosClose from 'react-ionicons/lib/IosClose';
 import ReviewForm from '../components/ReviewForm';
 import DepartmentChip from '../components/DepartmentChip';
 import Modal from '../components/Modal';
@@ -64,7 +64,7 @@ const HeaderCard = withStyles(styles)(withTheme(({ classes, theme, rating, semes
                     <Grid item xs={ 12 } sm={ 6 }>
                         <ClickAwayListener onClickAway={ () => setModalExposed(false) }>
                             <Paper className={ classes.control }>
-                                <IosClose onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
+                                <Close onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
                                 <ReviewForm
                                     teacher={ name }
                                     onClose={ () => setModalExposed(false) }
