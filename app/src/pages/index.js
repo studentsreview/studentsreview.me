@@ -90,7 +90,7 @@ const IndexPage = ({ data, theme, client }) => {
                 placeholder='Search Teachers and Courses...'
             />
             <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
-                <MenuList style={ { padding: 0, width: inputRef.current && inputRef.current.clientWidth } } component={ Paper } ref={ el => el && el.focus() }>
+                <MenuList style={ { padding: 0, width: inputRef.current && inputRef.current.clientWidth } } component={ Paper }>
                     {
                         suggestions.map((suggestion, idx) => <MenuItem
                                 key={ idx }
