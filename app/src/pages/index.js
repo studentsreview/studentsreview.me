@@ -87,24 +87,10 @@ const IndexPage = ({ data, theme, client }) => {
                 inputRef={ inputRef }
                 value={ value }
                 onChange={ e => setValue(e.target.value) }
-                inputProps={ {
-                    onKeyDown: e => {
-                        if (e.key === 'Enter') {
-                            if (teacherNames.includes(value)) {
-                                navigate(`/teachers/${ slugify(value, { lower: true }) }`);
-                            } else if (courseNames.includes(value)) {
-                                navigate(`/courses/${ slugify(value, { lower: true }) }`);
-                            } else {
-                                setValue(suggestions[0]);
-                            }
-                            e.stopPropagation();
-                        }
-                    }
-                } }
                 placeholder='Search Teachers and Courses...'
             />
             <Popper open={ Boolean(suggestions) && !items.includes(value) } anchorEl={ inputRef.current }>
-                <MenuList style={ { padding: 0, width: inputRef.current && inputRef.current.clientWidth } } component={ Paper }>
+                <MenuList style={ { padding: 0, width: inputRef.current && inputRef.current.clientWidth } } component={ Paper } ref={ el => el && el.focus() }>
                     {
                         suggestions.map((suggestion, idx) => <MenuItem
                                 key={ idx }
