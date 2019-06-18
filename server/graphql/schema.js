@@ -98,7 +98,7 @@ ReviewTC.setResolver('findOne', ReviewTC
         name: 'hash',
         type: 'String',
         query: (rawQuery, value) => {
-            rawQuery._id = new RegExp(`^${ value }`);
+            rawQuery._id = new RegExp(`${ value }.{54}`);
         }
     })
 );

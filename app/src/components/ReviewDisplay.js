@@ -13,19 +13,30 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
     const headerRef = useRef(null);
     const [linkedReview, setLinkedReview] = useState(null);
 
-    useEffect(() => {
-        if (window.location.hash.length > 1) {
+    const popStateHandler = e => {
+        if (e.target.location.hash.length === 11) {
             client.query({
                 query: FIND_REVIEW_BY_ID,
                 variables: {
-                    hash: window.location.hash.substr(1)
+                    hash: e.target.location.hash.substr(1)
                 }
             })
                 .then(({ data: { findOneReview } }) => {
                     setLinkedReview(findOneReview);
                 });
+        } else {
+            setLinkedReview(null);
         }
+    }
+
+    useEffect(() => {
+        popStateHandler({ target: window });
     }, []);
+
+    useEffect(() => {
+        window.addEventListener('popstate', popStateHandler);
+        return () => window.removeEventListener('popstate', popStateHandler);
+    });
 
     if (reviews && reviews.items.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)) !== -1) {
         reviews.items.splice(reviews.items.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)), 1);
@@ -71,7 +82,7 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             hasMore={ reviews && reviews.pageInfo.hasNextPage }
         >
             <Typography innerRef={ headerRef } variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>Reviews</Typography>
-            { linkedReview && <Review review={ linkedReview } teacher={ teacher }/> }
+            { linkedReview && <Review review={ linkedReview } teacher={ teacher } selected/> }
             {
                 reviews && reviews.items.length > 0 ? reviews.items.map((review, idx) =>
                         <Review key={ idx } review={ review } teacher={ teacher }/>

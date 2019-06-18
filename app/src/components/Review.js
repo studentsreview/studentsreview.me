@@ -6,16 +6,16 @@ import StarRatings from 'react-star-ratings';
 import { isIOS } from 'react-device-detect';
 
 import moment from 'moment';
-import { hashReview } from '../utils';
+import { hashReview, isMigrant } from '../utils';
 
 import styles from '../styles/styles';
 
-const Review = ({ classes, review, theme, teacher }) => {
+const Review = ({ classes, review, theme, teacher, selected }) => {
     const anchorEl = useRef(null);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if (window.location.hash.substr(1) === hashReview(review, teacher)) {
+        if (selected) {
             anchorEl.current.scrollIntoView({
                 behavior: 'smooth'
             });
@@ -25,7 +25,7 @@ const Review = ({ classes, review, theme, teacher }) => {
     return (
         <div className={ classes.control } style={ {
             wordWrap: 'break-word',
-            background: window.location.hash.substr(1) === hashReview(review, teacher) ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
+            background: selected ? 'rgba(0, 0, 0, 0.14)' : 'inherit'
         } }>
             <IconButton style={ {
                 float: 'right'
@@ -44,32 +44,31 @@ const Review = ({ classes, review, theme, teacher }) => {
                     <Paper style={ {
                         padding: theme.spacing(1),
                         width: 200
-                    } } onClick={ e => {
-                        const textField = document.createElement('textarea');
-                        e.target.appendChild(textField);
-                        textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ hashReview(review, teacher) }`;
-                        if (isIOS) {
-                            const range = document.createRange();
-                            range.selectNodeContents(textField);
-                            const selection = window.getSelection();
-                            selection.removeAllRanges();
-                            selection.addRange(range);
-                            textField.setSelectionRange(0, 999999);
-                        } else {
-                            textField.select();
-                        }
-                        document.execCommand('copy');
-                        textField.remove();
-                        setOpen(false);
-                    } }>
-                        <MenuItem>
+                    } } onClick={ () => setOpen(false) }>
+                        <MenuItem onClick={ e => {
+                            const textField = document.createElement('textarea');
+                            e.target.appendChild(textField);
+                            textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ hashReview(review, teacher) }`;
+                            if (isIOS) {
+                                const range = document.createRange();
+                                range.selectNodeContents(textField);
+                                const selection = window.getSelection();
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                                textField.setSelectionRange(0, 999999);
+                            } else {
+                                textField.select();
+                            }
+                            document.execCommand('copy');
+                            textField.remove();
+                        } }>
                             Copy Link
                         </MenuItem>
                     </Paper>
                 </ClickAwayListener>
             </Popper>
             {
-                new Date(review.timestamp).toISOString() !== '0001-01-01T00:00:00.000Z' ? <Fragment>
+                !isMigrant(review) ? <Fragment>
                     <StarRatings
                         rating={ review.rating }
                         starRatedColor='gold'
