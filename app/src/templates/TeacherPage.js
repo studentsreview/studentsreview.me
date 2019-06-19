@@ -17,7 +17,7 @@ import { graphql } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
-import { splitSemester, getCurrentSemester, getBlocks, removeDupes } from '../utils';
+import { splitSemester, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
 
 import styles from '../styles/styles';
 
@@ -118,11 +118,7 @@ const TeacherPage = ({ pageContext, classes, location, data, width }) => {
     const { name } = pageContext;
 
     const courses = data.srapi.findManyCourse;
-    const semesters = removeDupes(data.srapi.findManyCourse.map(course => course.semester)).sort((a, b) => {
-        a = /(Spring|Fall)(\d{4})/.exec(a);
-        b = /(Spring|Fall)(\d{4})/.exec(b);
-        return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
-    });
+    const semesters = sortSemesters(removeDupes(data.srapi.findManyCourse.map(course => course.semester)));
     const departments = data.srapi.findOneTeacher.departments;
 
     const [rating, setRating] = useState(0);

@@ -6,6 +6,11 @@ const getBlocks = () => ([...Array.from(Array(8).keys())].map(i => (i + 1).toStr
 const removeDupes = array => Array.from(new Set(array));
 const hashReview = (review, teacher) => sha256(review.timestamp.concat(review.text).concat(teacher)).substr(0, 10);
 const isMigrant = review => new Date(review.timestamp).toISOString() === '0001-01-01T00:00:00.000Z';
+const sortSemesters = semesters => semesters.sort((a, b) => {
+    a = /(Spring|Fall)(\d{4})/.exec(a);
+    b = /(Spring|Fall)(\d{4})/.exec(b);
+    return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
+});
 
 export {
     splitSemester,
@@ -13,5 +18,6 @@ export {
     getBlocks,
     removeDupes,
     hashReview,
-    isMigrant
+    isMigrant,
+    sortSemesters
 };
