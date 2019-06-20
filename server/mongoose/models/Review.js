@@ -15,7 +15,8 @@ const reviewSchema = new mongoose.Schema({
                 .limit(1)
                 .then(res => resolve(res.length === 1))
                 .catch(reject)
-        })
+        }),
+        required: true
     },
     text: {
         type: String,

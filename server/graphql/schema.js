@@ -4,6 +4,7 @@ const { schemaComposer } = require('graphql-compose');
 const Review = require('../mongoose/models/Review');
 const Course = require('../mongoose/models/Course');
 const Teacher = require('../mongoose/models/Teacher');
+const Report = require('../mongoose/models/Report');
 
 const CourseTC = composeWithMongoose(Course, {
     resolvers: {
@@ -26,6 +27,8 @@ const ReviewTC = composeWithMongoose(Review, {
 });
 
 const TeacherTC = composeWithMongoose(Teacher);
+
+const ReportTC = composeWithMongoose(Report);
 
 CourseTC.removeField('_id');
 TeacherTC.removeField('_id');
@@ -117,7 +120,8 @@ schemaComposer.Query.addFields({
 });
 
 schemaComposer.Mutation.addFields({
-    createReview: ReviewTC.getResolver('createOne')
+    createReview: ReviewTC.getResolver('createOne'),
+    createReport: ReportTC.getResolver('createOne')
 });
 
 module.exports = schemaComposer.buildSchema();

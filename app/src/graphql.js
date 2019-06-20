@@ -20,6 +20,23 @@ const CREATE_REVIEW = gql`
     }
 `;
 
+const CREATE_REPORT = gql`
+    mutation($review: String!, $reason: EnumReportReason!) {
+        createReport(
+            record: {
+                review: $review
+                reason: $reason
+            }
+        ) {
+            record {
+                _id
+                review
+                reason
+            }
+        }
+    }
+`;
+
 const FIND_REVIEWS = gql`
     query($name: String!) {
         findOneTeacher(filter: {
@@ -85,6 +102,7 @@ const FIND_REVIEW_BY_ID = gql`
 
 export {
     CREATE_REVIEW,
+    CREATE_REPORT,
     FIND_REVIEWS,
     LOAD_ADDITIONAL_REVIEWS,
     FIND_REVIEW_BY_ID

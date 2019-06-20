@@ -1,8 +1,19 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import { ClickAwayListener, IconButton, Paper, MenuItem, Popper, Typography, withStyles } from '@material-ui/core';
+import {
+    ClickAwayListener,
+    IconButton,
+    Paper,
+    MenuItem,
+    Popper,
+    Typography,
+    withStyles,
+    Grid,
+} from '@material-ui/core'
 import { withTheme } from '@material-ui/styles';
-import { MoreVert } from '@material-ui/icons';
+import { Close, MoreVert } from '@material-ui/icons'
 import StarRatings from 'react-star-ratings';
+import Modal from '../components/Modal';
+import ReportForm from '../components/ReportForm';
 import { isIOS } from 'react-device-detect';
 
 import moment from 'moment';
@@ -12,7 +23,8 @@ import styles from '../styles/styles';
 
 const Review = ({ classes, review, theme, teacher, selected }) => {
     const anchorEl = useRef(null);
-    const [open, setOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [modalExposed, setModalExposed] = useState(false);
 
     useEffect(() => {
         if (selected) {
@@ -31,20 +43,20 @@ const Review = ({ classes, review, theme, teacher, selected }) => {
                 float: 'right'
             } }
                 buttonRef={ anchorEl }
-                onClick={ () => setOpen(!open) }
+                onClick={ () => setMenuOpen(!menuOpen) }
             >
                 <MoreVert fontSize='small'/>
             </IconButton>
             <Popper
                 anchorEl={ anchorEl.current }
-                open={ open }
-                onBlur={ () => setOpen(false) }
+                open={ menuOpen }
+                onBlur={ () => setMenuOpen(false) }
             >
-                <ClickAwayListener onClickAway={ () => setOpen(false) }>
+                <ClickAwayListener onClickAway={ () => setMenuOpen(false) }>
                     <Paper style={ {
                         padding: theme.spacing(1),
                         width: 200
-                    } } onClick={ () => setOpen(false) }>
+                    } } onClick={ () => setMenuOpen(false) }>
                         <MenuItem onClick={ e => {
                             const textField = document.createElement('textarea');
                             e.target.appendChild(textField);
@@ -63,6 +75,9 @@ const Review = ({ classes, review, theme, teacher, selected }) => {
                             textField.remove();
                         } }>
                             Copy Link
+                        </MenuItem>
+                        <MenuItem onClick={ () => setModalExposed(true) }>
+                            Report
                         </MenuItem>
                     </Paper>
                 </ClickAwayListener>
@@ -85,6 +100,16 @@ const Review = ({ classes, review, theme, teacher, selected }) => {
             <Typography variant='body1'>
                 { review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '') }
             </Typography>
+            <Modal shown={ modalExposed }>
+                <Grid item xs={ 12 } sm={ 6 }>
+                    <ClickAwayListener onClickAway={ () => setModalExposed(false) }>
+                        <Paper className={ classes.control }>
+                            <Close onClick={ () => setModalExposed(false) } style={ { cursor: 'pointer', float: 'right' } }/>
+                            <ReportForm review={ review } teacher={ teacher } onClose={ () => setModalExposed(false) }/>
+                        </Paper>
+                    </ClickAwayListener>
+                </Grid>
+            </Modal>
         </div>
     );
 }

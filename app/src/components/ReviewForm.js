@@ -101,17 +101,13 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                                 starSpacing={ theme.spacing(0.5) }
                             />
                             <br/>
-                            <Button disabled={ reviewText.length < minCharacters || starRating === 0 } onClick={ () => {
-                                createReview({
-                                    variables: {
-                                        teacher: teacher,
-                                        rating: starRating,
-                                        text: reviewText
-                                    }
-                                });
-                                setReviewText('');
-                                setStarRating(0);
-                            } }>Submit Review</Button>
+                            <Button disabled={ reviewText.length < minCharacters || starRating === 0 } onClick={ () => createReview({
+                                variables: {
+                                    teacher: teacher,
+                                    rating: starRating,
+                                    text: reviewText
+                                }
+                            }) }>Submit Review</Button>
                             <br/>
                                 <span style={ { fontSize: 12 } }>
                                 {
