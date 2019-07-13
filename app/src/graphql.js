@@ -50,7 +50,7 @@ const FIND_REVIEWS = gql`
             } 
             sort: TIMESTAMP_DESC
             page: 1
-            perPage: 5
+            perPage: 15
         ) {
             pageInfo {
                 hasNextPage
@@ -72,7 +72,7 @@ const LOAD_ADDITIONAL_REVIEWS = gql`
             } 
             sort: TIMESTAMP_DESC
             page: $page
-            perPage: 5
+            perPage: 15
         ) {
             pageInfo {
                 hasNextPage
