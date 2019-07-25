@@ -17,7 +17,7 @@ typeof window !== 'undefined' && smoothscroll.polyfill();
 const theme = createMuiTheme({
     typography: {
         useNextVariants: true,
-        fontFamily: 'Proxima Nova, Helvetica, sans-serif'
+        fontFamily: 'Montserrat, Helvetica, sans-serif'
     },
     spacing: 5,
     palette: {

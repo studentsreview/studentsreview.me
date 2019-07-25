@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Course = require('./Course');
+const { composeWithMongoose }  = require('graphql-compose-mongoose');
+const { Class } = require('./Class');
 const sha256 = require('sha256');
 
 const reviewSchema = new mongoose.Schema({
@@ -7,7 +8,7 @@ const reviewSchema = new mongoose.Schema({
     teacher: {
         type: String,
         validate: v => new Promise((resolve, reject) => {
-            Course
+            Class
                 .find({
                     teacher: v,
                     semester: `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`
@@ -43,4 +44,19 @@ reviewSchema.pre('validate', function (next) {
     next();
 });
 
-module.exports = mongoose.model('Review', reviewSchema, 'reviews');
+const Review = mongoose.model('Review', reviewSchema, 'reviews');
+
+const ReviewTC = composeWithMongoose(Review, {
+    resolvers: {
+        findMany: {
+            limit: {
+                defaultValue: 100000
+            }
+        }
+    }
+});
+
+module.exports = {
+    Review,
+    ReviewTC
+};

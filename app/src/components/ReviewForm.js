@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Button, TextField, CircularProgress, withStyles } from '@material-ui/core';
+import { Button, TextField, CircularProgress } from '@material-ui/core';
 import { Check, Close } from '@material-ui/icons'
-import { withTheme } from '@material-ui/styles';
+import { withTheme, withStyles } from '@material-ui/styles';
 import { Mutation } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 

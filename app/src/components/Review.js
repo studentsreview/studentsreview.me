@@ -6,10 +6,9 @@ import {
     MenuItem,
     Popper,
     Typography,
-    withStyles,
     Grid,
 } from '@material-ui/core'
-import { withTheme } from '@material-ui/styles';
+import { withTheme, withStyles } from '@material-ui/styles';
 import { Close, MoreVert } from '@material-ui/icons'
 import StarRatings from 'react-star-ratings';
 import Modal from '../components/Modal';

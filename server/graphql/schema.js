@@ -1,117 +1,19 @@
-const { composeWithMongoose }  = require('graphql-compose-mongoose');
 const { schemaComposer } = require('graphql-compose');
 
-const Review = require('../mongoose/models/Review');
-const Course = require('../mongoose/models/Course');
-const Teacher = require('../mongoose/models/Teacher');
-const Report = require('../mongoose/models/Report');
-
-const CourseTC = composeWithMongoose(Course, {
-    resolvers: {
-        findMany: {
-            limit: {
-                defaultValue: 100000
-            }
-        }
-    }
-});
-
-const ReviewTC = composeWithMongoose(Review, {
-    resolvers: {
-        findMany: {
-            limit: {
-                defaultValue: 100000
-            }
-        }
-    }
-});
-
-const TeacherTC = composeWithMongoose(Teacher);
-
-const ReportTC = composeWithMongoose(Report);
-
-CourseTC.removeField('_id');
-TeacherTC.removeField('_id');
-
-TeacherTC.addFields({
-    rating: {
-        type: 'Float',
-        projection: { name: true },
-        resolve: async source => {
-            // TODO: find a way to ask for a specific field (rating)
-            const reviews = await ReviewTC
-                .getResolver('findMany')
-                .resolve({
-                    args: {
-                        filter: {
-                            teacher: source.name
-                        }
-                    }
-                });
-            return (reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length) || 0;
-        }
-    },
-    departments: {
-        type: '[String]',
-        projection: { name: true },
-        resolve: async source => {
-            const courses = await CourseTC
-                .getResolver('findMany')
-                .resolve({
-                    args: {
-                        filter: {
-                            teacher: source.name
-                        }
-                    }
-                });
-            const departments = Array.from(new Set(courses.map(course => course.department)));
-            if (departments.includes('Miscellaneous') && departments.length > 1) {
-                departments.splice(departments.indexOf('Miscellaneous'), 1);
-            }
-            return departments;
-        }
-    }
-});
-
-TeacherTC.setResolver('findMany', TeacherTC
-    .getResolver('findMany')
-    .addFilterArg({
-        name: 'search',
-        type: 'String',
-        query: (rawQuery, value) => {
-            rawQuery.name = new RegExp(value, 'i');
-        }
-    })
-);
-
-TeacherTC.setResolver('findOne', TeacherTC
-    .getResolver('findOne')
-    .addFilterArg({
-        name: 'search',
-        type: 'String',
-        query: (rawQuery, value) => {
-            rawQuery.name = new RegExp(value, 'i');
-        }
-    })
-);
-
-ReviewTC.setResolver('findOne', ReviewTC
-    .getResolver('findOne')
-    .addFilterArg({
-        name: 'hash',
-        type: 'String',
-        query: (rawQuery, value) => {
-            rawQuery._id = new RegExp(`${ value }.{54}`);
-        }
-    })
-);
+const { ReviewTC } = require('../mongoose/models/Review');
+const { CourseTC } = require('../mongoose/models/Course');
+const { ClassTC } = require('../mongoose/models/Class');
+const { TeacherTC } = require('../mongoose/models/Teacher');
+const { ReportTC } = require('../mongoose/models/Report');
 
 schemaComposer.Query.addFields({
     findOneReview: ReviewTC.getResolver('findOne'),
     findOneCourse: CourseTC.getResolver('findOne'),
+    findOneClass: ClassTC.getResolver('findOne'),
     findOneTeacher: TeacherTC.getResolver('findOne'),
     findManyReview: ReviewTC.getResolver('findMany'),
     findManyCourse: CourseTC.getResolver('findMany'),
+    findManyClass: ClassTC.getResolver('findMany'),
     findManyTeacher: TeacherTC.getResolver('findMany'),
     reviewCount:  ReviewTC.getResolver('count'),
     courseCount: CourseTC.getResolver('count'),

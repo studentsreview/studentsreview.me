@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from 'react';
-import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, withStyles, withWidth } from '@material-ui/core';
+import React, { Fragment, useEffect, useState } from 'react'
+import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, withWidth } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
-import { withTheme } from '@material-ui/styles';
+import { withTheme, withStyles } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import { Query } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
@@ -13,7 +13,7 @@ import ScheduleTable from '../components/ScheduleTable';
 import ReviewDisplay from '../components/ReviewDisplay';
 
 import { isWidthUp } from '@material-ui/core/withWidth';
-import { graphql } from 'gatsby';
+import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
@@ -43,7 +43,7 @@ const HeaderCard = withStyles(styles)(withTheme(({ classes, theme, rating, semes
                 />
             </div>
             <Chip
-                label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
+                label={ `${ semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[semesters.length - 1]) }` }
             />
             {
                 departments.map((department, idx) => <DepartmentChip
@@ -85,6 +85,13 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
     const semesterCourses = courses
         .filter(course => course.semester === semester);
 
+    useEffect(() => {
+        const courses = removeDupes(semesterCourses.map(course => course.name));
+        for (let course of courses) {
+            prefetchPathname(`/courses/${ slugify(course, { lower: true }) }`);
+        }
+    }, [semesterCourses]);
+
     return (
         <Fragment>
             <SemesterSelect
@@ -117,8 +124,8 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
 const TeacherPage = ({ pageContext, classes, location, data, width }) => {
     const { name } = pageContext;
 
-    const courses = data.srapi.findManyCourse;
-    const semesters = sortSemesters(removeDupes(data.srapi.findManyCourse.map(course => course.semester)));
+    const courses = data.srapi.findManyClass;
+    const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
     const departments = data.srapi.findOneTeacher.departments;
 
     const [rating, setRating] = useState(0);
@@ -160,7 +167,7 @@ export const query = graphql`
             }) {
                 departments
             }
-            findManyCourse(filter: {
+            findManyClass(filter: {
                 teacher: $name
             }) {
                 semester

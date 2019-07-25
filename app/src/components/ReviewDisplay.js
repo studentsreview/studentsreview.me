@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Divider, Typography, withStyles } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
+import { withStyles } from '@material-ui/styles';
 import { withApollo } from 'react-apollo';
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from './Review';

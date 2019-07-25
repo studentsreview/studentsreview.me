@@ -11,10 +11,12 @@ client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:
 
 db = client.get_database()
 courses = db['courses']
+classes = db['classes']
 reviews = db['reviews']
 teachers = db['teachers']
 
 courses.delete_many({})
+classes.delete_many({})
 teachers.delete_many({})
 reviews.delete_many({
     'version': 1
@@ -105,55 +107,78 @@ data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
 teachers_to_insert = []
 courses_to_insert = []
+classes_to_insert = []
 
 for semester in data:
-    for course in data[semester]:
-        if course['name'] == 'CHIN151A':
-            course['name'] = 'Chinese 1'
-
-        if any(test in course['name'] for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
-            course['department'] = 'Math'
-        elif any(test in course['name'] for test in ['Computer']):
-            course['department'] = 'Computer Science'
-        elif any(test in course['name'] for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
-            course['department'] = 'English'
-        elif any(test in course['name'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
-            course['department'] = 'Science'
-        elif any(test in course['name'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
-            course['department'] = 'Social Science'
-        elif any(test in course['name'] for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
-            course['department'] = 'Foreign Language'
-        elif any(test in course['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
-            course['department'] = 'Visual Performing Arts'
-        elif any(test in course['name'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga', 'Dance']):
-            course['department'] = 'Physical Education'
-        elif any(test in course['name'] for test in ['JROTC']):
-            course['department'] = 'JROTC'
+    for class_ in data[semester]:
+        if any(test in class_['name'] for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
+            department = 'Math'
+        elif any(test in class_['name'] for test in ['Computer']):
+            department = 'Computer Science'
+        elif any(test in class_['name'] for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
+            department = 'English'
+        elif any(test in class_['name'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
+            department = 'Science'
+        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
+            department = 'Social Science'
+        elif any(test in class_['name'] for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
+            department = 'Foreign Language'
+        elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
+            department = 'Visual Performing Arts'
+        elif any(test in class_['name'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga', 'Dance']):
+            department = 'Physical Education'
+        elif any(test in class_['name'] for test in ['JROTC']):
+            department = 'JROTC'
         else:
-            course['department'] = 'Miscellaneous'
+            department = 'Miscellaneous'
 
-        if course['teacher'] == 'Chan':
-            if course['department'] == 'Visual Performing Arts':
-                course['teacher'] = 'Jason Chan'
-            elif course['department'] == 'Math':
-                course['teacher'] = 'Tom Chan'
+        if class_['teacher'] == 'Chan':
+            if department == 'Visual Performing Arts':
+                class_['teacher'] = 'Jason Chan'
+            elif department == 'Math':
+                class_['teacher'] = 'Tom Chan'
 
-        if course['teacher'] == 'Yu Li':
-            if course['department'] == 'Math':
-                course['teacher'] = 'Ernest Li'
+        if class_['name'] == 'CHIN151A':
+            class_['name'] = 'Chinese 1'
 
-        if course['name'] == 'AP Enivronmental Science':
-            course['name'] = 'AP Environmental Science'
+        if class_['teacher'] == 'Yu Li':
+            if department == 'Math':
+                class_['teacher'] = 'Ernest Li'
 
-        course['semester'] = semester
-        courses_to_insert.append(course)
+        if class_['name'] == 'AP Enivronmental Science':
+            class_['name'] = 'AP Environmental Science'
 
-        if all(doc['name'] != course['teacher'] for doc in teachers_to_insert):
+        class_['semester'] = semester
+        classes_to_insert.append(class_)
+
+        try:
+            teacher = next(teacher for teacher in teachers_to_insert if teacher['name'] == class_['teacher'])
+            if department not in teacher['departments']:
+                teacher['departments'].append(department)
+                if len(teacher['departments']) > 1 and 'Miscellaneous' in teacher['departments']:
+                    teacher['departments'].remove('Miscellaneous')
+            if class_['semester'] not in teacher['semesters']:
+                teacher['semesters'].append(class_['semester'])
+        except StopIteration:
             teachers_to_insert.append({
-                'name': course['teacher']
+                'name': class_['teacher'],
+                'departments': [department],
+                'semesters': [class_['semester']]
+            })
+
+        try:
+            course = next(course for course in courses_to_insert if course['name'] == class_['name'])
+            if class_['semester'] not in course['semesters']:
+                course['semesters'].append(class_['semester'])
+        except StopIteration:
+            courses_to_insert.append({
+                'name': class_['name'],
+                'department': department,
+                'semesters': [class_['semester']]
             })
 
 courses.insert_many(courses_to_insert)
+classes.insert_many(classes_to_insert)
 teachers.insert_many(teachers_to_insert)
 
 reviews_to_insert = []

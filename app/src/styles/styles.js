@@ -1,6 +1,6 @@
 import { createStyles } from '@material-ui/styles';
 
-export default theme => createStyles({
+export default createStyles(theme => ({
     root: {
         flexGrow: 1,
         margin: theme.spacing(2)
@@ -19,4 +19,4 @@ export default theme => createStyles({
             fontSize: '0.9vw'
         }
     }
-});
+}));

@@ -34,7 +34,7 @@ module.exports.createPages = async ({ graphql, actions }) => {
             }
         }
     `);
-    (new Set(courses.data.srapi.findManyCourse.map(course => course.name))).forEach(name => {
+    courses.data.srapi.findManyCourse.map(course => course.name).forEach(name => {
         createPage({
             path: `/courses/${ slugify(name, { lower: true }) }`,
             component: path.resolve('./src/templates/CoursePage.js'),

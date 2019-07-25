@@ -1,13 +1,27 @@
 const mongoose = require('mongoose');
+const { composeWithMongoose }  = require('graphql-compose-mongoose');
 
 const courseSchema = new mongoose.Schema({
-    code: String,
     name: String,
-    block: String,
-    room: String,
-    teacher: String,
     department: String,
-    semester: String
+    semesters: [String]
 });
 
-module.exports = mongoose.model('Course', courseSchema, 'courses');
+const Course = mongoose.model('Course', courseSchema, 'courses');
+
+const CourseTC = composeWithMongoose(Course, {
+    resolvers: {
+        findMany: {
+            limit: {
+                defaultValue: 100000
+            }
+        }
+    }
+});
+
+CourseTC.removeField('_id');
+
+module.exports = {
+    Course,
+    CourseTC
+};

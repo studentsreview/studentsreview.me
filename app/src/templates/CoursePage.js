@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Grid, Chip, Typography, withStyles } from '@material-ui/core';
-import { withTheme } from '@material-ui/styles';
+import { Paper, Grid, Chip, Typography } from '@material-ui/core';
+import { withTheme, withStyles } from '@material-ui/styles';
 import { withApollo } from 'react-apollo';
 import { Helmet } from 'react-helmet';
 import DepartmentChip from '../components/DepartmentChip';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
 
-import { graphql } from 'gatsby';
+import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { splitSemester, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
@@ -18,9 +18,9 @@ import styles from '../styles/styles';
 const TeacherPage = ({ data, pageContext, classes, location, theme, client }) => {
     const { name } = pageContext;
 
-    const courses = data.srapi.findManyCourse;
-    const semesters = sortSemesters(removeDupes(data.srapi.findManyCourse.map(course => course.semester)));
-    const codes = removeDupes(data.srapi.findManyCourse.map(course => course.code))
+    const courses = data.srapi.findManyClass;
+    const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
+    const codes = removeDupes(data.srapi.findManyClass.map(course => course.code))
 
     const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
@@ -31,12 +31,15 @@ const TeacherPage = ({ data, pageContext, classes, location, theme, client }) =>
     useEffect(() => {
         const teachers = removeDupes(semesterCourses.map(course => course.teacher));
         for (let teacher of teachers) {
-            client.query({
-                query: FIND_REVIEWS,
-                variables: {
-                    name: teacher
-                }
-            });
+            if (teacher !== 'Undetermined') {
+                prefetchPathname(`/teachers/${ slugify(teacher, { lower: true }) }`);
+                client.query({
+                    query: FIND_REVIEWS,
+                    variables: {
+                        name: teacher
+                    }
+                });
+            }
         }
     }, [semesterCourses]);
 
@@ -74,7 +77,7 @@ const TeacherPage = ({ data, pageContext, classes, location, theme, client }) =>
                             />
                         }
                         <Chip
-                            label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
+                            label={ `${ semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[semesters.length - 1]) }` }
                         />
                         <br/>
                         {
@@ -130,7 +133,7 @@ export default withStyles(styles)(withTheme(withApollo(TeacherPage)));
 export const query = graphql`
     query($name: String!) {
         srapi {
-            findManyCourse(filter: {
+            findManyClass(filter: {
                 name: $name
             }) {
                 code
