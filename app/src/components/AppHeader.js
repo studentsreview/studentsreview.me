@@ -65,13 +65,18 @@ const AppHeader = ({ classes }) => {
     const items = teacherNames.concat(courseNames);
     const suggestions = items.filter(item => match(item, value).length > 0).sort((a, b) => match(b, value).length - match(a, value).length).slice(0, 5);
 
+    const navigateToSuggestion = suggestion => {
+        if (teacherNames.includes(suggestion)) {
+            navigate(`/teachers/${ slugify(suggestion, { lower: true }) }`);
+        } else if (courseNames.includes(suggestion)) {
+            navigate(`/courses/${ slugify(suggestion, { lower: true }) }`);
+        }
+        setValue('');
+    }
+
     const keyDownHandler = e => {
         if (e.key === 'Enter') {
-            if (teacherNames.includes(suggestions[0])) {
-                navigate(`/teachers/${ slugify(suggestions[0], { lower: true }) }`);
-            } else if (courseNames.includes(suggestions[0])) {
-                navigate(`/courses/${ slugify(suggestions[0], { lower: true }) }`);
-            }
+            navigateToSuggestion(suggestions[0]);
         }
     }
 
@@ -111,13 +116,7 @@ const AppHeader = ({ classes }) => {
                         {
                             suggestions.map((suggestion, idx) => <MenuItem
                                     key={ idx }
-                                    onClick={ () => {
-                                        if (teacherNames.includes(suggestion)) {
-                                            navigate(`/teachers/${ slugify(suggestion, { lower: true }) }`);
-                                        } else if (courseNames.includes(suggestion)) {
-                                            navigate(`/courses/${ slugify(suggestion, { lower: true }) }`);
-                                        }
-                                    } }
+                                    onClick={ () => navigateToSuggestion(suggestion) }
                                     style={ { cursor: 'pointer' } }
                                 >{
                                     parse(suggestion, match(suggestion, value)).map((match, idx) => <span key={ idx } style={ {
