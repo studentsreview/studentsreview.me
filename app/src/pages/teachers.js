@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Button,
     ClickAwayListener,
@@ -18,7 +18,7 @@ import { FilterList } from '@material-ui/icons';
 import { createStyles, withStyles } from '@material-ui/styles';
 
 import slugify from 'slugify';
-import { navigate, graphql, prefetchPathname } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import { sortSemesters, splitSemester, getCurrentSemester, combineStyles } from '../utils';
 
 import styles from '../styles/styles';
@@ -32,13 +32,6 @@ const styles0 = createStyles({
 });
 
 const TeachersPage = ({ classes, data }) => {
-    // too much?
-    useEffect(() => {
-        for (let teacher of data.srapi.findManyTeacher) {
-            prefetchPathname(`/teachers/${ slugify(teacher.name, { lower: true }) }`);
-        }
-    }, []);
-
     const [currentTeachersFilter, setCurrentTeachersFilter] = useState(true);
     const [departmentFilterMenuOpen, setDepartmentFilterMenuOpen] = useState(false);
 
@@ -114,10 +107,9 @@ const TeachersPage = ({ classes, data }) => {
                     {
                         teachers.map((teacher, idx) => (
                             <TableRow key={ idx }>
-                                <TableCell
-                                    style={ { cursor: 'pointer', width: '33%' } }
-                                    onClick={ () => navigate(`/teachers/${ slugify(teacher.name, { lower: true }) }`) }
-                                >{ teacher.name }</TableCell>
+                                <TableCell style={ { cursor: 'pointer', width: '33%' } }>
+                                    <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
+                                </TableCell>
                                 <TableCell style={ { width: '33%' } }>{ (() => {
                                     const semesters = sortSemesters(teacher.semesters);
                                     const start = semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014';

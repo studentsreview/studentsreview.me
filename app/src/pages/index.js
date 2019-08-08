@@ -59,8 +59,9 @@ const IndexPage = ({ classes, data }) => {
                 <Grid item xs={ 12 }>
                     <Paper className={ classes.control }>
                         <ul>
-                            <li>Course and teacher data is aggregated from the past 5 years of Arena announcers from the school website.</li>
+                            <li>Course, teacher and class data is aggregated from the past 5 years of Arena announcers from the school website.</li>
                             <li>The majority of teacher reviews were restored from ratemyteachers.com, with an increasing amount of original reviews generated from users on this site.</li>
+                            <li>Courses refer to an overall collection of classes that are all part of that course. For example, while AP Statistics is a singular <i>course</i>, there would be several <i>classes</i> of AP Statistics offered at any point in time.</li>
                         </ul>
                     </Paper>
                 </Grid>
