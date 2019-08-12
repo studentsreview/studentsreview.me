@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:27017/StudentsReview')
 
-db = client.get_database()
+db = client['StudentsReview']
 courses = db['courses']
 classes = db['classes']
 reviews = db['reviews']
@@ -115,14 +115,14 @@ for semester in data:
             department = 'Math'
         elif any(test in class_['name'] for test in ['Computer']):
             department = 'Computer Science'
+        elif any(test in class_['name'] for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
+            department = 'Foreign Language'
         elif any(test in class_['name'] for test in ['Novel', 'Lit', 'English', 'Writing', 'Fiction', 'Epic', 'Satire', 'Shakespeare']):
             department = 'English'
         elif any(test in class_['name'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             department = 'Science'
         elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
             department = 'Social Science'
-        elif any(test in class_['name'] for test in ['Chinese', 'Japanese', 'Korean', 'Spanish', 'Italian', 'Latin', 'Hebrew', 'French']):
-            department = 'Foreign Language'
         elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
             department = 'Visual Performing Arts'
         elif any(test in class_['name'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga', 'Dance']):
