@@ -32,6 +32,7 @@
     "graphql": "^14.3.1",
     "graphql-tag": "^2.10.1",
     "isomorphic-fetch": "^2.2.1",
+    "mermaid": "^8.2.3",
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-apollo": "^2.5.6",
