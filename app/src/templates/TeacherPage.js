@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, withWidth } from '@material-ui/core';
+import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, useTheme } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { withTheme, withStyles } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
@@ -13,6 +13,7 @@ import ScheduleTable from '../components/ScheduleTable';
 import ReviewDisplay from '../components/ReviewDisplay';
 
 import { isWidthUp } from '@material-ui/core/withWidth';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
@@ -20,6 +21,17 @@ import { FIND_REVIEWS } from '../graphql';
 import { splitSemester, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
 
 import styles from '../styles/styles';
+
+ const useWidth = () => {
+    const theme = useTheme();
+    const keys = [...theme.breakpoints.keys].reverse();
+    return (
+        keys.reduce((output, key) => {
+            const matches = useMediaQuery(theme.breakpoints.up(key));
+            return !output && matches ? key : output;
+        }, null) || 'xs'
+    );
+}
 
 const HeaderCard = withStyles(styles)(withTheme(({ classes, theme, rating, semesters, departments, name }) => {
     const [modalExposed, setModalExposed] = useState(false);
@@ -121,7 +133,7 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
     );
 });
 
-const TeacherPage = ({ pageContext, classes, location, data, width }) => {
+const TeacherPage = ({ data, pageContext, classes, location }) => {
     const { name } = pageContext;
 
     const courses = data.srapi.findManyClass;
@@ -130,13 +142,15 @@ const TeacherPage = ({ pageContext, classes, location, data, width }) => {
 
     const [rating, setRating] = useState(0);
 
+    const width = useWidth();
+
     return (
         <div className={ classes.root }>
             <Grid container spacing={ 3 }>
                 <Helmet>
                     <title>{ name }</title>
                     <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
-                    <meta name='keywords' content={ departments.concat(['Education', 'Lowell High School', 'Teacher', name].concat(departments)).join(',') }/>
+                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', name, ...departments].join(',') }/>
                 </Helmet>
                 <Grid item xs={ 12 } sm={ 5 }>
                     <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
@@ -157,7 +171,7 @@ const TeacherPage = ({ pageContext, classes, location, data, width }) => {
     );
 }
 
-export default withWidth()(withStyles(styles)(withTheme(TeacherPage)));
+export default withStyles(styles)(withTheme(TeacherPage));
 
 export const query = graphql`
     query($name: String!) {
