@@ -19,6 +19,7 @@ const TeacherPage = ({ data, pageContext, classes, location, theme, client }) =>
     const { name } = pageContext;
 
     const courses = data.srapi.findManyClass;
+    const department = data.srapi.findOneCourse.department;
     const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
     const codes = removeDupes(data.srapi.findManyClass.map(course => course.code))
 
@@ -49,12 +50,18 @@ const TeacherPage = ({ data, pageContext, classes, location, theme, client }) =>
                 <Helmet>
                     <title>{ name }</title>
                     <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
-                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', data.srapi.findOneCourse.department, name] }/>
+                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', department, name] }/>
                     <script type="application/ld+json">
                         { JSON.stringify({
-                            "@context": "https://schema.org",
-                            "@type": "Course",
-                            "courseCode": codes.join(', ')
+                            '@context': 'https://schema.org',
+                            '@type': 'Course',
+                            courseCode: codes.join(', '),
+                            name,
+                            description: `${ name } is a${ /^[AEIOU]/.test(department) ? 'n' : '' } ${ department } class offered at Lowell High School.`,
+                            provider: {
+                                '@type': 'Organization',
+                                name: 'Lowell High School'
+                            }
                         }) }
                     </script>
                 </Helmet>
