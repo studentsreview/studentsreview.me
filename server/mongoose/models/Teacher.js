@@ -22,7 +22,6 @@ TeacherTC.addFields({
         type: 'Float',
         projection: { name: true },
         resolve: async source => {
-            // TODO: find a way to ask for a specific field (rating)
             const reviews = await ReviewTC
                 .getResolver('findMany')
                 .resolve({
@@ -33,6 +32,22 @@ TeacherTC.addFields({
                     }
                 });
             return (reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length) || 0;
+        }
+    },
+    reviewCount: {
+        type: 'Int',
+        projection: { name: true },
+        resolve: async source => {
+            const reviews = await ReviewTC
+                .getResolver('findMany')
+                .resolve({
+                    args: {
+                        filter: {
+                            teacher: source.name
+                        }
+                    }
+                });
+            return reviews.length;
         }
     }
 });

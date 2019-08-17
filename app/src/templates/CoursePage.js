@@ -49,7 +49,14 @@ const TeacherPage = ({ data, pageContext, classes, location, theme, client }) =>
                 <Helmet>
                     <title>{ name }</title>
                     <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
-                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', data.srapi.findOneCourse.department, name].join(',') }/>
+                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', data.srapi.findOneCourse.department, name] }/>
+                    <script type="application/ld+json">
+                        { JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "Course",
+                            "courseCode": codes.join(', ')
+                        }) }
+                    </script>
                 </Helmet>
                 <Grid item xs={ 12 } sm={ 6 }>
                     <Paper className={ classes.control }>

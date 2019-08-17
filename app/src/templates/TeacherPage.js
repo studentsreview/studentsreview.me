@@ -150,7 +150,21 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
                 <Helmet>
                     <title>{ name }</title>
                     <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
-                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', name, ...departments].join(',') }/>
+                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', name, ...departments] }/>
+                    <script type="application/ld+json">
+                        { JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "AggregateRating",
+                            "itemReviewed": {
+                                "@type": "Person",
+                                "name": name,
+                                "jobTitle": "Teacher",
+                                "knowsAbout": departments.join(', ')
+                            },
+                            "ratingValue": data.srapi.findOneTeacher.rating,
+                            "reviewCount": data.srapi.findOneTeacher.reviewCount
+                        }) }
+                    </script>
                 </Helmet>
                 <Grid item xs={ 12 } sm={ 5 }>
                     <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
@@ -179,6 +193,8 @@ export const query = graphql`
             findOneTeacher(filter: {
                 name: $name
             }) {
+                rating
+                reviewCount
                 departments
             }
             findManyClass(filter: {
