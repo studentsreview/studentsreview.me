@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppBar, MenuItem, MenuList, Paper, Popper, TextField, Toolbar } from '@material-ui/core';
 import { createStyles, withStyles } from '@material-ui/styles';
 import { Link, graphql, useStaticQuery, prefetchPathname } from 'gatsby';
+import { withApollo } from 'react-apollo';
 import Img from 'gatsby-image';
 
 import slugify from 'slugify';
@@ -9,6 +10,7 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
 import { removeDupes } from '../utils';
+import { FIND_REVIEWS } from '../graphql';
 
 import '../styles/layout.css';
 
@@ -31,7 +33,7 @@ const styles = createStyles({
     }
 });
 
-const AppHeader = ({ classes }) => {
+const AppHeader = ({ classes, client }) => {
     const data = useStaticQuery(graphql`
             query {
                 file(relativePath: { eq: "transparent_logo.png" }) {
@@ -89,6 +91,12 @@ const AppHeader = ({ classes }) => {
         for (let suggestion of suggestions) {
             if (teacherNames.includes(suggestion)) {
                 prefetchPathname(`/teachers/${ slugify(suggestion, { lower: true }) }`);
+                client.query({
+                    query: FIND_REVIEWS,
+                    variables: {
+                        name: suggestion
+                    }
+                });
             } else if (courseNames.includes(suggestion)) {
                 prefetchPathname(`/courses/${ slugify(suggestion, { lower: true }) }`);
             }
@@ -133,4 +141,4 @@ const AppHeader = ({ classes }) => {
     );
 };
 
-export default withStyles(styles)(AppHeader);
+export default withStyles(styles)(withApollo(AppHeader));

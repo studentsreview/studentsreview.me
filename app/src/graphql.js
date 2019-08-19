@@ -29,7 +29,6 @@ const CREATE_REPORT = gql`
             }
         ) {
             record {
-                _id
                 review
                 reason
             }
