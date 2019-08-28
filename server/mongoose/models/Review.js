@@ -56,6 +56,17 @@ const ReviewTC = composeWithMongoose(Review, {
     }
 });
 
+ReviewTC.setResolver('findOne', ReviewTC
+    .getResolver('findOne')
+    .addFilterArg({
+        name: 'hash',
+        type: 'String',
+        query: (rawQuery, value) => {
+            rawQuery._id = new RegExp(`${ value }.{54}`);
+        }
+    })
+);
+
 module.exports = {
     Review,
     ReviewTC
