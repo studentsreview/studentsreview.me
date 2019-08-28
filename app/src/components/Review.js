@@ -8,7 +8,7 @@ import {
     Typography,
     Grid,
 } from '@material-ui/core'
-import { withTheme, withStyles } from '@material-ui/styles';
+import { useTheme, withStyles } from '@material-ui/styles';
 import { Close, MoreVert } from '@material-ui/icons'
 import StarRatings from 'react-star-ratings';
 import Modal from '../components/Modal';
@@ -16,11 +16,12 @@ import ReportForm from '../components/ReportForm';
 import { isIOS } from 'react-device-detect';
 
 import moment from 'moment';
+import slugify from 'slugify';
 import { hashReview, isMigrant } from '../utils';
 
 import styles from '../styles/styles';
 
-const Review = ({ classes, review, theme, teacher, selected }) => {
+const Review = ({ classes, review, teacher, selected }) => {
     const anchorEl = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [modalExposed, setModalExposed] = useState(false);
@@ -32,6 +33,8 @@ const Review = ({ classes, review, theme, teacher, selected }) => {
             });
         }
     }, []);
+
+    const theme = useTheme();
 
     return (
         <div className={ classes.control } style={ {
@@ -59,7 +62,7 @@ const Review = ({ classes, review, theme, teacher, selected }) => {
                         <MenuItem onClick={ e => {
                             const textField = document.createElement('textarea');
                             e.target.appendChild(textField);
-                            textField.innerText = `${ window.location.origin }${ window.location.pathname }#${ hashReview(review, teacher) }`;
+                            textField.innerText = `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ hashReview(review, teacher) }`;
                             if (isIOS) {
                                 const range = document.createRange();
                                 range.selectNodeContents(textField);
@@ -113,4 +116,4 @@ const Review = ({ classes, review, theme, teacher, selected }) => {
     );
 }
 
-export default withStyles(styles)(withTheme(Review));
+export default withStyles(styles)(Review);

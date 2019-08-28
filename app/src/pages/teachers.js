@@ -52,77 +52,79 @@ const TeachersPage = ({ classes, data }) => {
         (!currentTeachersFilter || teacher.semesters.includes(getCurrentSemester())) && teacher.departments.some(department => departmentFilter.includes(department)));
 
     return (
-        <div className={ classes.root }>
+        <>
             <Helmet>
                 <title>Teachers</title>
                 <meta name='description' content={ `See all teachers teaching at Lowell High School.` }/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
-            <FormGroup row className={ classes.gutters }>
-                <Button
-                    ref={ buttonRef }
-                    onClick={ () => setDepartmentFilterMenuOpen(!departmentFilterMenuOpen) }
-                ><FilterList/>Filter Departments</Button>
-                <Popper anchorEl={ buttonRef.current } open={ departmentFilterMenuOpen }>
-                    <ClickAwayListener onClickAway={ () => setDepartmentFilterMenuOpen(false) }>
-                        <Paper className={ classes.control }>
-                            <FormGroup>
-                                {
-                                    departmentFilter.length === 0 ?
-                                        <Button variant='outlined' onClick={ () => setDepartmentFilter(departments) }>Select All</Button> :
-                                        <Button variant='outlined' onClick={ () => setDepartmentFilter([]) }>Deselect All</Button>
-                                }
-                                {
-                                    departments.map((department, idx) => (
-                                        <FormControlLabel
-                                            key={ idx }
-                                            control={ <Checkbox
-                                                checked={ departmentFilter.includes(department) }
-                                                onChange={ () => departmentFilter.includes(department) ?
-                                                    setDepartmentFilter(departmentFilter.filter(el => el !== department)) :
-                                                    setDepartmentFilter(departmentFilter.concat(department)) }/>
-                                            }
-                                            label={ department }
-                                        />
-                                    ))
-                                }
-                            </FormGroup>
-                        </Paper>
-                    </ClickAwayListener>
-                </Popper>
-                <FormControlLabel
-                    control={ <Checkbox checked={ currentTeachersFilter } onChange={ e => setCurrentTeachersFilter(e.target.checked) }/> }
-                    label='Current Teachers Only'
-                />
-            </FormGroup>
-            <Table size='small'>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Semesters</TableCell>
-                        <TableCell>Department(s)</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        teachers.map((teacher, idx) => (
-                            <TableRow key={ idx }>
-                                <TableCell style={ { cursor: 'pointer', width: '33%' } }>
-                                    <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
-                                </TableCell>
-                                <TableCell style={ { width: '33%' } }>{ (() => {
-                                    const semesters = sortSemesters(teacher.semesters);
-                                    const start = semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014';
-                                    const end = splitSemester(semesters[semesters.length - 1]);
-                                    return `${ start } - ${ end }`;
-                                })() }</TableCell>
-                                <TableCell>{ teacher.departments.join(', ') }</TableCell>
-                            </TableRow>
-                        ))
-                    }
-                </TableBody>
-            </Table>
-        </div>
+            <div className={ classes.root }>
+                <FormGroup row className={ classes.gutters }>
+                    <Button
+                        ref={ buttonRef }
+                        onClick={ () => setDepartmentFilterMenuOpen(!departmentFilterMenuOpen) }
+                    ><FilterList/>Filter Departments</Button>
+                    <Popper anchorEl={ buttonRef.current } open={ departmentFilterMenuOpen }>
+                        <ClickAwayListener onClickAway={ () => setDepartmentFilterMenuOpen(false) }>
+                            <Paper className={ classes.control }>
+                                <FormGroup>
+                                    {
+                                        departmentFilter.length === 0 ?
+                                            <Button variant='outlined' onClick={ () => setDepartmentFilter(departments) }>Select All</Button> :
+                                            <Button variant='outlined' onClick={ () => setDepartmentFilter([]) }>Deselect All</Button>
+                                    }
+                                    {
+                                        departments.map((department, idx) => (
+                                            <FormControlLabel
+                                                key={ idx }
+                                                control={ <Checkbox
+                                                    checked={ departmentFilter.includes(department) }
+                                                    onChange={ () => departmentFilter.includes(department) ?
+                                                        setDepartmentFilter(departmentFilter.filter(el => el !== department)) :
+                                                        setDepartmentFilter(departmentFilter.concat(department)) }/>
+                                                }
+                                                label={ department }
+                                            />
+                                        ))
+                                    }
+                                </FormGroup>
+                            </Paper>
+                        </ClickAwayListener>
+                    </Popper>
+                    <FormControlLabel
+                        control={ <Checkbox checked={ currentTeachersFilter } onChange={ e => setCurrentTeachersFilter(e.target.checked) }/> }
+                        label='Current Teachers Only'
+                    />
+                </FormGroup>
+                <Table size='small'>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Semesters</TableCell>
+                            <TableCell>Department(s)</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            teachers.map((teacher, idx) => (
+                                <TableRow key={ idx }>
+                                    <TableCell style={ { cursor: 'pointer', width: '33%' } }>
+                                        <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
+                                    </TableCell>
+                                    <TableCell style={ { width: '33%' } }>{ (() => {
+                                        const semesters = sortSemesters(teacher.semesters);
+                                        const start = semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014';
+                                        const end = splitSemester(semesters[semesters.length - 1]);
+                                        return `${ start } - ${ end }`;
+                                    })() }</TableCell>
+                                    <TableCell>{ teacher.departments.join(', ') }</TableCell>
+                                </TableRow>
+                            ))
+                        }
+                    </TableBody>
+                </Table>
+            </div>
+        </>
     );
 }
 

@@ -61,53 +61,55 @@ const CoursesPage = ({ classes, data }) => {
     }, {});
 
     return (
-        <div className={ classes.root }>
+        <>
             <Helmet>
                 <title>Courses</title>
                 <meta name='description' content={ `See all Courses offered at Lowell High School.` }/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
-            <FormGroup row>
-                <FormControlLabel
-                    control={ <Checkbox checked={ currentCoursesFilter } onChange={ e => setCurrentCoursesFilter(e.target.checked) }/> }
-                    label='Current Courses Only'
-                />
-            </FormGroup>
-            {
-                Object.keys(courses_by_department).sort().map((department, idx) => (
-                    <CollapsingTable
-                        key={ idx }
-                        title={ department }
-                        table={ <Table size='small'>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Years</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    courses_by_department[department].map((course, idx) => (
-                                        <TableRow key={ idx }>
-                                            <TableCell
-                                                style={ { cursor: 'pointer', width: '50%' } }
-                                                onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`) }
-                                            >{ course.name }</TableCell>
-                                            <TableCell>{ (() => {
-                                                const semesters = sortSemesters(course.semesters);
-                                                const start = semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014';
-                                                const end = splitSemester(semesters[semesters.length - 1]);
-                                                return `${ start } - ${ end }`;
-                                            })() }</TableCell>
-                                        </TableRow>
-                                    ))
-                                }
-                            </TableBody>
-                        </Table> }
+            <div className={ classes.root }>
+                <FormGroup row>
+                    <FormControlLabel
+                        control={ <Checkbox checked={ currentCoursesFilter } onChange={ e => setCurrentCoursesFilter(e.target.checked) }/> }
+                        label='Current Courses Only'
                     />
-                )).reduce((acc, cur) => [acc, <Divider/>, cur])
-            }
-        </div>
+                </FormGroup>
+                {
+                    Object.keys(courses_by_department).sort().map((department, idx) => (
+                        <CollapsingTable
+                            key={ idx }
+                            title={ department }
+                            table={ <Table size='small'>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Years</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        courses_by_department[department].map((course, idx) => (
+                                            <TableRow key={ idx }>
+                                                <TableCell
+                                                    style={ { cursor: 'pointer', width: '50%' } }
+                                                    onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`) }
+                                                >{ course.name }</TableCell>
+                                                <TableCell>{ (() => {
+                                                    const semesters = sortSemesters(course.semesters);
+                                                    const start = semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014';
+                                                    const end = splitSemester(semesters[semesters.length - 1]);
+                                                    return `${ start } - ${ end }`;
+                                                })() }</TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                </TableBody>
+                            </Table> }
+                        />
+                    )).reduce((acc, cur) => [acc, <Divider/>, cur])
+                }
+            </div>
+        </>
     );
 }
 

@@ -1,7 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, TextField, CircularProgress } from '@material-ui/core';
 import { Check, Close } from '@material-ui/icons'
-import { withTheme, withStyles } from '@material-ui/styles';
+import { useTheme, withStyles } from '@material-ui/styles';
 import { Mutation } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 
@@ -9,9 +9,11 @@ import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
 
 import styles from '../styles/styles';
 
-const ReviewForm = ({ classes, teacher, onClose, theme }) => {
+const ReviewForm = ({ classes, teacher, onClose }) => {
     const [reviewText, setReviewText] = useState('');
     const [starRating, setStarRating] = useState(0);
+
+    const theme = useTheme();
 
     const minCharacters = 50;
 
@@ -57,29 +59,29 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
             { (createReview, { data, error, loading }) => {
                 if (data) {
                     return (
-                        <Fragment>
+                        <>
                             <Check className={ classes.blockIcon } htmlColor='green'/>
                             <p style={ {
                                 textAlign: 'center',
                                 color: 'green'
                             } }>Review submitted successfully!</p>
-                        </Fragment>
+                        </>
                     );
                 } else if (error) {
                     return (
-                        <Fragment>
+                        <>
                             <Close className={ classes.blockIcon } htmlColor='red'/>
                             <p style={ {
                                 textAlign: 'center',
                                 color: 'red'
                             } }>Unable to submit review.</p>
-                        </Fragment>
+                        </>
                     );
                 } else if (loading) {
                     return <CircularProgress className={ [classes.blockIcon, classes.control] } size={ 100 }/>;
                 } else {
                     return (
-                        <Fragment>
+                        <>
                             <TextField
                                 style={ {
                                     width: '100%'
@@ -115,7 +117,7 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
                                         (starRating === 0 && reviewText.length > 0 ? <span style={ { color: 'red' } }>Choose a star rating.</span> : null)
                                 }
                             </span>
-                        </Fragment>
+                        </>
                     );
                 }
             } }
@@ -123,4 +125,4 @@ const ReviewForm = ({ classes, teacher, onClose, theme }) => {
     );
 };
 
-export default withStyles(styles)(withTheme(ReviewForm));
+export default withStyles(styles)(ReviewForm);

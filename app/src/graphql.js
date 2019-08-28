@@ -99,10 +99,25 @@ const FIND_REVIEW_BY_ID = gql`
     }
 `;
 
+const FIND_LATEST_REVIEWS = gql`
+    query {
+        findManyReview(
+            limit: 5
+            sort: TIMESTAMP_DESC
+        ) {
+            teacher
+            timestamp
+            text
+            rating
+        }
+    }
+`;
+
 export {
     CREATE_REVIEW,
     CREATE_REPORT,
     FIND_REVIEWS,
     LOAD_ADDITIONAL_REVIEWS,
-    FIND_REVIEW_BY_ID
+    FIND_REVIEW_BY_ID,
+    FIND_LATEST_REVIEWS
 };

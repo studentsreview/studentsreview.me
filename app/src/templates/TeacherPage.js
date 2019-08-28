@@ -1,7 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, useTheme } from '@material-ui/core';
+import React, { useEffect, useState } from 'react'
+import { Button, Chip, Grid, Paper, Typography, ClickAwayListener } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
-import { withTheme, withStyles } from '@material-ui/styles';
+import { useTheme, withStyles } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import { Query } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
@@ -33,8 +33,9 @@ import styles from '../styles/styles';
     );
 }
 
-const HeaderCard = withStyles(styles)(withTheme(({ classes, theme, rating, semesters, departments, name }) => {
+const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments, name }) => {
     const [modalExposed, setModalExposed] = useState(false);
+    const theme = useTheme();
 
     return (
         <Paper className={ classes.control }>
@@ -88,7 +89,7 @@ const HeaderCard = withStyles(styles)(withTheme(({ classes, theme, rating, semes
             </div>
         </Paper>
     );
-}));
+});
 
 const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) => {
     const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
@@ -105,7 +106,7 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
     }, [semesterCourses]);
 
     return (
-        <Fragment>
+        <>
             <SemesterSelect
                 semesters={ semesters }
                 value={ semester }
@@ -129,7 +130,7 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
                         />)
                 }
             </ScheduleTable>
-        </Fragment>
+        </>
     );
 });
 
@@ -145,47 +146,49 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
     const width = useWidth();
 
     return (
-        <div className={ classes.root }>
-            <Grid container spacing={ 3 }>
-                <Helmet>
-                    <title>{ name }</title>
-                    <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
-                    <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', name, ...departments] }/>
-                    <script type="application/ld+json">
-                        { JSON.stringify({
-                            '@context': 'https://schema.org',
-                            '@type': 'AggregateRating',
-                            itemReviewed: {
-                                '@type': 'Person',
-                                name,
-                                jobTitle: 'Teacher',
-                                knowsAbout: departments.join(', ')
-                            },
-                            ratingValue: data.srapi.findOneTeacher.rating,
-                            reviewCount: data.srapi.findOneTeacher.reviewCount
-                        }) }
-                    </script>
-                </Helmet>
-                <Grid item xs={ 12 } sm={ 5 }>
-                    <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
-                    { isWidthUp('sm', width) && <Sidebar courses={ courses } semesters={ semesters } location={ location }/> }
+        <>
+            <Helmet>
+                <title>{ name }</title>
+                <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
+                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', name, ...departments] }/>
+                <script type="application/ld+json">
+                    { JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'AggregateRating',
+                        itemReviewed: {
+                            '@type': 'Person',
+                            name,
+                            jobTitle: 'Teacher',
+                            knowsAbout: departments.join(', ')
+                        },
+                        ratingValue: data.srapi.findOneTeacher.rating,
+                        reviewCount: data.srapi.findOneTeacher.reviewCount
+                    }) }
+                </script>
+            </Helmet>
+            <div className={ classes.root }>
+                <Grid container spacing={ 3 }>
+                    <Grid item xs={ 12 } sm={ 5 }>
+                        <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
+                        { isWidthUp('sm', width) && <Sidebar courses={ courses } semesters={ semesters } location={ location }/> }
+                    </Grid>
+                    <Grid item xs={ 12 } sm={ 7 }>
+                        <Query
+                            query={ FIND_REVIEWS }
+                            variables={ { name } }
+                            onCompleted={ data => setRating(data.findOneTeacher.rating) }
+                            notifyOnNetworkStatusChange={ true }
+                        >
+                            { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
+                        </Query>
+                    </Grid>
                 </Grid>
-                <Grid item xs={ 12 } sm={ 7 }>
-                    <Query
-                        query={ FIND_REVIEWS }
-                        variables={ { name } }
-                        onCompleted={ data => setRating(data.findOneTeacher.rating) }
-                        notifyOnNetworkStatusChange={ true }
-                    >
-                        { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
-                    </Query>
-                </Grid>
-            </Grid>
-        </div>
+            </div>
+        </>
     );
 }
 
-export default withStyles(styles)(withTheme(TeacherPage));
+export default withStyles(styles)(TeacherPage);
 
 export const query = graphql`
     query($name: String!) {
