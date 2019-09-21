@@ -56,7 +56,7 @@ const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments
                 />
             </div>
             <Chip
-                label={ `${ semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[semesters.length - 1]) }` }
+                label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
             />
             {
                 departments.map((department, idx) => <DepartmentChip
