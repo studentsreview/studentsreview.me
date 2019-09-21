@@ -10,7 +10,7 @@ const isMigrant = review => new Date(review.timestamp).toISOString() === '0001-0
 const sortSemesters = semesters => semesters.sort((a, b) => {
     a = /(Spring|Fall)(\d{4})/.exec(a);
     b = /(Spring|Fall)(\d{4})/.exec(b);
-    return (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5)) - (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5));
+    return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
 });
 
 const combineStyles = (...styles) => {

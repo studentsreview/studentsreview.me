@@ -97,6 +97,8 @@ for announcer in os.listdir(data_path):
             if all(field == '' for field in data[announcer[:-4]][-1].values()) or all(x == y for (x, y) in data[announcer[:-4]][-1].items()):
                 data[announcer[:-4]].remove(data[announcer[:-4]][-1])
 
+# misc. fixes
+
 for x in range(234, 242):
     data['Fall2014'][x]['room'] = 'Library'
 
@@ -104,6 +106,46 @@ for x in range(301, 303):
     data['Spring2015'][x]['teacher'] = 'Matthew Bell'
 
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
+
+"""
+for i in range(len(data['Fall2018'])):
+    class_ = data['Fall2018'][i]
+    if class_['teacher'] == 'Undetermined':
+        print(i, class_)
+"""
+
+# undetermined fixes
+
+data['Fall2018'][4]['teacher'] = 'Louis Grice'
+data['Fall2018'][9]['teacher'] = 'Louis Grice'
+data['Fall2018'][21]['teacher'] = 'Louis Grice'
+data['Fall2018'][32]['teacher'] = 'Louis Grice'
+data['Fall2018'][38]['teacher'] = 'Louis Grice'
+
+data['Fall2018'][1]['teacher'] = 'Alex Cheng'
+data['Fall2018'][11]['teacher'] = 'Alex Cheng'
+data['Fall2018'][17]['teacher'] = 'Alex Cheng'
+data['Fall2018'][26]['teacher'] = 'Alex Cheng'
+data['Fall2018'][29]['teacher'] = 'Alex Cheng'
+
+data['Fall2018'][315]['teacher'] = 'Kay Petrini'
+data['Fall2018'][316]['teacher'] = 'Kay Petrini'
+data['Fall2018'][158]['teacher'] = 'Kay Petrini'
+data['Fall2018'][364]['teacher'] = 'Kay Petrini'
+
+data['Fall2018'][99]['teacher'] = 'Raymond Chan'
+data['Fall2018'][100]['teacher'] = 'Raymond Chan'
+
+data['Fall2019'][333]['teacher'] = 'Christopher Watters'
+data['Fall2019'][339]['teacher'] = 'Christopher Watters'
+data['Fall2019'][374]['teacher'] = 'Christopher Watters'
+data['Fall2019'][385]['teacher'] = 'Christopher Watters'
+
+data['Fall2019'][541]['teacher'] = 'Cody Mitcheltree'
+data['Fall2019'][543]['teacher'] = 'Cody Mitcheltree'
+data['Fall2019'][546]['teacher'] = 'Cody Mitcheltree'
+data['Fall2019'][547]['teacher'] = 'Cody Mitcheltree'
+data['Fall2019'][549]['teacher'] = 'Cody Mitcheltree'
 
 teachers_to_insert = []
 courses_to_insert = []
