@@ -96,8 +96,8 @@ const CoursesPage = ({ classes, data }) => {
                                                 >{ course.name }</TableCell>
                                                 <TableCell>{ (() => {
                                                     const semesters = sortSemesters(course.semesters);
-                                                    const start = semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014';
-                                                    const end = splitSemester(semesters[semesters.length - 1]);
+                                                    const start = semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014';
+                                                    const end = splitSemester(semesters[0]);
                                                     return `${ start } - ${ end }`;
                                                 })() }</TableCell>
                                             </TableRow>
