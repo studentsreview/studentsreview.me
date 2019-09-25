@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Typography, Grid, Divider } from '@material-ui/core';
 import { withStyles, useTheme } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
@@ -6,17 +6,19 @@ import { Query } from 'react-apollo';
 import Review from '../components/Review';
 
 import { graphql, prefetchPathname } from 'gatsby';
-import { Link, navigate } from '@reach/router'
+import { navigate } from '@reach/router'
 import slugify from 'slugify';
 import { FIND_LATEST_REVIEWS } from '../graphql'
 
 import styles from '../styles/styles';
 
 const IndexPage = ({ classes, data }) => {
+    const [pathsToFetch, setPathsToFetch] = useState(['/teachers', '/courses']);
     useEffect(() => {
-        prefetchPathname('/teachers');
-        prefetchPathname('/courses');
-    }, []);
+        for (let pathName of pathsToFetch) {
+            prefetchPathname(pathName);
+        }
+    }, pathsToFetch);
 
     const theme = useTheme();
 
@@ -41,7 +43,11 @@ const IndexPage = ({ classes, data }) => {
                 </Typography>
             </Grid>
             <Grid item xs={ 12 } style={ { marginLeft: theme.spacing(5), marginRight: theme.spacing(5) } }>
-                <Query query={ FIND_LATEST_REVIEWS }>
+                <Query query={ FIND_LATEST_REVIEWS } onCompleted={ data =>
+                    setPathsToFetch(
+                        pathsToFetch.concat(data.findManyReview.map(review => `/teachers/${ slugify(review.teacher, { lower: true }) }`))
+                    ) }
+                >
                     { ({ data, loading }) => {
                         if (loading) {
                             return (
@@ -55,11 +61,7 @@ const IndexPage = ({ classes, data }) => {
                                 <>
                                     <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                                     { data.findManyReview
-                                        .map((review, idx) => (
-                                            <Link to={ `/teachers/${ slugify(review.teacher, { lower: true }) }` }>
-                                                <Review key={ idx } review={ review } teacher={ review.teacher }/>
-                                            </Link>
-                                        ))
+                                        .map((review, idx) => <Review key={ idx } review={ review } teacher={ review.teacher }/>)
                                         .reduce((acc, cur) => [acc, <Divider/>, cur]) }
                                 </>
                             );

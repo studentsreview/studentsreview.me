@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     ClickAwayListener,
     IconButton,
@@ -21,7 +21,7 @@ import { hashReview, isMigrant } from '../utils';
 
 import styles from '../styles/styles';
 
-const Review = ({ classes, review, teacher, selected }) => {
+const Review = ({ classes, review, teacher, selected, onClick }) => {
     const anchorEl = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [modalExposed, setModalExposed] = useState(false);
@@ -84,24 +84,26 @@ const Review = ({ classes, review, teacher, selected }) => {
                     </Paper>
                 </ClickAwayListener>
             </Popper>
-            {
-                !isMigrant(review) ? <Fragment>
-                    <StarRatings
-                        rating={ review.rating }
-                        starRatedColor='gold'
-                        starHoverColor='gold'
-                        numberOfStars={ 5 }
-                        starDimension={ theme.spacing(2.5) }
-                        starSpacing={ theme.spacing(0.25) }
-                    />
-                    <Typography variant='caption' style={ {
-                        marginLeft: theme.spacing(0.5)
-                    } }>{ moment(review.timestamp).format('MMM Do YYYY') }</Typography>
-                </Fragment> : <Typography variant='caption'>Restored from ratemyteachers.com</Typography>
-            }
-            <Typography variant='body1'>
-                { review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '') }
-            </Typography>
+            <div onClick={ () => typeof onClick === 'function' ? onClick() : null }>
+                {
+                    !isMigrant(review) ? <>
+                        <StarRatings
+                            rating={ review.rating }
+                            starRatedColor='gold'
+                            starHoverColor='gold'
+                            numberOfStars={ 5 }
+                            starDimension={ theme.spacing(2.5) }
+                            starSpacing={ theme.spacing(0.25) }
+                        />
+                        <Typography variant='caption' style={ {
+                            marginLeft: theme.spacing(0.5)
+                        } }>{ moment(review.timestamp).format('MMM Do YYYY') }</Typography>
+                    </> : <Typography variant='caption'>Restored from ratemyteachers.com</Typography>
+                }
+                <Typography variant='body1'>
+                    { review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '') }
+                </Typography>
+            </div>
             <Modal shown={ modalExposed }>
                 <Grid item xs={ 12 } sm={ 6 }>
                     <ClickAwayListener onClickAway={ () => setModalExposed(false) }>
