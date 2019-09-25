@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, CircularProgress, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
 import { Check, Close } from '@material-ui/icons'
 import { withTheme, withStyles } from '@material-ui/styles';
@@ -30,29 +30,29 @@ const ReportForm = ({ classes, review, teacher, onClose }) => {
             { (createReport, { data, error, loading }) => {
                 if (data) {
                     return (
-                        <Fragment>
+                        <>
                             <Check className={ classes.blockIcon } htmlColor='green'/>
                             <p style={ {
                                 textAlign: 'center',
                                 color: 'green'
                             } }>Report submitted successfully!</p>
-                        </Fragment>
+                        </>
                     );
                 } else if (error) {
                     return (
-                        <Fragment>
+                        <>
                             <Close className={ classes.blockIcon } htmlColor='red'/>
                             <p style={ {
                                 textAlign: 'center',
                                 color: 'red'
                             } }>Unable to submit report.</p>
-                        </Fragment>
+                        </>
                     );
                 } else if (loading) {
                     return <CircularProgress className={ [classes.blockIcon, classes.control] } size={ 100 }/>;
                 } else {
                     return (
-                        <Fragment>
+                        <>
                             <RadioGroup value={ value } onChange={ e => setValue(e.target.value) }>
                                 <FormControlLabel value='inappropriate' control={ <Radio/> } label='Inappropriate / Hateful Content'/>
                                 <FormControlLabel value='uninformative' control={ <Radio/> } label='Uninformative / Unconstructive Content'/>
@@ -63,7 +63,7 @@ const ReportForm = ({ classes, review, teacher, onClose }) => {
                                     review: getReviewId(review, teacher)
                                 }
                             }) }>Submit</Button>
-                        </Fragment>
+                        </>
                     );
                 }
             } }

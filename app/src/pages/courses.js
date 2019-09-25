@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Checkbox,
     FormGroup,
@@ -25,7 +25,7 @@ const CollapsingTable = ({ title, table, initialValue }) => {
     const [collapsed, setCollapsed] = useState(initialValue || true);
 
     return (
-        <Fragment>
+        <>
             <Typography variant='h6' style={ { textAlign: 'center' } }>
                 <IconButton onClick={ () => setCollapsed(!collapsed) }>
                     { collapsed ? <AddBox/> : <IndeterminateCheckBox/> }
@@ -34,7 +34,7 @@ const CollapsingTable = ({ title, table, initialValue }) => {
             {
                 collapsed ? null : table
             }
-        </Fragment>
+        </>
     );
 }
 
