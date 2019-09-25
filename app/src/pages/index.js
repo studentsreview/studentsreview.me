@@ -61,7 +61,8 @@ const IndexPage = ({ classes, data }) => {
                                 <>
                                     <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                                     { data.findManyReview
-                                        .map((review, idx) => <Review key={ idx } review={ review } teacher={ review.teacher }/>)
+                                        .map((review, idx) =>
+                                            <Review onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } key={ idx } review={ review } teacher={ review.teacher }/>)
                                         .reduce((acc, cur) => [acc, <Divider/>, cur]) }
                                 </>
                             );

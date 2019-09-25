@@ -84,7 +84,10 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
                     </Paper>
                 </ClickAwayListener>
             </Popper>
-            <div onClick={ () => typeof onClick === 'function' ? onClick() : null }>
+            <div
+                style={ { cursor: typeof onClick === 'function' ? 'pointer' : null } }
+                onClick={ () => typeof onClick === 'function' ? onClick() : null }
+            >
                 {
                     !isMigrant(review) ? <>
                         <StarRatings
