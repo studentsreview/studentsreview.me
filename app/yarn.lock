@@ -11642,10 +11642,9 @@ react-side-effect@^1.1.0:
     exenv "^1.2.1"
     shallowequal "^1.0.1"
 
-react-star-ratings@^2.3.0:
+"react-star-ratings@https://github.com/kajchang/react-star-ratings.git":
   version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-star-ratings/-/react-star-ratings-2.3.0.tgz#311a68f8f44492439a5b306ed743e63a63fe0fa7"
-  integrity sha512-34Z/oFNDRRn4ZcX7F3t9ccnpo7SQ32gD/vsusQOBc6B6vlqaGR6tke1/Yx3jTDjemKRSmXqhKgpPTR7/JAXq6A==
+  resolved "https://github.com/kajchang/react-star-ratings.git#69d794c8a13402b576a8cddd314a29c8d77b32b3"
   dependencies:
     classnames "^2.2.1"
     prop-types "^15.6.0"
