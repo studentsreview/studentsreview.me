@@ -42,5 +42,6 @@ module.exports = {
         `gatsby-plugin-favicon`,
         `gatsby-plugin-sharp`,
         `gatsby-plugin-offline`
-    ]
+    ],
+    siteMetadata: require('../config/config')
 }

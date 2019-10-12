@@ -1,0 +1,6 @@
+{
+  "reviews": {
+    "minCharacters": 50,
+    "maxCharacters": 1000
+  }
+}

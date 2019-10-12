@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, TextField, CircularProgress } from '@material-ui/core';
+import { Button, TextField, Typography, CircularProgress } from '@material-ui/core';
 import { Check, Close } from '@material-ui/icons'
 import { useTheme, withStyles } from '@material-ui/styles';
 import { Mutation } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 
+import { useStaticQuery, graphql } from 'gatsby';
 import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
 
 import styles from '../styles/styles';
@@ -14,8 +15,28 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
     const [starRating, setStarRating] = useState(0);
 
     const theme = useTheme();
+    const data = useStaticQuery(graphql`
+        query {
+            site {
+                siteMetadata {
+                    reviews {
+                        minCharacters
+                        maxCharacters
+                    }
+                }
+            }
+        }
+    `);
 
-    const minCharacters = 50;
+    const minCharacters = data.site.siteMetadata.reviews.minCharacters;
+    const maxCharacters = data.site.siteMetadata.reviews.maxCharacters;
+
+    const inputRestrictions = [
+        [reviewText.length < minCharacters, `Reviews must be at least ${ minCharacters } characters.`],
+        [reviewText.length > maxCharacters, `Reviews can not be more than ${ maxCharacters } characters.`],
+        [starRating === 0, 'Choose a star rating.']
+    ];
+    const restriction = inputRestrictions.find(restriction => restriction[0]);
 
     const keyDownHandler = e => {
         if (e.key === 'Escape') {
@@ -29,7 +50,7 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
         window.addEventListener('keydown', keyDownHandler);
         return () => window.removeEventListener('keydown', keyDownHandler);
     });
-    
+
     return (
         <Mutation
             mutation={ CREATE_REVIEW }
@@ -111,12 +132,7 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                                 }
                             }) }>Submit Review</Button>
                             <br/>
-                                <span style={ { fontSize: 12 } }>
-                                {
-                                    reviewText.length < minCharacters && reviewText.length > 0 ? <span style={ { color: 'red' } }>Reviews must be at least { minCharacters } characters.</span> :
-                                        (starRating === 0 && reviewText.length > 0 ? <span style={ { color: 'red' } }>Choose a star rating.</span> : null)
-                                }
-                            </span>
+                            { reviewText.length > 0 && restriction ? <Typography variant='body1' style={ { fontSize: 12, color: 'red' } }>{ restriction[1] }</Typography> : null }
                         </>
                     );
                 }
