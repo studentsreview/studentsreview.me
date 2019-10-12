@@ -26,6 +26,10 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [modalExposed, setModalExposed] = useState(false);
 
+    const truncateLength = 500;
+    const fullText = review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '');
+    const [shownText, setShownText] = useState(fullText.slice(0, truncateLength + 1));
+
     useEffect(() => {
         if (selected) {
             anchorEl.current.scrollIntoView({
@@ -104,7 +108,11 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
                     </> : <Typography variant='caption'>Restored from ratemyteachers.com</Typography>
                 }
                 <Typography variant='body1'>
-                    { review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '') }
+                    { shownText }{ shownText.length < fullText.length ? '…' : '' }
+                    { shownText.length < fullText.length ?
+                        <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Expand</p> : (
+                            shownText.length > truncateLength ? <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Collapse</p> : null
+                        ) }
                 </Typography>
             </div>
             <Modal shown={ modalExposed }>

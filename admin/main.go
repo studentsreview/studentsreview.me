@@ -74,7 +74,15 @@ func main() {
 		reportsMenu = append(reportsMenu, Handler{name: "Back", handler: func() { setMenu(mainMenu) }})
 		setMenu(reportsMenu)
 	}})
-	mainMenu = append(mainMenu, Handler{name: "Reviews", handler: func() {}})
+	mainMenu = append(mainMenu, Handler{name: "Reviews", handler: func() {
+		reviewsMenu := make(Menu, 0)
+		reviewsMenu = append(reviewsMenu, Handler{name: "Back", handler: func() { setMenu(mainMenu) }})
+		setMenu(reviewsMenu)
+	}})
+	mainMenu = append(mainMenu, Handler{name: "Exit", handler: func() {
+		termbox.Close()
+		os.Exit(0)
+	}})
 	setMenu(mainMenu)
 
 	for {
