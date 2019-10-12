@@ -109,12 +109,14 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
                 }
                 <Typography variant='body1'>
                     { shownText }{ shownText.length < fullText.length ? '…' : '' }
-                    { shownText.length < fullText.length ?
-                        <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Expand</p> : (
-                            shownText.length > truncateLength ? <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Collapse</p> : null
-                        ) }
                 </Typography>
             </div>
+            <Typography variant='body1'>
+                { shownText.length < fullText.length ?
+                    <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Expand</p> : (
+                        shownText.length > truncateLength ? <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Collapse</p> : null
+                    ) }
+            </Typography>
             <Modal shown={ modalExposed }>
                 <Grid item xs={ 12 } sm={ 6 }>
                     <ClickAwayListener onClickAway={ () => setModalExposed(false) }>
