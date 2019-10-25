@@ -39,8 +39,13 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
         return () => window.removeEventListener('popstate', popStateHandler);
     });
 
-    if (reviews && reviews.items.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)) !== -1) {
-        reviews.items.splice(reviews.items.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)), 1);
+    let filteredReviews;
+
+    if (reviews) {
+        filteredReviews = reviews.items.slice();
+        if (filteredReviews.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)) !== -1) {
+            filteredReviews.splice(reviews.items.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)), 1);
+        }
     }
 
     return (
@@ -85,7 +90,7 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             <Typography innerRef={ headerRef } variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>Reviews</Typography>
             { linkedReview && <Review review={ linkedReview } teacher={ teacher } selected/> }
             {
-                reviews && reviews.items.length > 0 ? reviews.items.map((review, idx) =>
+                reviews && filteredReviews.length > 0 ? filteredReviews.map((review, idx) =>
                         <Review key={ idx } review={ review } teacher={ teacher }/>
                 ).reduce((acc, cur) => [acc, <Divider key={ cur.length + 4 }/>, cur]) : <p className={ classes.control } style={ { textAlign: 'center' } }>No Reviews Available.</p>
             }

@@ -30,6 +30,10 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
     const fullText = review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '');
     const [shownText, setShownText] = useState(fullText.slice(0, truncateLength + 1));
 
+    if (!fullText.includes(shownText)) {
+        setShownText(fullText.slice(0, truncateLength + 1));
+    }
+
     useEffect(() => {
         if (selected) {
             anchorEl.current.scrollIntoView({
