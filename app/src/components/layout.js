@@ -13,7 +13,12 @@ import { ApolloProvider } from 'react-apollo';
 import fetch from 'isomorphic-fetch';
 import smoothscroll from 'smoothscroll-polyfill';
 
-typeof window !== 'undefined' && smoothscroll.polyfill();
+if (typeof window !== 'undefined') {
+    smoothscroll.polyfill();
+    require('mermaid').initialize({
+        startOnLoad: true
+    });
+}
 
 const theme = createMuiTheme({
     typography: {

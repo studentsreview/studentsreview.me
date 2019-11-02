@@ -15,7 +15,7 @@ import { FIND_REVIEWS } from '../graphql';
 
 import styles from '../styles/styles';
 
-const TeacherPage = ({ data, pageContext, classes, location, client }) => {
+const CoursePage = ({ data, pageContext, classes, location, client }) => {
     const { name } = pageContext;
 
     const courses = data.srapi.findManyClass;
@@ -146,7 +146,7 @@ const TeacherPage = ({ data, pageContext, classes, location, client }) => {
     );
 }
 
-export default withStyles(styles)(withApollo(TeacherPage));
+export default withStyles(styles)(withApollo(CoursePage));
 
 export const query = graphql`
     query($name: String!) {
