@@ -12,7 +12,7 @@
   "AP Calculus AB": ["Algebra 2 and Pre-Calculus", "Pre-Calculus", "Pre-Calculus Honors"],
   "AP Calculus BC": ["Algebra 2 and Pre-Calculus", "Pre-Calculus", "Pre-Calculus Honors"],
   "Biology": [],
-  "AP Biology": ["Biology"],
+  "AP Biology": ["Chemistry", "Chemistry Honors", "Biology"],
   "AP Physics 1": ["Biology"],
   "AP Physics 2": ["AP Physics 1"],
   "AP Physics C": ["AP Physics 2"],
@@ -20,9 +20,9 @@
   "Chemistry": ["Biology"],
   "Chemistry Honors": ["Biology"],
   "AP Chemistry": ["Chemistry", "Chemistry Honors"],
-  "Marine Science": ["Junior / Senior"],
-  "AP Environmental Science": ["Junior / Senior"],
-  "Principles of Biotech": ["Junior / Senior"],
-  "Organic Chemistry": ["Junior / Senior"],
-  "Physiology": ["Junior / Senior"]
+  "English 1": [],
+  "English 2": ["English 1"],
+  "Critical Writing": ["English 2"],
+  "AP English Language and Composition": ["English 2"],
+  "AP English Literature and Composition": ["AP English Language and Composition"]
 }
