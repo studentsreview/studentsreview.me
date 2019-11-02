@@ -5,20 +5,22 @@ import { withStyles } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
 import Mermaid from '../components/Mermaid';
 
-import styles from '../styles/styles';
-import { prefetchPathname, navigate } from 'gatsby';
+import { graphql, prefetchPathname, navigate } from 'gatsby';
 import slugify from 'slugify';
 
-const alpha = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
-const diagrams = {
-    'Computer Science': {
-        'Computer Programming': [],
-        'AP Principles of Computer Science': [],
-        'AP Computer Science': ['Computer Programming', 'AP Principles of Computer Science']
-    }
-};
+import styles from '../styles/styles';
 
-const CoursesPage = ({ classes }) => {
+const alphabet = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
+
+const CoursesPage = ({ classes, data }) => {
+    const diagrams = data.srapi.findManyCourse.reduce((acc, cur) => {
+        if (!(cur.department in acc)) {
+            acc[cur.department] = {};
+        }
+        acc[cur.department][cur.name] = cur.prerequisites;
+        return acc;
+    }, {});
+
     return (
         <>
             <Helmet>
@@ -33,12 +35,12 @@ const CoursesPage = ({ classes }) => {
                             <Typography variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>{ diagram }</Typography>
                             <Mermaid
                                 onClick={ Object.keys(diagrams[diagram]).reduce((acc, cur, idx) => {
-                                    acc[alpha.charAt(idx)] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
+                                    acc[alphabet.charAt(idx)] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
                                     return acc;
                                 }, {}) }
                                 chart={
                                     ['graph LR;'].concat(Object.keys(diagrams[diagram]).reduce((acc, cur, idx) =>
-                                            acc.concat(diagrams[diagram][cur].map(course => `${ alpha.charAt(Object.keys(diagrams[diagram]).indexOf(course)) }[${ course }] --> ${ alpha.charAt(idx) }[${ cur }];`)),
+                                            acc.concat(diagrams[diagram][cur].map(course => `${ alphabet.charAt(Object.keys(diagrams[diagram]).indexOf(course)) }[${ course }] --> ${ alphabet.charAt(idx) }[${ cur }];`)),
                                         [])).join('\n')
                                 }
                             />
@@ -49,5 +51,25 @@ const CoursesPage = ({ classes }) => {
         </>
     );
 }
+
+export const query = graphql`
+    query {
+        srapi {
+            findManyCourse(
+                filter: {
+                    _operators: {
+                        semesters: {
+                            in: "Fall2019"
+                        }
+                    }
+                }
+            ) {
+                name
+                prerequisites
+                department
+            }
+        }
+    }
+`;
 
 export default withStyles(styles)(CoursesPage);

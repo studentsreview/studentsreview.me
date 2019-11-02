@@ -42,7 +42,7 @@ header_on_every_page = {
 
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
 for announcer in os.listdir(data_path):
-    if announcer == 'teachers.json':
+    if announcer == 'teachers.json' or announcer == 'prerequisites.json':
         continue
     print(announcer)
     data[announcer[:-4]] = []
@@ -218,6 +218,11 @@ for semester in data:
                 'department': department,
                 'semesters': [class_['semester']]
             })
+
+with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'prerequisites.json')) as prerequisites_file:
+    prerequisites_data = json.load(prerequisites_file)
+    for course in courses_to_insert:
+        course['prerequisites'] = prerequisites_data.get(course['name'], [])
 
 courses.insert_many(courses_to_insert)
 classes.insert_many(classes_to_insert)
