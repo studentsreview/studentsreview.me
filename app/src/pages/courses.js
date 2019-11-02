@@ -31,16 +31,16 @@ const CoursesPage = ({ classes, data }) => {
             <div className={ classes.root }>
                 <Grid container spacing={ 3 }>
                     {
-                        Object.keys(diagrams).map(diagram => <Grid item xs={ 12 } sm={ 6 }>
+                        Object.keys(diagrams).map((diagram, idx) => <Grid key={ idx } item xs={ 12 } sm={ 6 }>
                             <Typography variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>{ diagram }</Typography>
                             <Mermaid
                                 onClick={ Object.keys(diagrams[diagram]).reduce((acc, cur, idx) => {
-                                    acc[alphabet.charAt(idx)] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
+                                    acc[slugify(diagram).toUpperCase().concat(alphabet.charAt(idx))] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
                                     return acc;
                                 }, {}) }
                                 chart={
                                     ['graph LR;'].concat(Object.keys(diagrams[diagram]).reduce((acc, cur, idx) =>
-                                            acc.concat(diagrams[diagram][cur].map(course => `${ alphabet.charAt(Object.keys(diagrams[diagram]).indexOf(course)) }[${ course }] --> ${ alphabet.charAt(idx) }[${ cur }];`)),
+                                            acc.concat(diagrams[diagram][cur].map(course => `${ slugify(diagram).toUpperCase().concat(alphabet.charAt(Object.keys(diagrams[diagram]).indexOf(course))) }[${ course }] --> ${ slugify(diagram).toUpperCase().concat(alphabet.charAt(idx)) }[${ cur }];`)),
                                         [])).join('\n')
                                 }
                             />

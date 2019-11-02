@@ -107,12 +107,12 @@ for x in range(301, 303):
 
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
-
+"""
 for i in range(len(data['Fall2018'])):
     class_ = data['Fall2018'][i]
     if class_['teacher'] == 'Undetermined':
         print(i, class_)
-
+"""
 
 # undetermined fixes
 
