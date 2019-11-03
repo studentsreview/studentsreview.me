@@ -84,7 +84,7 @@ const CoursesPage = ({ classes, data }) => {
                             </Typography>
                             <Mermaid
                                 onClick={ Object.keys(diagramData[diagram]).reduce((acc, cur, idx) => {
-                                    prefetchPathname(`/courses/${ slugify(cur, { lower: true }) }`);
+                                    typeof window !== 'undefined' && prefetchPathname(`/courses/${ slugify(cur, { lower: true }) }`);
                                     acc[slugify(diagram).toUpperCase().concat(alphabet.charAt(idx))] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
                                     return acc;
                                 }, {}) }
