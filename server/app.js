@@ -60,18 +60,19 @@ if (config.ssl) {
     https_server.listen({ port: 443 }, () =>
         console.log(
             '🚀 HTTPS server ready at',
-            `https://${config.hostname}:443${apollo.graphqlPath}`
+            `https://${ config.hostname }:443${ apollo.graphqlPath }`
         )
     );
 }
 
 server = http.createServer(config.ssl ? (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
+    res.writeHead(301, { Location: 'https://' + req.headers['host'] + req.url });
+    res.end();
 } : app);
 
 server.listen({ port: config.port }, () =>
     console.log(
         '🚀 HTTP Server ready at',
-        `http://${config.hostname}:${ config.port }${apollo.graphqlPath}`
+        `http://${ config.hostname }:${ config.port }${ apollo.graphqlPath }`
     )
 );
