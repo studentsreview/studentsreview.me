@@ -88,7 +88,7 @@ const CoursesPage = ({ classes, data }) => {
                                     acc[slugify(diagram).toUpperCase().concat(alphabet.charAt(idx))] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
                                     return acc;
                                 }, {}) }
-                                chart={
+                                content={
                                     ['graph TD;'].concat(Object.keys(diagramData[diagram]).reduce((acc, cur, idx) =>
                                             acc.concat(diagramData[diagram][cur].map(course => `${ slugify(diagram).toUpperCase().concat(alphabet.charAt(Object.keys(diagramData[diagram]).indexOf(course))) }[${ course }] --> ${ slugify(diagram).toUpperCase().concat(alphabet.charAt(idx)) }[${ cur }];`)),
                                         [])).join('\n')
