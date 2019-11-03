@@ -1,14 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Typography, Grid } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
+import { createStyles, withStyles } from '@material-ui/styles'
 
 import { Helmet } from 'react-helmet';
+import { Link } from '@material-ui/icons';
 import Mermaid from '../components/Mermaid';
 
 import { graphql, prefetchPathname, navigate } from 'gatsby';
+import { combineStyles, copyToClipboard } from '../utils'
 import slugify from 'slugify';
 
 import styles from '../styles/styles';
+
+const styles0 = createStyles({
+    icon: {
+        fill: 'rgb(200, 200, 200)',
+        cursor: 'pointer',
+        '&:hover': {
+            fill: 'black'
+        }
+    }
+});
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
 
@@ -28,6 +40,22 @@ const CoursesPage = ({ classes, data }) => {
         'Computer Science': '* Students can skip AP Computer Science prerequisites if they have previous experience'
     }
 
+    const popStateHandler = e => {
+        console.log('hi');
+        if (Object.keys(diagrams).findIndex(diagram => slugify(diagram, { lower: true }) === e.target.location.hash.substr(1)) !== -1) {
+            document.querySelector(`.${ e.target.location.hash.substr(1) }`).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    useEffect(() => {
+        popStateHandler({ target: window });
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('popstate', popStateHandler);
+        return () => window.removeEventListener('popstate', popStateHandler);
+    });
+
     return (
         <>
             <Helmet>
@@ -39,9 +67,24 @@ const CoursesPage = ({ classes, data }) => {
                 <Grid container spacing={ 3 }>
                     {
                         Object.keys(diagrams).map((diagram, idx) => <Grid key={ idx } item xs={ 12 } sm={ 6 }>
-                            <Typography variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>{ diagram }</Typography>
+                            <Typography variant='h6' className={ [classes.control, slugify(diagram, { lower: true })] } style={ { textAlign: 'center' } }>
+                                <Link className={ classes.icon } fontSize='small' onClick={ e => {
+                                    copyToClipboard(document.querySelector(`.${ slugify(diagram, { lower: true }) }`), `${ window.location.origin }/courses#${ slugify(diagram, { lower: true }) }`);
+                                    let hash = `#${ slugify(diagram, { lower: true }) }`;
+                                    if (hash !== window.location.hash) {
+                                        if (window.history.pushState) {
+                                            window.history.pushState(null, null, hash);
+                                            popStateHandler({ target: window });
+                                        } else {
+                                            window.location.hash = hash;
+                                        }
+                                    }
+                                }
+                                }/>{ diagram }
+                            </Typography>
                             <Mermaid
                                 onClick={ Object.keys(diagramData[diagram]).reduce((acc, cur, idx) => {
+                                    prefetchPathname(`/courses/${ slugify(cur, { lower: true }) }`);
                                     acc[slugify(diagram).toUpperCase().concat(alphabet.charAt(idx))] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
                                     return acc;
                                 }, {}) }
@@ -80,4 +123,4 @@ export const query = graphql`
     }
 `;
 
-export default withStyles(styles)(CoursesPage);
+export default withStyles(combineStyles(styles, styles0))(CoursesPage);
