@@ -22,9 +22,7 @@ const Mermaid = ({ content, onClick }) => {
             let el = document.getElementById(key);
             if (el !== null) {
                 el.addEventListener('click', () => value(key));
-                if (!el.classList.contains('clickable')) {
-                    el.classList.add('clickable');
-                }
+                el.classList.add('clickable');
             }
         }
     });

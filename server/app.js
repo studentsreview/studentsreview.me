@@ -65,8 +65,9 @@ if (config.ssl) {
     );
 }
 
-server = http.createServer(app);
-apollo.installSubscriptionHandlers(server);
+server = http.createServer(config.ssl ? (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+} : app);
 
 server.listen({ port: config.port }, () =>
     console.log(
