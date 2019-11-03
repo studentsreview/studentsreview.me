@@ -1,64 +1,60 @@
-import React, { useEffect, useState } from 'react'
-import {
-    Checkbox,
-    FormGroup,
-    FormControlLabel,
-    Divider,
-    IconButton,
-    Table,
-    TableHead,
-    TableBody,
-    TableRow,
-    TableCell,
-    Typography
-} from '@material-ui/core';
-import { IndeterminateCheckBox, AddBox } from '@material-ui/icons';
-import { withStyles } from '@material-ui/styles';
+import React, { useEffect } from 'react'
+import { Typography, Grid } from '@material-ui/core';
+import { createStyles, withStyles } from '@material-ui/styles'
+
+import { Helmet } from 'react-helmet';
+import { Link } from '@material-ui/icons';
+import Mermaid from '../components/Mermaid';
+
+import { graphql, prefetchPathname, navigate } from 'gatsby';
+import { combineStyles, copyToClipboard } from '../utils'
+import slugify from 'slugify';
 
 import styles from '../styles/styles';
-import { graphql, prefetchPathname, navigate } from 'gatsby';
-import slugify from 'slugify';
-import { getCurrentSemester, sortSemesters, splitSemester } from '../utils'
-import { Helmet } from 'react-helmet'
 
-const CollapsingTable = ({ title, table, initialValue }) => {
-    const [collapsed, setCollapsed] = useState(initialValue || true);
+const styles0 = createStyles({
+    icon: {
+        fill: 'rgb(200, 200, 200)',
+        cursor: 'pointer',
+        '&:hover': {
+            fill: 'black'
+        }
+    }
+});
 
-    return (
-        <>
-            <Typography variant='h6' style={ { textAlign: 'center' } }>
-                <IconButton onClick={ () => setCollapsed(!collapsed) }>
-                    { collapsed ? <AddBox/> : <IndeterminateCheckBox/> }
-                </IconButton>{ title }
-            </Typography>
-            {
-                collapsed ? null : table
-            }
-        </>
-    );
-}
+const alphabet = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase();
 
 const CoursesPage = ({ classes, data }) => {
-    // too much?
-    useEffect(() => {
-        for (let course of data.srapi.findManyCourse) {
-            prefetchPathname(`/courses/${ slugify(course.name, { lower: true }) }`);
+    const diagramData = data.srapi.findManyCourse.reduce((acc, cur) => {
+        if (!(cur.department in acc)) {
+            acc[cur.department] = {};
         }
-    }, []);
-
-    const [currentCoursesFilter, setCurrentCoursesFilter] = useState(true);
-
-    const courses = data.srapi.findManyCourse.filter(course =>
-        !currentCoursesFilter || course.semesters.includes(getCurrentSemester()));
-
-    const courses_by_department = courses.reduce((acc, cur) => {
-        if (Object.keys(acc).includes(cur.department)) {
-            acc[cur.department].push(cur);
-        } else {
-            acc[cur.department] = [cur];
-        }
+        acc[cur.department][cur.name] = cur.prerequisites;
         return acc;
     }, {});
+
+    const diagrams = {
+        Math: '* Incoming freshmen can take the MVT to skip Algebra 1',
+        Science: `* Juniors and Seniors can also take electives not part of the 3 "main" sciences (${ data.srapi.findManyCourse.filter(course => course.department === 'Science' && course.prerequisites.length === 0 && course.name !== 'Biology').map(course => course.name).join(', ') })`,
+        English: `* Juniors and Seniors not taking AP Englishes or Critical Writing (1 semester required for non-AP Juniors) take English electives (${ data.srapi.findManyCourse.filter(course => course.department === 'English' && course.prerequisites.length === 0 && !(['English 1', 'English Support', 'Communication and Writing'].includes(course.name))).map(course => course.name).join(', ') })`,
+        'Computer Science': '* Students can skip AP Computer Science prerequisites if they have previous experience'
+    }
+
+    const popStateHandler = e => {
+        console.log('hi');
+        if (Object.keys(diagrams).findIndex(diagram => slugify(diagram, { lower: true }) === e.target.location.hash.substr(1)) !== -1) {
+            document.querySelector(`.${ e.target.location.hash.substr(1) }`).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    useEffect(() => {
+        popStateHandler({ target: window });
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('popstate', popStateHandler);
+        return () => window.removeEventListener('popstate', popStateHandler);
+    });
 
     return (
         <>
@@ -68,46 +64,40 @@ const CoursesPage = ({ classes, data }) => {
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>
-                <FormGroup row>
-                    <FormControlLabel
-                        control={ <Checkbox checked={ currentCoursesFilter } onChange={ e => setCurrentCoursesFilter(e.target.checked) }/> }
-                        label='Current Courses Only'
-                    />
-                </FormGroup>
-                {
-                    Object.keys(courses_by_department).sort().map((department, idx) => (
-                        <CollapsingTable
-                            key={ idx }
-                            title={ department }
-                            table={ <Table size='small'>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Years</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {
-                                        courses_by_department[department].map((course, idx) => (
-                                            <TableRow key={ idx }>
-                                                <TableCell
-                                                    style={ { cursor: 'pointer', width: '50%' } }
-                                                    onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`) }
-                                                >{ course.name }</TableCell>
-                                                <TableCell>{ (() => {
-                                                    const semesters = sortSemesters(course.semesters);
-                                                    const start = semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014';
-                                                    const end = splitSemester(semesters[0]);
-                                                    return `${ start } - ${ end }`;
-                                                })() }</TableCell>
-                                            </TableRow>
-                                        ))
+                <Grid container spacing={ 3 }>
+                    {
+                        Object.keys(diagrams).map((diagram, idx) => <Grid key={ idx } item xs={ 12 } sm={ 6 }>
+                            <Typography variant='h6' className={ [classes.control, slugify(diagram, { lower: true })] } style={ { textAlign: 'center' } }>
+                                <Link className={ classes.icon } fontSize='small' onClick={ e => {
+                                    copyToClipboard(document.querySelector(`.${ slugify(diagram, { lower: true }) }`), `${ window.location.origin }/courses#${ slugify(diagram, { lower: true }) }`);
+                                    let hash = `#${ slugify(diagram, { lower: true }) }`;
+                                    if (hash !== window.location.hash) {
+                                        if (window.history.pushState) {
+                                            window.history.pushState(null, null, hash);
+                                            popStateHandler({ target: window });
+                                        } else {
+                                            window.location.hash = hash;
+                                        }
                                     }
-                                </TableBody>
-                            </Table> }
-                        />
-                    )).reduce((acc, cur) => [acc, <Divider/>, cur])
-                }
+                                }
+                                }/>{ diagram }
+                            </Typography>
+                            <Mermaid
+                                onClick={ Object.keys(diagramData[diagram]).reduce((acc, cur, idx) => {
+                                    prefetchPathname(`/courses/${ slugify(cur, { lower: true }) }`);
+                                    acc[slugify(diagram).toUpperCase().concat(alphabet.charAt(idx))] = () => navigate(`/courses/${ slugify(cur, { lower: true }) }`);
+                                    return acc;
+                                }, {}) }
+                                chart={
+                                    ['graph TD;'].concat(Object.keys(diagramData[diagram]).reduce((acc, cur, idx) =>
+                                            acc.concat(diagramData[diagram][cur].map(course => `${ slugify(diagram).toUpperCase().concat(alphabet.charAt(Object.keys(diagramData[diagram]).indexOf(course))) }[${ course }] --> ${ slugify(diagram).toUpperCase().concat(alphabet.charAt(idx)) }[${ cur }];`)),
+                                        [])).join('\n')
+                                }
+                            />
+                            <Typography variant='caption'>{ diagrams[diagram] }</Typography>
+                        </Grid>)
+                    }
+                </Grid>
             </div>
         </>
     );
@@ -116,13 +106,21 @@ const CoursesPage = ({ classes, data }) => {
 export const query = graphql`
     query {
         srapi {
-            findManyCourse {
+            findManyCourse(
+                filter: {
+                    _operators: {
+                        semesters: {
+                            in: "Fall2019"
+                        }
+                    }
+                }
+            ) {
                 name
+                prerequisites
                 department
-                semesters
             }
         }
     }
 `;
 
-export default withStyles(styles)(CoursesPage);
+export default withStyles(combineStyles(styles, styles0))(CoursesPage);

@@ -13,11 +13,10 @@ import { Close, MoreVert } from '@material-ui/icons'
 import StarRatings from 'react-star-ratings';
 import Modal from '../components/Modal';
 import ReportForm from '../components/ReportForm';
-import { isIOS } from 'react-device-detect';
 
 import moment from 'moment';
 import slugify from 'slugify';
-import { hashReview, isMigrant } from '../utils';
+import { hashReview, isMigrant, copyToClipboard } from '../utils';
 
 import styles from '../styles/styles';
 
@@ -67,23 +66,7 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
                         padding: theme.spacing(1),
                         width: 200
                     } } onClick={ () => setMenuOpen(false) }>
-                        <MenuItem onClick={ e => {
-                            const textField = document.createElement('textarea');
-                            e.target.appendChild(textField);
-                            textField.innerText = `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ hashReview(review, teacher) }`;
-                            if (isIOS) {
-                                const range = document.createRange();
-                                range.selectNodeContents(textField);
-                                const selection = window.getSelection();
-                                selection.removeAllRanges();
-                                selection.addRange(range);
-                                textField.setSelectionRange(0, 999999);
-                            } else {
-                                textField.select();
-                            }
-                            document.execCommand('copy');
-                            textField.remove();
-                        } }>
+                        <MenuItem onClick={ e => copyToClipboard(e.target, `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ hashReview(review, teacher) }`) }>
                             Copy Link
                         </MenuItem>
                         <MenuItem onClick={ () => setModalExposed(true) }>
