@@ -20,6 +20,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
 
     const courses = data.srapi.findManyClass;
     const department = data.srapi.findOneCourse.department;
+    const prerequisites = data.srapi.findOneCourse.prerequisites
     const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
     const codes = removeDupes(data.srapi.findManyClass.map(course => course.code))
 
@@ -57,6 +58,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                         '@context': 'https://schema.org',
                         '@type': 'Course',
                         courseCode: codes.join(', '),
+                        coursePrerequisites: prerequisites.join(', '),
                         name,
                         description: `${ name } is a${ /^[AEIOU]/.test(department) ? 'n' : '' } ${ department } class offered at Lowell High School.`,
                         provider: {
@@ -163,6 +165,7 @@ export const query = graphql`
                 name: $name
             }) {
                 department
+                prerequisites
             }
         }
     }

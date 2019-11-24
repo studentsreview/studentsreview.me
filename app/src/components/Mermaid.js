@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import mermaid from 'mermaid';
 
 const Mermaid = ({ content, onClick }) => {
-    const graphRef = useRef(null);
     const [graph, setGraph] = useState('Loading...');
 
     useEffect(() => {
