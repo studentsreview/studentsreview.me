@@ -37,7 +37,8 @@ header_on_every_page = {
     'Spring2018': True,
     'Fall2018': True,
     'Spring2019': True,
-    'Fall2019': True
+    'Fall2019': True,
+    'Spring2020': True
 }
 
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
@@ -108,8 +109,8 @@ for x in range(301, 303):
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
 """
-for i in range(len(data['Fall2018'])):
-    class_ = data['Fall2018'][i]
+for i in range(len(data['Fall2019'])):
+    class_ = data['Fall2019'][i]
     if class_['teacher'] == 'Undetermined':
         print(i, class_)
 """
@@ -146,6 +147,11 @@ data['Fall2019'][543]['teacher'] = 'Cody Mitcheltree'
 data['Fall2019'][546]['teacher'] = 'Cody Mitcheltree'
 data['Fall2019'][547]['teacher'] = 'Cody Mitcheltree'
 data['Fall2019'][549]['teacher'] = 'Cody Mitcheltree'
+
+data['Fall2019'][166]['teacher'] = 'Andrew Cho'
+
+data['Fall2019'][463]['teacher'] = 'Edna Barakat'
+data['Fall2019'][464]['teacher'] = 'Edna Barakat'
 
 teachers_to_insert = []
 courses_to_insert = []
