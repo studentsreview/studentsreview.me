@@ -19,7 +19,7 @@ import { createStyles, withStyles } from '@material-ui/styles';
 
 import slugify from 'slugify';
 import { graphql, Link } from 'gatsby';
-import { sortSemesters, splitSemester, getCurrentSemester, combineStyles } from '../utils';
+import { sortSemesters, formatSemesterRange, getCurrentSemester, combineStyles } from '../utils';
 
 import styles from '../styles/styles';
 
@@ -111,12 +111,7 @@ const TeachersPage = ({ classes, data }) => {
                                     <TableCell style={ { cursor: 'pointer', width: '33%' } }>
                                         <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
                                     </TableCell>
-                                    <TableCell style={ { width: '33%' } }>{ (() => {
-                                        const semesters = sortSemesters(teacher.semesters);
-                                        const start = semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014';
-                                        const end = splitSemester(semesters[0]);
-                                        return `${ start } - ${ end }`;
-                                    })() }</TableCell>
+                                    <TableCell style={ { width: '33%' } }>{ formatSemesterRange(sortSemesters(teacher.semesters)) }</TableCell>
                                     <TableCell>{ teacher.departments.join(', ') }</TableCell>
                                 </TableRow>
                             ))

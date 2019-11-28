@@ -10,7 +10,7 @@ import ScheduleTable from '../components/ScheduleTable';
 import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { splitSemester, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
+import { formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
 import { FIND_REVIEWS } from '../graphql';
 
 import styles from '../styles/styles';
@@ -96,7 +96,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                 />
                             }
                             <Chip
-                                label={ `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }` }
+                                label={ formatSemesterRange(semesters) }
                             />
                             <br/>
                             {
@@ -132,7 +132,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                         label={ teacher }
                                     /> : <Chip
                                         key={ idx }
-                                        label={ teacher.split(' ')[teacher.split(' ').length - 1] }
+                                        label={ teacher.split(' ').slice(1).join(' ') }
                                         onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
                                             state: {
                                                 semester: semester === semesters[0] ? null : semester

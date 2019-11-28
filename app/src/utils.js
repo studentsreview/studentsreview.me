@@ -13,6 +13,8 @@ const sortSemesters = semesters => semesters.sort((a, b) => {
     b = /(Spring|Fall)(\d{4})/.exec(b);
     return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
 });
+const formatSemesterRange = semesters => semesters.length === 1 ?  (semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014') :
+    `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }`;
 const copyToClipboard = (target, text) => {
     const textField = document.createElement('textarea');
     target.appendChild(textField);
@@ -55,6 +57,7 @@ export {
     hashReview,
     isMigrant,
     sortSemesters,
+    formatSemesterRange,
     copyToClipboard,
     combineStyles
 };
