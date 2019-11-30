@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Typography, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
@@ -9,7 +9,7 @@ import Review from '../components/Review';
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS } from '../graphql'
 import { isWidthUp } from '@material-ui/core/withWidth';
-import { splitSemester, useWidth } from '../utils';
+import { splitSemester, sortSemesters, useWidth } from '../utils';
 import slugify from 'slugify';
 
 import styles from '../styles/styles';
@@ -30,7 +30,7 @@ const Sidebar = withStyles(styles)(({ classes }) => {
             <List>
                 <ListItem><Typography variant='body1'>Announcers</Typography></ListItem>
                 <Divider/>
-                { data.site.siteMetadata.announcers.reverse().map((announcer, idx) => <ListItem key={ idx }>
+                { sortSemesters(data.site.siteMetadata.announcers).map((announcer, idx) => <ListItem key={ idx }>
                     <a href={ `${ process.env.GRAPHQL_URI }/data/${ announcer }.pdf` } target='_blank' rel='noopener noreferrer'>
                         <Typography variant='body2'>{ splitSemester(announcer) }</Typography>
                     </a>
