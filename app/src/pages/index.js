@@ -1,26 +1,62 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Typography, Grid, Divider } from '@material-ui/core';
-import { withStyles, useTheme } from '@material-ui/styles'
+import { Typography, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
+import { withStyles } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
-import { Query } from 'react-apollo';
+import { Query, withApollo } from 'react-apollo'
+import InfiniteScroll from 'react-infinite-scroller';
 import Review from '../components/Review';
 
-import { graphql, prefetchPathname } from 'gatsby';
-import { navigate } from '@reach/router'
-import slugify from 'slugify';
+import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS } from '../graphql'
+import { isWidthUp } from '@material-ui/core/withWidth';
+import { splitSemester, useWidth } from '../utils';
+import slugify from 'slugify';
 
 import styles from '../styles/styles';
 
-const IndexPage = ({ classes, data }) => {
-    const [pathsToFetch, setPathsToFetch] = useState(['/teachers', '/courses']);
-    useEffect(() => {
-        for (let pathName of pathsToFetch) {
-            prefetchPathname(pathName);
+const Sidebar = withStyles(styles)(({ classes }) => {
+    const data = useStaticQuery(graphql`
+        query {
+            site {
+                siteMetadata {
+                    announcers
+                }
+            }
         }
-    }, pathsToFetch);
+    `);
 
-    const theme = useTheme();
+    return (
+        <Paper className={ classes.control }>
+            <List>
+                <ListItem><Typography variant='body1'>Announcers</Typography></ListItem>
+                <Divider/>
+                { data.site.siteMetadata.announcers.reverse().map((announcer, idx) => <ListItem key={ idx }>
+                    <a href={ `${ process.env.GRAPHQL_URI }/data/${ announcer }.pdf` } target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body2'>{ splitSemester(announcer) }</Typography>
+                    </a>
+                </ListItem>) }
+                <ListItem><Typography variant='body1'>Links</Typography></ListItem>
+                <Divider/>
+                <ListItem>
+                    <a href={ process.env.GRAPHQL_URI } target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body2'>GraphQL API</Typography>
+                    </a>
+                </ListItem>
+                <ListItem>
+                    <a href='https://github.com/kajchang/studentsreview.me' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body2'>Source</Typography>
+                    </a>
+                </ListItem>
+                <ListItem>
+                    <Typography variant='body2'>Created by Kai Chang</Typography>
+                </ListItem>
+            </List>
+        </Paper>
+    );
+});
+
+const IndexPage = ({ classes, client }) => {
+    const width = useWidth();
 
     return (
         <>
@@ -29,59 +65,72 @@ const IndexPage = ({ classes, data }) => {
                 <meta name='description' content='Students Review is a education website for students to share and read reviews of courses and teachers at Lowell High School.'/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review'].join(',') }/>
             </Helmet>
-            <Grid item xs={ 12 } style={ { background: theme.palette.primary.light, paddingTop: theme.spacing(7.5), paddingBottom: theme.spacing(7.5), textAlign: 'center' } }>
-                <Typography variant='h4'>studentsreview.me</Typography>
-                <Typography variant='h6'>teacher and course database for lowell high school</Typography>
-                <div style={ { paddingTop: theme.spacing(2.5) } }>
-                    <Button variant='contained' size='large' onClick={ () => navigate('/teachers') } style={ { marginRight: theme.spacing(2.5) } }>Teachers</Button>
-                    <Button variant='contained' size='large' onClick={ () => navigate('/courses') }>Courses</Button>
-                </div>
-            </Grid>
-            <Grid item xs={ 12 } style={ { background: theme.palette.secondary.light, paddingTop: theme.spacing(7.5), paddingBottom: theme.spacing(7.5), textAlign: 'center' } }>
-                <Typography variant='body1'>
-                    This database contains { data.srapi.courseCount.toLocaleString() } courses, { data.srapi.teacherCount.toLocaleString() } teachers and { data.srapi.reviewCount.toLocaleString() } reviews.
-                </Typography>
-            </Grid>
-            <Grid item xs={ 12 } style={ { marginLeft: theme.spacing(5), marginRight: theme.spacing(5) } }>
-                <Query query={ FIND_LATEST_REVIEWS } onCompleted={ data =>
-                    setPathsToFetch(
-                        pathsToFetch.concat(data.findManyReview.map(review => `/teachers/${ slugify(review.teacher, { lower: true }) }`))
-                    ) }
-                >
-                    { ({ data, loading }) => {
-                        if (loading) {
-                            return (
-                                <>
-                                    <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
-                                    <Typography variant='body1' className={ classes.control } style={ { textAlign: 'center' } }>Loading...</Typography>
-                                </>
-                            );
-                        } else {
-                            return (
-                                <>
-                                    <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
-                                    { data.findManyReview
-                                        .map((review, idx) =>
-                                            <Review onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } key={ idx } review={ review } teacher={ review.teacher }/>)
-                                        .reduce((acc, cur) => [acc, <Divider/>, cur]) }
-                                </>
-                            );
-                        }
-                    } }
-                </Query>
-            </Grid>
+            <div className={ classes.root }>
+                <Grid container spacing={ 3 } direction='row'>
+                    { isWidthUp('sm', width) && <Grid item sm={ 3 }>
+                        <Sidebar/>
+                    </Grid> }
+                    <Grid item xs={ 12 } sm={ 9 }>
+                        <Query
+                            query={ FIND_LATEST_REVIEWS }
+                            variables={ {
+                                page: 1
+                            } }
+                            onCompleted={ data => {
+                                for (let review of data.reviewPagination.items) {
+                                    prefetchPathname(`/teachers/${ slugify(review.teacher, { lower: true }) }`);
+                                }
+                            } }
+                            notifyOnNetworkStatusChange={ true }
+                        >
+                            { ({ data }) => <InfiniteScroll
+                                pageStart={ 1 }
+                                initialLoad={ false }
+                                loader={ <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading More Reviews...</Typography> }
+                                loadMore={ page => {
+                                    client.query({
+                                        query: FIND_LATEST_REVIEWS,
+                                        variables: {
+                                            page
+                                        }
+                                    })
+                                        .then(({ data: { reviewPagination: { pageInfo, items, __typename } } }) => {
+                                            const { reviewPagination } = client.cache.readQuery({
+                                                query: FIND_LATEST_REVIEWS,
+                                                variables: {
+                                                    page: 1
+                                                }
+                                            });
+
+                                            client.cache.writeQuery({
+                                                query: FIND_LATEST_REVIEWS,
+                                                data: {
+                                                    reviewPagination: {
+                                                        pageInfo,
+                                                        items: reviewPagination.items.concat(items),
+                                                        __typename
+                                                    },
+                                                },
+                                                variables: {
+                                                    page: 1
+                                                }
+                                            });
+                                        });
+                                } }
+                                hasMore={ data.reviewPagination && data.reviewPagination.pageInfo.hasNextPage }
+                            >
+                                <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
+                                { data.reviewPagination ? data.reviewPagination.items
+                                    .map((review, idx) =>
+                                        <Review key={ idx } onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } review={ review } teacher={ review.teacher }/>)
+                                    .reduce((acc, cur) => [acc, <Divider/>, cur]) : <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading Latest Reviews...</Typography> }
+                            </InfiniteScroll> }
+                        </Query>
+                    </Grid>
+                </Grid>
+            </div>
         </>
     );
 }
 
-export const query = graphql`
-    query {
-        srapi {
-            courseCount
-            reviewCount
-            teacherCount
-        }
-    }
-`;
-
-export default withStyles(styles)(IndexPage);
+export default withStyles(styles)(withApollo(IndexPage));

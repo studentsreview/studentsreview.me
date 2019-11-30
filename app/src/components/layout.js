@@ -2,9 +2,9 @@ import React from 'react';
 import AppHeader from './AppHeader';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
-import red from '@material-ui/core/colors/red';
-import blue from '@material-ui/core/colors/blue';
-import { white, black } from '@material-ui/core/colors/common';
+import grey from '@material-ui/core/colors/grey';
+import amber from '@material-ui/core/colors/amber';
+import { white } from '@material-ui/core/colors/common';
 
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-boost';
@@ -28,16 +28,16 @@ const theme = createMuiTheme({
     spacing: 5,
     palette: {
         primary: {
-            light: red[700],
-            main: red[800],
-            dark: red[900],
+            light: grey[600],
+            main: grey[700],
+            dark: grey[800],
             contrastText: white
         },
         secondary: {
-            light: blue[100],
-            main: blue[800],
-            dark: blue[900],
-            contrastText: black
+            light: amber[100],
+            main: amber[800],
+            dark: amber[900],
+            contrastText: white
         }
     }
 });

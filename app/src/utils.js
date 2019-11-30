@@ -1,6 +1,11 @@
 import sha256 from 'sha256';
 import { isIOS } from 'react-device-detect';
 
+import { useTheme } from '@material-ui/styles';
+import { useMediaQuery } from '@material-ui/core';
+
+import config from '../../config/config';
+
 const splitSemester = text => /(Spring|Fall)(\d{4})/.exec(text).slice(1).join(' ');
 const getCurrentSemester = () => `${ ['Spring', 'Fall'][Math.floor((new Date().getMonth() / 12 * 2)) % 2] }${ new Date().getFullYear() }`;
 const getBlocks = () => ([...Array.from(Array(8).keys())].map(i => (i + 1).toString()));
@@ -13,8 +18,8 @@ const sortSemesters = semesters => semesters.sort((a, b) => {
     b = /(Spring|Fall)(\d{4})/.exec(b);
     return (Number(b[2]) + (b[1] === 'Spring' ? 0 : 0.5)) - (Number(a[2]) + (a[1] === 'Spring' ? 0 : 0.5));
 });
-const formatSemesterRange = semesters => semesters.length === 1 ?  (semesters[0] !== 'Fall2014' ? splitSemester(semesters[0]) : 'Pre-Fall 2014') :
-    `${ semesters[semesters.length - 1] !== 'Fall2014' ? splitSemester(semesters[semesters.length - 1]) : 'Pre-Fall 2014' } - ${ splitSemester(semesters[0]) }`;
+const formatSemesterRange = semesters => semesters.length === 1 ?  (semesters[0] !== config.announcers[0] ? splitSemester(semesters[0]) : 'Pre-'.concat(splitSemester(config.announcers[0]))) :
+    `${ semesters[semesters.length - 1] !== config.announcers[0] ? splitSemester(semesters[semesters.length - 1]) : 'Pre-'.concat(splitSemester(config.announcers[0])) } - ${ splitSemester(semesters[0]) }`;
 const copyToClipboard = (target, text) => {
     const textField = document.createElement('textarea');
     target.appendChild(textField);
@@ -33,6 +38,16 @@ const copyToClipboard = (target, text) => {
     textField.remove();
 }
 
+const useWidth = () => {
+    const theme = useTheme();
+    const keys = [...theme.breakpoints.keys].reverse();
+    return (
+        keys.reduce((output, key) => {
+            const matches = useMediaQuery(theme.breakpoints.up(key));
+            return !output && matches ? key : output;
+        }, null) || 'xs'
+    );
+}
 const combineStyles = (...styles) => {
     return function CombineStyles(theme) {
         const outStyles = styles.map((arg) => {
@@ -59,5 +74,6 @@ export {
     sortSemesters,
     formatSemesterRange,
     copyToClipboard,
+    useWidth,
     combineStyles
 };

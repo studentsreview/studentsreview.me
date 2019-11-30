@@ -100,15 +100,21 @@ const FIND_REVIEW_BY_ID = gql`
 `;
 
 const FIND_LATEST_REVIEWS = gql`
-    query {
-        findManyReview(
-            limit: 5
+    query($page: Int!) {
+        reviewPagination(
             sort: TIMESTAMP_DESC
+            page: $page
+            perPage: 10
         ) {
-            teacher
-            timestamp
-            text
-            rating
+            pageInfo {
+                hasNextPage
+            }
+            items {
+                timestamp
+                text
+                rating
+                teacher
+            }
         }
     }
 `;

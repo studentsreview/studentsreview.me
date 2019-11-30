@@ -13,25 +13,13 @@ import ScheduleTable from '../components/ScheduleTable';
 import ReviewDisplay from '../components/ReviewDisplay';
 
 import { isWidthUp } from '@material-ui/core/withWidth';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
-import { formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
+import { formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
 
 import styles from '../styles/styles';
-
- const useWidth = () => {
-    const theme = useTheme();
-    const keys = [...theme.breakpoints.keys].reverse();
-    return (
-        keys.reduce((output, key) => {
-            const matches = useMediaQuery(theme.breakpoints.up(key));
-            return !output && matches ? key : output;
-        }, null) || 'xs'
-    );
-}
 
 const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments, name }) => {
     const [modalExposed, setModalExposed] = useState(false);

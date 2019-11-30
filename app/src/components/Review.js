@@ -100,8 +100,8 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
             </div>
             <Typography variant='body1'>
                 { shownText.length < fullText.length ?
-                    <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Expand</p> : (
-                        shownText.length > truncateLength ? <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.primary.dark, cursor: 'pointer' } }>Collapse</p> : null
+                    <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Expand</p> : (
+                        shownText.length > truncateLength ? <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Collapse</p> : null
                     ) }
             </Typography>
             <Modal shown={ modalExposed }>

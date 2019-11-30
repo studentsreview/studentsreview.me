@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const https = require('https');
 const http = require('http');
 
@@ -42,6 +43,7 @@ const apollo = new ApolloServer({
 });
 
 const app = express();
+app.use('/data', express.static(path.join(__dirname, '..', 'data')));
 apollo.applyMiddleware({
     app,
     path: '/'

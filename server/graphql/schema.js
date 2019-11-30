@@ -15,9 +15,6 @@ schemaComposer.Query.addFields({
     findManyCourse: CourseTC.getResolver('findMany'),
     findManyClass: ClassTC.getResolver('findMany'),
     findManyTeacher: TeacherTC.getResolver('findMany'),
-    reviewCount:  ReviewTC.getResolver('count'),
-    courseCount: CourseTC.getResolver('count'),
-    teacherCount: TeacherTC.getResolver('count'),
     reviewPagination: ReviewTC.getResolver('pagination')
 });
 

@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AppBar, MenuItem, MenuList, Paper, Popper, TextField, Toolbar } from '@material-ui/core';
+import { AppBar, MenuItem, MenuList, Paper, Popper, TextField, Toolbar, Typography } from '@material-ui/core';
 import { createStyles, withStyles } from '@material-ui/styles';
 import { Link, graphql, useStaticQuery, prefetchPathname } from 'gatsby';
+import Image from 'gatsby-image';
 import { withApollo } from 'react-apollo';
-import Img from 'gatsby-image';
 
 import slugify from 'slugify';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
-import { removeDupes } from '../utils';
+import { removeDupes, useWidth } from '../utils';
+import { isWidthUp } from '@material-ui/core/withWidth';
 import { FIND_REVIEWS } from '../graphql';
 
 import '../styles/layout.css';
@@ -53,6 +54,8 @@ const AppHeader = ({ classes, client }) => {
                 }
             }
     `);
+
+    const width = useWidth();
 
     const [value, setValue] = useState('');
     const inputRef = useRef(null);
@@ -106,18 +109,23 @@ const AppHeader = ({ classes, client }) => {
     return (
         <AppBar position='static'>
             <Toolbar>
-                <Link to='/'><Img fixed={ data.file.childImageSharp.fixed }/></Link>
-                <div style={ { flexGrow: 1 } }/>
+                <Link to='/'><Image fixed={ data.file.childImageSharp.fixed }/></Link>
+                { isWidthUp('md', width) && <>
+                    <div style={ { flexGrow: 1 } }/>
+                    <Link to='/teachers'><Typography variant='h6'>teachers</Typography></Link>
+                    <div style={ { flexGrow: 1 } }/>
+                    <Link to='/courses'><Typography variant='h6'>courses</Typography></Link>
+                </> }
+                <div style={ { flexGrow: 25 } }/>
                 <TextField
                     style={ { width: 300 } }
                     variant='filled'
                     className={ classes.textField }
                     InputLabelProps={ { classes: { root: classes.label, shrink: classes.shrink } } }
-                    label='Quick Search'
+                    label='Search'
                     inputRef={ inputRef }
                     value={ value }
                     onChange={ e => setValue(e.target.value) }
-                    placeholder='Search Teachers and Courses...'
                 />
                 <Popper open={ Boolean(suggestions) } anchorEl={ inputRef.current }>
                     <MenuList style={ { padding: 0, width: inputRef.current && inputRef.current.clientWidth } } component={ Paper }>
