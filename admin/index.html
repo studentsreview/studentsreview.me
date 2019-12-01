@@ -22,18 +22,16 @@
             </div>
             <main class="mdl-layout__content">
                 <div class="mdl-layout-spacer"></div>
-                <div>
-                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="display: none;" id="reports-table">
-                        <thead>
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric">Time</th>
-                                <th class="mdl-data-table__cell--non-numeric">Reason</th>
-                                <th class="mdl-data-table__cell--non-numeric">Review</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="display: none;" id="reports-table">
+                    <thead>
+                    <tr>
+                        <th class="mdl-data-table__cell--non-numeric">Date</th>
+                        <th class="mdl-data-table__cell--non-numeric">Reason</th>
+                        <th class="mdl-data-table__cell--non-numeric">Review</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <form style="display: inline-flex; flex-direction: column;" id="authentication-form">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="password" id="password-input">
@@ -44,6 +42,7 @@
                 <div class="mdl-layout-spacer" style="flex-grow: 2;"></div>
             </main>
         </div>
+        <script src="node_modules/js-sha256/build/sha256.min.js"></script>
         <script src="node_modules/d3/dist/d3.min.js"></script>
         <script src="index.js"></script>
     </body>
