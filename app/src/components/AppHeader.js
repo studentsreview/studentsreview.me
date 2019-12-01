@@ -22,10 +22,8 @@ const styles = createStyles({
     textField: {
         '& .MuiFilledInput-root': {
             '& input': {
-                backgroundColor: 'white'
-            },
-            '& fieldset': {
-                borderColor: 'rgba(0, 0, 0, 0.75) !important'
+                backgroundColor: 'white',
+                borderRadius: '5px'
             }
         }
     },

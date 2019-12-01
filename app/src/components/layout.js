@@ -2,7 +2,7 @@ import React from 'react';
 import AppHeader from './AppHeader';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
-import grey from '@material-ui/core/colors/grey';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 import amber from '@material-ui/core/colors/amber';
 import { white } from '@material-ui/core/colors/common';
 
@@ -28,9 +28,9 @@ const theme = createMuiTheme({
     spacing: 5,
     palette: {
         primary: {
-            light: grey[600],
-            main: grey[700],
-            dark: grey[800],
+            light: blueGrey[400],
+            main: blueGrey[500],
+            dark: blueGrey[600],
             contrastText: white
         },
         secondary: {
