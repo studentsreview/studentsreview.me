@@ -19,6 +19,7 @@ const authenticationForm = d3.select('#authentication-form');
 const passwordInput = d3.select('#password-input');
 
 const reportsTable = d3.select('#reports-table');
+const snackBar = d3.select('.mdl-snackbar');
 
 function graphQLFetch(token, query, variables) {
     return fetch(API_URL, {
@@ -34,6 +35,7 @@ function graphQLFetch(token, query, variables) {
 const LOAD_REPORTS = `
     query {
         findManyReport {
+            _id
             timestamp
             reason
             review
@@ -61,6 +63,73 @@ const FIND_REVIEWS_BY_IDS = `
     }
 `;
 
+const REMOVE_REPORT = `
+    mutation($id: MongoID!) {
+        reportRemoveById(_id: $id) {
+            recordId
+        }
+    }
+`;
+
+const REMOVE_REVIEW = `
+    mutation($id: MongoID!) {
+        reviewRemoveById(_id: $id) {
+            recordId
+        }
+    }
+`;
+
+const REPORT_ACTIONS = [
+    { name: 'Dismiss Report', handler: target => {
+        const report = target.parentNode.parentNode.parentNode;
+        graphQLFetch(TOKEN, REMOVE_REPORT, { id: report.__data__._id })
+            .then(resp => resp.json())
+            .then(json => {
+                if (!json.errors) {
+                    d3.select(report).remove();
+                    displayMessage('Success!');
+                } else {
+                    for (let error of json.errors) {
+                        displayMessage(error.message);
+                    }
+                }
+            });
+    } },
+    { name: 'Delete Review',  handler: target => {
+        const report = target.parentNode.parentNode.parentNode;
+        const review = target.parentNode.parentNode.parentNode.querySelector('.review');
+        graphQLFetch(TOKEN, REMOVE_REPORT, { id: report.__data__._id })
+            .then(resp => resp.json())
+            .then(json => {
+                if (!json.errors) {
+                    return graphQLFetch(TOKEN, REMOVE_REVIEW, { id: review.__data__._id });
+                } else {
+                    for (let error of json.errors) {
+                        displayMessage(error.message);
+                    }
+                }
+            })
+            .then(resp => resp.json())
+            .then(json => {
+                if (!json.errors) {
+                    d3.select(report).remove();
+                    displayMessage('Success!',);
+                } else {
+                    for (let error of json.errors) {
+                        displayMessage(error.message);
+                    }
+                }
+            });
+    } }
+];
+
+function displayMessage(message) {
+    snackBar.node().MaterialSnackbar.showSnackbar({
+        message,
+        timeout: 2500
+    });
+}
+
 authenticationForm
     .on('submit', () => {
         const e = d3.event;
@@ -87,11 +156,22 @@ authenticationForm
                         .selectAll('tr')
                         .data(data.findManyReport.sort((a, b) => +new Date(b.timestamp) - +new Date(a.timestamp)))
                         .enter().append('tr')
-                        .selectAll('td')
-                        .data(d => Object.entries(d))
-                        .enter().append('td')
-                        .attr('class', d => 'mdl-data-table__cell--non-numeric '.concat(d[0]))
-                        .text(d => d[1]);
+                        .call(rows => rows.selectAll('td')
+                            .data(d => Object.entries(d))
+                            .enter().append('td')
+                            .attr('class', d => 'mdl-data-table__cell--non-numeric '.concat(d[0]))
+                            .text(d => d[1])
+                        )
+                        .call(rows => rows.append('td')
+                            .append('div')
+                            .attr('class', 'report-actions-div')
+                            .selectAll('button')
+                            .data(REPORT_ACTIONS)
+                            .enter().append('button')
+                            .attr('class', 'mdl-button mdl-js-button mdl-button--raised')
+                            .text(d => d.name)
+                            .on('click', function(d) { d.handler(this); })
+                        );
 
                     reportsTable
                         .selectAll('.timestamp')
@@ -106,19 +186,19 @@ authenticationForm
 
                     reportsTable
                         .selectAll('.review')
-                        .call(reviewCells => {
-                            graphQLFetch(TOKEN, FIND_REVIEWS_BY_IDS, { ids: reviewCells.nodes().map(node => node.innerText) })
+                        .call(cells => {
+                            graphQLFetch(TOKEN, FIND_REVIEWS_BY_IDS, { ids: cells.nodes().map(node => node.innerText) })
                                 .then(res => res.json())
                                 .then(json => {
                                     const data = json.data;
 
-                                    reviewCells
+                                    cells
                                         .data(data.findManyReview.sort((a, b) =>
-                                            reviewCells.nodes().findIndex(node => node.innerText === a._id) -
-                                            reviewCells.nodes().findIndex(node => node.innerText === b._id))
+                                            cells.nodes().findIndex(node => node.innerText === a._id) -
+                                            cells.nodes().findIndex(node => node.innerText === b._id))
                                         )
                                         .text('')
-                                        .call(reviewCells => reviewCells.selectAll('p')
+                                        .call(cells => cells.selectAll('p')
                                             .data(d => Object.entries(d))
                                             .enter().append('p')
                                             .html(d => {
@@ -138,7 +218,7 @@ authenticationForm
                                                 }
                                             })
                                         )
-                                        .call(reviewCells => reviewCells.append('a')
+                                        .call(cells => cells.append('a')
                                             .attr('target', '_blank')
                                             .attr('rel', 'noopener noreferrer')
                                             .attr('href', d => SITE_URL.concat('/teachers/').concat(d.teacher.slugify()).concat('#')

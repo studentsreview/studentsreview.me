@@ -17,3 +17,13 @@
 #reports-table td > p {
     margin: 0;
 }
+
+.report-actions-div {
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+}
+
+.report-actions-div > button {
+    margin: 10px 0;
+}
