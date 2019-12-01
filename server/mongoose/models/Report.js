@@ -35,8 +35,6 @@ const ReportTC = composeWithMongoose(Report, {
     }
 });
 
-ReportTC.removeField('_id');
-
 module.exports = {
     Report,
     ReportTC
