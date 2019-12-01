@@ -1,5 +1,5 @@
-const API_URL = 'http://localhost:8080';
-const SITE_URL = 'http://localhost:8000';
+const API_URL = window.location.origin;
+const SITE_URL = 'https://studentsreview.me';
 let TOKEN;
 
 String.prototype.capitalize = function () {

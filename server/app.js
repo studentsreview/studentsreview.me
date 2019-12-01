@@ -53,6 +53,7 @@ const apollo = new ApolloServer({
 
 const app = express();
 app.use('/data', express.static(path.join(__dirname, '..', 'data')));
+app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 apollo.applyMiddleware({
     app,
     path: '/'
