@@ -25,9 +25,15 @@ reportSchema.pre('validate', function (next) {
 
 const Report = mongoose.model('Report', reportSchema, 'reports');
 
-const ReportTC = composeWithMongoose(Report);
-
-ReportTC.removeField('_id');
+const ReportTC = composeWithMongoose(Report, {
+    resolvers: {
+        findMany: {
+            limit: {
+                defaultValue: 100000
+            }
+        }
+    }
+});
 
 module.exports = {
     Report,

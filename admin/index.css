@@ -1,0 +1,29 @@
+.mdl-layout__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#reports-table {
+    table-layout: fixed;
+    white-space: normal !important;
+}
+
+#reports-table td {
+    word-wrap: break-word;
+    max-width: 33vw;
+}
+
+#reports-table td > p {
+    margin: 0;
+}
+
+.report-actions-div {
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+}
+
+.report-actions-div > button {
+    margin: 10px 0;
+}

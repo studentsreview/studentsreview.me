@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const http = require('http');
+const bcrypt = require('bcrypt');
 
 const { ApolloServer } = require('apollo-server-express');
 const cors = require('cors');
@@ -31,6 +32,11 @@ const configurations = {
 const environment = process.env.NODE_ENV || 'production';
 const config = configurations[environment];
 
+function getScope(token) {
+    if (!token) return 'USER';
+    return bcrypt.compareSync(token, process.env.ADMIN_PWD_HASH) ? 'ADMIN' : 'USER';
+}
+
 const apollo = new ApolloServer({
     schema: GraphQLSchema,
     tracing: true,
@@ -39,11 +45,15 @@ const apollo = new ApolloServer({
     engine: {
         apiKey: process.env.ENGINE_API_KEY
     },
-    cors: cors()
+    cors: cors(),
+    context: integrationContext => ({
+        authScope: getScope(integrationContext.req.headers.authorization)
+    })
 });
 
 const app = express();
 app.use('/data', express.static(path.join(__dirname, '..', 'data')));
+app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 apollo.applyMiddleware({
     app,
     path: '/'
