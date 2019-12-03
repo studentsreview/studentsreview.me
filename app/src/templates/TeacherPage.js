@@ -80,8 +80,8 @@ const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments
 });
 
 const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) => {
-    const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
-    const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[semesters.length - 1]);
+    const initialSemester = location.state && location.state.semester;
+    const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
         .filter(course => course.semester === semester);

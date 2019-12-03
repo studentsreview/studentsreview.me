@@ -10,7 +10,7 @@ import ScheduleTable from '../components/ScheduleTable';
 import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters } from '../utils';
+import { formatSemesterRange, getBlocks, removeDupes, sortSemesters } from '../utils';
 import { FIND_REVIEWS } from '../graphql';
 
 import styles from '../styles/styles';
@@ -24,7 +24,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
     const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
     const codes = removeDupes(data.srapi.findManyClass.map(course => course.code))
 
-    const initialSemester = location.state && location.state.semester ? location.state.semester : getCurrentSemester();
+    const initialSemester = location.state && location.state.semester;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
     const semesterCourses = courses
