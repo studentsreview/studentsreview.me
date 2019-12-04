@@ -7,7 +7,8 @@ const classSchema = new mongoose.Schema({
     block: String,
     room: String,
     teacher: String,
-    semester: String
+    semester: String,
+    section: String
 });
 
 const Class = mongoose.model('Class', classSchema, 'classes');

@@ -108,10 +108,12 @@ for x in range(301, 303):
 
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
+"""
 for i in range(len(data['Fall2019'])):
     class_ = data['Fall2019'][i]
     if class_['teacher'] == 'Undetermined':
         print(i, class_)
+"""
 
 # undetermined fixes
 
@@ -157,6 +159,17 @@ classes_to_insert = []
 
 for semester in data:
     for class_ in data[semester]:
+        sectioned = False
+        if class_['name'].startswith('AP English') and len(class_['name'].split()) == 4:
+            class_['section'] = class_['name'].split()[-1]
+            class_['name'] = ' '.join(class_['name'].split()[:-1])
+            try:
+                course = next(course for course in courses_to_insert if course['name'] == class_['name'])
+                course['sectioned'] = True
+            except StopIteration:
+                sectioned = True
+        else:
+            class_['section'] = None
         if any(test in class_['name'] for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
             department = 'Math'
         elif any(test in class_['name'] for test in ['Computer']):
@@ -167,7 +180,7 @@ for semester in data:
             department = 'English'
         elif any(test in class_['name'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             department = 'Science'
-        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
+        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Microeconomics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
             department = 'Social Science'
         elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
             department = 'Visual Performing Arts'
@@ -220,7 +233,8 @@ for semester in data:
             courses_to_insert.append({
                 'name': class_['name'],
                 'department': department,
-                'semesters': [class_['semester']]
+                'semesters': [class_['semester']],
+                'sectioned': sectioned
             })
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'prerequisites.json')) as prerequisites_file:

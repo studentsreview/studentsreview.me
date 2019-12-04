@@ -41,7 +41,6 @@ const CoursesPage = ({ classes, data }) => {
     }
 
     const popStateHandler = e => {
-        console.log('hi');
         if (Object.keys(diagrams).findIndex(diagram => slugify(diagram, { lower: true }) === e.target.location.hash.substr(1)) !== -1) {
             document.querySelector(`.${ e.target.location.hash.substr(1) }`).scrollIntoView({ behavior: 'smooth' });
         }
@@ -110,7 +109,7 @@ export const query = graphql`
                 filter: {
                     _operators: {
                         semesters: {
-                            in: "Fall2019"
+                            in: "Spring2020"
                         }
                     }
                 }

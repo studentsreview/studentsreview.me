@@ -4,6 +4,7 @@ const { composeWithMongoose }  = require('graphql-compose-mongoose');
 const courseSchema = new mongoose.Schema({
     name: String,
     department: String,
+    sectioned: Boolean,
     semesters: {
         type: [String],
         index: true

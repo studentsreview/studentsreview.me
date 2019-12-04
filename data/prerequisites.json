@@ -23,6 +23,6 @@
   "English 1": [],
   "English 2": ["English 1"],
   "Critical Writing": ["English 2"],
-  "AP English Language and Composition": ["English 2"],
-  "AP English Literature and Composition": ["AP English Language and Composition"]
+  "AP English Language": ["English 2"],
+  "AP English Literature": ["AP English Language"]
 }
