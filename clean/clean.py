@@ -197,6 +197,12 @@ for semester in data:
             elif department == 'Math':
                 class_['teacher'] = 'Tom Chan'
 
+        if class_['teacher'] == 'Park':
+            if department == 'Foreign Language':
+                class_['teacher'] = 'Soo Park'
+            elif department == 'English':
+                class_['teacher'] = 'Claudia Park'
+
         if class_['name'] == 'CHIN151A':
             class_['name'] = 'Chinese 1'
 
