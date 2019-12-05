@@ -18,3 +18,7 @@ a:link, a:visited, a:hover, a:active {
     text-decoration: none;
     color: black;
 }
+
+.MuiGrid-item {
+    width: 100%;
+}

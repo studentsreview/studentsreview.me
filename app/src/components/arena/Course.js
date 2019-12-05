@@ -31,9 +31,10 @@ const LabeledSelect = withStyles(styles)((props) => {
 
 const Course = ({ id, courses, classes, departments }) => {
     const [selectedDepartment, setSelectedDepartment] = useState('');
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState('');
     const [selectedSection, setSelectedSection] = useState('');
-    const [selectedClass, setSelectedClass] = useState(null);
+    const [selectedTeacher, setSelectedTeacher] = useState('Any');
+    const [selectedBlock, setSelectedBlock] = useState('Any');
 
     const selects = [];
 
@@ -44,9 +45,10 @@ const Course = ({ id, courses, classes, departments }) => {
         value={ selectedDepartment }
         onChange={ e => {
             setSelectedDepartment(e.target.value);
-            setSelectedCourse(null);
+            setSelectedCourse('');
             setSelectedSection('');
-            setSelectedClass(null);
+            setSelectedTeacher('Any');
+            setSelectedBlock('Any');
         } }
     >
         { departments.map((department, idx) => <MenuItem key={ idx } value={ department }>
@@ -63,7 +65,8 @@ const Course = ({ id, courses, classes, departments }) => {
             onChange={ e => {
                 setSelectedCourse(e.target.value);
                 setSelectedSection('');
-                setSelectedClass(null);
+                setSelectedTeacher('Any');
+                setSelectedBlock('Any');
             } }
         >
             { courses.filter(course => course.department === selectedDepartment).map((course, idx) => <MenuItem key={ idx } value={ course }>
@@ -80,7 +83,8 @@ const Course = ({ id, courses, classes, departments }) => {
                     value={ selectedSection }
                     onChange={ e => {
                         setSelectedSection(e.target.value);
-                        setSelectedClass(null);
+                        setSelectedTeacher('Any');
+                        setSelectedBlock('Any');
                     } }
                 >
                     { removeDupes(classes.filter(class_ => class_.name === selectedCourse.name).map(class_ => class_.section)).map((section, idx) => (
@@ -96,17 +100,48 @@ const Course = ({ id, courses, classes, departments }) => {
     }
 
     if (selectedCourse && (selectedSection || !selectedCourse.sectioned)) {
-        selects.push(<LabeledSelect
-            type='teacher-block'
-            label='Teacher / Block'
-            id={ id }
-            value={ selectedClass }
-            onChange={ e => setSelectedClass(e.target.value) }
-        >
-            { classes.filter(class_ => class_.name === selectedCourse.name).map((class_, idx) => <MenuItem key={ idx } value={ class_ }>
-                { class_.teacher } - Block { class_.block }
-            </MenuItem>) }
-        </LabeledSelect>);
+        selects.push(<div>
+            <LabeledSelect
+                type='teacher'
+                label='Teacher'
+                id={ id }
+                value={ selectedTeacher }
+                onChange={ e => {
+                    setSelectedTeacher(e.target.value);
+                    if (!classes.find(class_ => class_.teacher === e.target.value && class_.block === selectedBlock)) {
+                        setSelectedBlock('Any');
+                    }
+                } }
+            >
+                <MenuItem value='Any'>Any</MenuItem>
+                { removeDupes(classes
+                    .filter(class_ => class_.name === selectedCourse.name &&
+                        (!selectedCourse.sectioned || class_.section === selectedSection)
+                    ).map(class_ => class_.teacher)).map((teacher, idx) =>
+                    <MenuItem key={ idx } value={ teacher }>
+                        { teacher }
+                    </MenuItem>
+                ) }
+            </LabeledSelect>
+            <LabeledSelect
+                type='block'
+                label='Block'
+                id={ id }
+                value={ selectedBlock }
+                onChange={ e => setSelectedBlock(e.target.value) }
+            >
+                <MenuItem value='Any'>Any</MenuItem>
+                { removeDupes(classes
+                    .filter(class_ => class_.name === selectedCourse.name &&
+                        (!selectedCourse.sectioned || class_.section === selectedSection) &&
+                        (selectedTeacher === 'Any' || class_.teacher === selectedTeacher)
+                    ).map(class_ => class_.block)).map((block, idx) =>
+                    <MenuItem key={ idx } value={ block }>
+                        { block }
+                    </MenuItem>
+                ) }
+            </LabeledSelect>
+        </div>);
     }
 
     return (
