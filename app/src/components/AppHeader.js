@@ -113,6 +113,8 @@ const AppHeader = ({ classes, client }) => {
                     <Link to='/teachers'><Typography variant='h6'>teachers</Typography></Link>
                     <div style={ { flexGrow: 1 } }/>
                     <Link to='/courses'><Typography variant='h6'>courses</Typography></Link>
+                    <div style={ { flexGrow: 1 } }/>
+                    <Link to='/arena'><Typography variant='h6'>arena</Typography></Link>
                 </> }
                 <div style={ { flexGrow: 25 } }/>
                 <TextField

@@ -15,8 +15,8 @@ import {
 } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import { FilterList } from '@material-ui/icons';
-import { createStyles, withStyles } from '@material-ui/styles';
 
+import { createStyles, withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { graphql, Link } from 'gatsby';
 import { sortSemesters, formatSemesterRange, getCurrentSemester, combineStyles } from '../utils';

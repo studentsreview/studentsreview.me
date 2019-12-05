@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react'
 import { Typography, Grid } from '@material-ui/core';
-import { createStyles, withStyles } from '@material-ui/styles'
-
 import { Helmet } from 'react-helmet';
 import { Link } from '@material-ui/icons';
 import Mermaid from '../components/Mermaid';
 
+import { createStyles, withStyles } from '@material-ui/styles';
 import { graphql, prefetchPathname, navigate } from 'gatsby';
 import { combineStyles, copyToClipboard } from '../utils'
 import slugify from 'slugify';
