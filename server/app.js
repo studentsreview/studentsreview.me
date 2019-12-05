@@ -3,11 +3,13 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 const bcrypt = require('bcrypt');
+const child_process = require('child_process');
 
 const { ApolloServer } = require('apollo-server-express');
 const cors = require('cors');
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const GraphQLSchema = require('./graphql/schema');
@@ -52,8 +54,15 @@ const apollo = new ApolloServer({
 });
 
 const app = express();
+app.use(bodyParser.json());
 app.use('/data', express.static(path.join(__dirname, '..', 'data')));
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
+app.use('/portal/schedule', (req, res) => {
+    const { username, password } = req.body;
+    const studentVueAgent = child_process.spawn('python3', [path.join(__dirname, 'python', 'main.py'), username, password]);
+    studentVueAgent.stdout.on('data', data => res.json(JSON.parse(data.toString())));
+    studentVueAgent.stderr.on('data', () => res.status(400).json({}));
+});
 apollo.applyMiddleware({
     app,
     path: '/'
