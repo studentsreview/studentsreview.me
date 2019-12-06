@@ -9,7 +9,7 @@ import slugify from 'slugify';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { navigate } from '@reach/router';
-import { removeDupes, useWidth } from '../utils';
+import { getCurrentSemester, removeDupes, sortSemesters, useWidth } from '../utils'
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { FIND_REVIEWS } from '../graphql';
 
@@ -40,6 +40,11 @@ const AppHeader = ({ classes, client }) => {
                         fixed(width: 75, height: 75) {
                             ...GatsbyImageSharpFixed
                         }
+                    }
+                }
+                site {
+                    siteMetadata {
+                        announcers
                     }
                 }
                 srapi {
@@ -104,6 +109,8 @@ const AppHeader = ({ classes, client }) => {
         }
     }, [suggestions]);
 
+    const arenaOn = sortSemesters(data.site.siteMetadata.announcers)[0] !== getCurrentSemester();
+
     return (
         <AppBar position='static'>
             <Toolbar>
@@ -113,8 +120,10 @@ const AppHeader = ({ classes, client }) => {
                     <Link to='/teachers'><Typography variant='h6'>teachers</Typography></Link>
                     <div style={ { flexGrow: 1 } }/>
                     <Link to='/courses'><Typography variant='h6'>courses</Typography></Link>
-                    <div style={ { flexGrow: 1 } }/>
-                    <Link to='/arena'><Typography variant='h6'>arena</Typography></Link>
+                    { arenaOn ? <>
+                        <div style={ { flexGrow: 1 } }/>
+                        <Link to='/arena'><Typography variant='h6'>arena</Typography></Link>
+                    </> : null }
                 </> }
                 <div style={ { flexGrow: 25 } }/>
                 <TextField

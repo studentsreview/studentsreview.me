@@ -58,7 +58,7 @@ const CoursesPage = ({ classes, data }) => {
         <>
             <Helmet>
                 <title>Courses</title>
-                <meta name='description' content={ `See all Courses offered at Lowell High School.` }/>
+                <meta name='description' content='See all Courses offered at Lowell High School.'/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>

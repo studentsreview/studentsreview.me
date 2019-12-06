@@ -62,7 +62,7 @@ const IndexPage = ({ classes, client }) => {
         <>
             <Helmet>
                 <title>Students Review</title>
-                <meta name='description' content='Students Review is a education website for students to share and read reviews of courses and teachers at Lowell High School.'/>
+                <meta name='description' content='Students Review is a website for students to share and read reviews of teachers at Lowell High School.'/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>

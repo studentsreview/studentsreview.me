@@ -29,9 +29,9 @@ const LabeledSelect = withStyles(styles)((props) => {
     );
 });
 
-const Course = ({ id, courses, classes, departments }) => {
-    const [selectedDepartment, setSelectedDepartment] = useState('');
-    const [selectedCourse, setSelectedCourse] = useState('');
+const Course = ({ id, initialClass, courses, classes, departments }) => {
+    const [selectedDepartment, setSelectedDepartment] = useState(initialClass ? courses.find(course => course.name === initialClass.name).department : '');
+    const [selectedCourse, setSelectedCourse] = useState(initialClass ? courses.find(course => course.name === initialClass.name) : '');
     const [selectedSection, setSelectedSection] = useState('');
     const [selectedTeacher, setSelectedTeacher] = useState('Any');
     const [selectedBlock, setSelectedBlock] = useState('Any');

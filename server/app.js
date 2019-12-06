@@ -47,21 +47,21 @@ const apollo = new ApolloServer({
     engine: {
         apiKey: process.env.ENGINE_API_KEY
     },
-    cors: cors(),
     context: integrationContext => ({
         authScope: getScope(integrationContext.req.headers.authorization)
     })
 });
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use('/data', express.static(path.join(__dirname, '..', 'data')));
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
-app.use('/portal/schedule', (req, res) => {
+app.post('/portal/schedule', (req, res) => {
     const { username, password } = req.body;
     const studentVueAgent = child_process.spawn('python3', [path.join(__dirname, 'python', 'main.py'), username, password]);
     studentVueAgent.stdout.on('data', data => res.json(JSON.parse(data.toString())));
-    studentVueAgent.stderr.on('data', () => res.status(400).json({}));
+    studentVueAgent.stderr.on('data', data => res.status(400).json({ message: data.toString() }));
 });
 apollo.applyMiddleware({
     app,
