@@ -142,15 +142,11 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
                 <script type="application/ld+json">
                     { JSON.stringify({
                         '@context': 'https://schema.org',
-                        '@type': 'AggregateRating',
-                        itemReviewed: {
-                            '@type': 'Person',
-                            name,
-                            jobTitle: 'Teacher',
-                            knowsAbout: departments.join(', ')
-                        },
-                        ratingValue: data.srapi.findOneTeacher.rating,
-                        reviewCount: data.srapi.findOneTeacher.reviewCount
+                        '@type': 'Person',
+                        name,
+                        jobTitle: 'Teacher',
+                        knowsAbout: departments.join(', '),
+                        affiliation: 'Lowell High School'
                     }) }
                 </script>
             </Helmet>
