@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
+import { Typography, Button, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
 import { Query, withApollo } from 'react-apollo'
@@ -71,6 +71,15 @@ const IndexPage = ({ classes, client }) => {
                         <Sidebar/>
                     </Grid> }
                     <Grid item xs={ 12 } sm={ 9 }>
+                        <Paper className={ classes.control }>
+                            <Grid container direction='column' alignItems='center'>
+                                <Typography className={ classes.control } variant='h5'>Making an Arena Schedule?</Typography>
+                                <a href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
+                                    <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
+                                </a>
+                            </Grid>
+                        </Paper>
+                        <Typography variant='h4' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                         <Query
                             query={ FIND_LATEST_REVIEWS }
                             variables={ {
@@ -119,7 +128,6 @@ const IndexPage = ({ classes, client }) => {
                                 } }
                                 hasMore={ data.reviewPagination && data.reviewPagination.pageInfo.hasNextPage }
                             >
-                                <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                                 { data.reviewPagination ? data.reviewPagination.items
                                     .map((review, idx) =>
                                         <Review key={ idx } onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } review={ review } teacher={ review.teacher }/>)
