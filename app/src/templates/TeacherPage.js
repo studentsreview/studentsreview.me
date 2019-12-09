@@ -17,9 +17,10 @@ import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
-import { formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
+import { semesterValue, formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
 
 import styles from '../styles/styles';
+import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments, name }) => {
     const [modalExposed, setModalExposed] = useState(false);
@@ -98,7 +99,15 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
             <SemesterSelect
                 semesters={ semesters }
                 value={ semester }
-                onChange={ setSemester }
+                onChange={ semester => {
+                    trackCustomEvent({
+                        category: 'Semester Select',
+                        action: 'Select',
+                        label: 'Teacher Page',
+                        value: semesterValue(semester)
+                    });
+                    setSemester(semester);
+                } }
             />
             <ScheduleTable
                 blocks={ getBlocks().concat(removeDupes(semesterCourses.map(course => course.block).filter(block => block > 8))) }
@@ -139,7 +148,7 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
                 <title>{ name }</title>
                 <meta name='description' content={ `See students' reviews of ${ name }, a teacher at Lowell High School.` }/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', name, ...departments] }/>
-                <script type="application/ld+json">
+                <script type='application/ld+json'>
                     { JSON.stringify({
                         '@context': 'https://schema.org',
                         '@type': 'Person',
