@@ -9,7 +9,6 @@ import { FIND_REVIEWS, LOAD_ADDITIONAL_REVIEWS, FIND_REVIEW_BY_ID } from '../gra
 import { hashReview } from '../utils';
 
 import styles from '../styles/styles';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics'
 
 const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
     const headerRef = useRef(null);
@@ -55,12 +54,6 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             initialLoad={ false }
             loader={ <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading More Reviews...</Typography> }
             loadMore={ page => {
-                trackCustomEvent({
-                    category: 'Review Display',
-                    action: 'Scroll',
-                    label: teacher,
-                    value: page
-                });
                 client.query({
                     query: LOAD_ADDITIONAL_REVIEWS,
                     variables: {

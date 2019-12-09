@@ -12,7 +12,6 @@ import { navigate } from '@reach/router';
 import { removeDupes, useWidth } from '../utils';
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { FIND_REVIEWS } from '../graphql';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import '../styles/layout.css';
 
@@ -131,14 +130,7 @@ const AppHeader = ({ classes, client }) => {
                         {
                             suggestions.map((suggestion, idx) => <MenuItem
                                     key={ idx }
-                                    onClick={ () => {
-                                        trackCustomEvent({
-                                            category: 'Searchbar',
-                                            action: 'Navigate',
-                                            label: suggestion
-                                        });
-                                        navigateToSuggestion(suggestion);
-                                    } }
+                                    onClick={ () => navigateToSuggestion(suggestion) }
                                     style={ { cursor: 'pointer' } }
                                 >{
                                     parse(suggestion, match(suggestion, value)).map((match, idx) => <span key={ idx } style={ {

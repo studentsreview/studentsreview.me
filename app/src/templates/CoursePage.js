@@ -10,9 +10,8 @@ import ScheduleTable from '../components/ScheduleTable';
 import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { formatSemesterRange, getBlocks, removeDupes, semesterValue, sortSemesters } from '../utils'
+import { formatSemesterRange, getBlocks, removeDupes, sortSemesters } from '../utils';
 import { FIND_REVIEWS } from '../graphql';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
 
@@ -117,15 +116,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                         <SemesterSelect
                             semesters={ semesters }
                             value={ semester }
-                            onChange={ semester => {
-                                trackCustomEvent({
-                                    category: 'Semester Select',
-                                    action: 'Select',
-                                    label: 'Course Page',
-                                    value: semesterValue(semester)
-                                });
-                                setSemester(semester);
-                            } }
+                            onChange={ setSemester }
                         />
                         <ScheduleTable
                             blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }

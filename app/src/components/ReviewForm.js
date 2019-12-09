@@ -7,7 +7,6 @@ import StarRatings from 'react-star-ratings';
 
 import { useStaticQuery, graphql } from 'gatsby';
 import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
 
@@ -125,20 +124,13 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                                 starSpacing={ theme.spacing(0.5) }
                             />
                             <br/>
-                            <Button disabled={ reviewText.length < minCharacters || starRating === 0 } onClick={ () => {
-                                trackCustomEvent({
-                                    category: 'Review Form',
-                                    action: 'Submit',
-                                    label: teacher
-                                });
-                                createReview({
-                                    variables: {
-                                        teacher,
-                                        rating: starRating,
-                                        text: reviewText
-                                    }
-                                });
-                            } }>Submit Review</Button>
+                            <Button disabled={ reviewText.length < minCharacters || starRating === 0 } onClick={ () => createReview({
+                                variables: {
+                                    teacher: teacher,
+                                    rating: starRating,
+                                    text: reviewText
+                                }
+                            }) }>Submit Review</Button>
                             <br/>
                             { reviewText.length > 0 && restriction ? <Typography variant='body1' style={ { fontSize: 12, color: 'red' } }>{ restriction[1] }</Typography> : null }
                         </>

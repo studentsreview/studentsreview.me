@@ -8,7 +8,6 @@ import { getReviewId } from '../utils';
 import { CREATE_REPORT } from '../graphql';
 
 import styles from '../styles/styles';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 const ReportForm = ({ classes, review, teacher, onClose }) => {
     const [value, setValue] = useState('inappropriate');
@@ -58,19 +57,12 @@ const ReportForm = ({ classes, review, teacher, onClose }) => {
                                 <FormControlLabel value='inappropriate' control={ <Radio/> } label='Inappropriate / Hateful Content'/>
                                 <FormControlLabel value='uninformative' control={ <Radio/> } label='Uninformative / Unconstructive Content'/>
                             </RadioGroup>
-                            <Button onClick={ () => {
-                                trackCustomEvent({
-                                    category: 'Report Form',
-                                    action: 'Submit',
-                                    label: teacher
-                                });
-                                createReport({
-                                    variables: {
-                                        reason: value,
-                                        review: getReviewId(review, teacher)
-                                    }
-                                });
-                            } }>Submit</Button>
+                            <Button onClick={ () => createReport({
+                                variables: {
+                                    reason: value,
+                                    review: getReviewId(review, teacher)
+                                }
+                            }) }>Submit</Button>
                         </>
                     );
                 }
