@@ -19,7 +19,6 @@ import slugify from 'slugify';
 import { hashReview, isMigrant, copyToClipboard } from '../utils';
 
 import styles from '../styles/styles';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics'
 
 const Review = ({ classes, review, teacher, selected, onClick }) => {
     const anchorEl = useRef(null);
@@ -67,17 +66,7 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
                         padding: theme.spacing(1),
                         width: 200
                     } } onClick={ () => setMenuOpen(false) }>
-                        <MenuItem onClick={ e => {
-                            trackCustomEvent({
-                                category: 'Review',
-                                action: 'Copy Link',
-                                label: teacher
-                            });
-                            copyToClipboard(
-                                e.target,
-                                `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ hashReview(review, teacher) }`
-                            );
-                        } }>
+                        <MenuItem onClick={ e => copyToClipboard(e.target, `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ hashReview(review, teacher) }`) }>
                             Copy Link
                         </MenuItem>
                         <MenuItem onClick={ () => setModalExposed(true) }>
