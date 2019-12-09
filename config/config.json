@@ -1,4 +1,5 @@
 {
+  "siteUrl": "https://www.studentsreview.me",
   "reviews": {
     "minCharacters": 50,
     "maxCharacters": 1000
