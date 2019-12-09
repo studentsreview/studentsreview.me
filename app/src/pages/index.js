@@ -5,12 +5,14 @@ import { Helmet } from 'react-helmet';
 import { Query, withApollo } from 'react-apollo'
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from '../components/Review';
+import { OutboundLink } from 'gatsby-plugin-google-analytics';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS } from '../graphql'
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { splitSemester, sortSemesters, useWidth } from '../utils';
 import slugify from 'slugify';
+import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
 
@@ -31,21 +33,21 @@ const Sidebar = withStyles(styles)(({ classes }) => {
                 <ListItem><Typography variant='body1'>Announcers</Typography></ListItem>
                 <Divider/>
                 { sortSemesters(data.site.siteMetadata.announcers).map((announcer, idx) => <ListItem key={ idx }>
-                    <a href={ `${ process.env.GRAPHQL_URI }/data/${ announcer }.pdf` } target='_blank' rel='noopener noreferrer'>
+                    <OutboundLink href={ `${ process.env.GRAPHQL_URI }/data/${ announcer }.pdf` } target='_blank' rel='noopener noreferrer'>
                         <Typography variant='body2'>{ splitSemester(announcer) }</Typography>
-                    </a>
+                    </OutboundLink>
                 </ListItem>) }
                 <ListItem><Typography variant='body1'>Links</Typography></ListItem>
                 <Divider/>
                 <ListItem>
-                    <a href={ process.env.GRAPHQL_URI } target='_blank' rel='noopener noreferrer'>
+                    <OutboundLink href={ process.env.GRAPHQL_URI } target='_blank' rel='noopener noreferrer'>
                         <Typography variant='body2'>GraphQL API</Typography>
-                    </a>
+                    </OutboundLink>
                 </ListItem>
                 <ListItem>
-                    <a href='https://github.com/kajchang/studentsreview.me' target='_blank' rel='noopener noreferrer'>
+                    <OutboundLink href='https://github.com/kajchang/studentsreview.me' target='_blank' rel='noopener noreferrer'>
                         <Typography variant='body2'>Source</Typography>
-                    </a>
+                    </OutboundLink>
                 </ListItem>
                 <ListItem>
                     <Typography variant='body2'>Created by Kai Chang</Typography>
@@ -74,9 +76,9 @@ const IndexPage = ({ classes, client }) => {
                         <Paper className={ classes.control }>
                             <Grid container direction='column' alignItems='center'>
                                 <Typography className={ classes.control } variant='h5'>Making an Arena Schedule?</Typography>
-                                <a href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
+                                <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
                                     <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
-                                </a>
+                                </OutboundLink>
                             </Grid>
                         </Paper>
                         <Typography variant='h4' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
@@ -97,6 +99,11 @@ const IndexPage = ({ classes, client }) => {
                                 initialLoad={ false }
                                 loader={ <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading More Reviews...</Typography> }
                                 loadMore={ page => {
+                                    trackCustomEvent({
+                                        category: 'Latest Review Display',
+                                        action: 'Scroll',
+                                        value: page
+                                    });
                                     client.query({
                                         query: FIND_LATEST_REVIEWS,
                                         variables: {
