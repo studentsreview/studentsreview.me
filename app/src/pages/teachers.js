@@ -48,8 +48,9 @@ const TeachersPage = ({ classes, data }) => {
 
     const [departmentFilter, setDepartmentFilter] = useState(departments.filter(el => el !== 'Miscellaneous'));
 
-    const teachers = data.srapi.findManyTeacher.filter(teacher =>
-        (!currentTeachersFilter || teacher.semesters.includes(getCurrentSemester())) && teacher.departments.some(department => departmentFilter.includes(department)));
+    const teachers = data.srapi.findManyTeacher
+        .filter(teacher => (!currentTeachersFilter || teacher.semesters.includes(getCurrentSemester())) && teacher.departments.some(department => departmentFilter.includes(department)))
+        .sort((a, b) => a.name.split(' ').slice(1).join(' ').localeCompare(b.name.split(' ').slice(1).join(' ')));
 
     return (
         <>
