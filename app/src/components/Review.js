@@ -7,7 +7,7 @@ import {
     Popper,
     Typography,
     Grid,
-} from '@material-ui/core'
+} from '@material-ui/core';
 import { useTheme, withStyles } from '@material-ui/styles';
 import { Close, MoreVert } from '@material-ui/icons'
 import StarRatings from 'react-star-ratings';
@@ -21,7 +21,7 @@ import { hashReview, isMigrant, copyToClipboard } from '../utils';
 import styles from '../styles/styles';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics'
 
-const Review = ({ classes, review, teacher, selected, onClick }) => {
+const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) => {
     const anchorEl = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [modalExposed, setModalExposed] = useState(false);
@@ -100,9 +100,12 @@ const Review = ({ classes, review, teacher, selected, onClick }) => {
                             starDimension={ theme.spacing(2.5) }
                             starSpacing={ theme.spacing(0.25) }
                         />
-                        <Typography variant='caption' style={ {
-                            marginLeft: theme.spacing(0.5)
-                        } }>{ moment(review.timestamp).format('MMM Do YYYY') }</Typography>
+                        <Typography variant='caption' style={ { marginLeft: theme.spacing(0.5) } }>
+                            { moment(review.timestamp).format('MMM Do YYYY') }
+                        </Typography>
+                        { showTeacher ? <Typography variant='caption' style={ { marginLeft: theme.spacing(0.5) } }>
+                            - { teacher }
+                        </Typography> : null }
                     </> : <Typography variant='caption'>Restored from ratemyteachers.com</Typography>
                 }
                 <Typography variant='body1'>

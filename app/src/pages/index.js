@@ -137,7 +137,7 @@ const IndexPage = ({ classes, client }) => {
                             >
                                 { data.reviewPagination ? data.reviewPagination.items
                                     .map((review, idx) =>
-                                        <Review key={ idx } onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } review={ review } teacher={ review.teacher }/>)
+                                        <Review key={ idx } onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } review={ review } teacher={ review.teacher } showTeacher={ true }/>)
                                     .reduce((acc, cur) => [acc, <Divider/>, cur]) : <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading Latest Reviews...</Typography> }
                             </InfiniteScroll> }
                         </Query>
