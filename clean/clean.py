@@ -41,10 +41,17 @@ header_on_every_page = {
     'Spring2020': True
 }
 
+
+def semester_value(semester):
+    year = int(semester[-4:])
+    semester = semester[:-4]
+
+    return year + (0.5 if semester == 'Fall' else 0)
+
+
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
-for announcer in os.listdir(data_path):
-    if announcer == 'teachers.json' or announcer == 'prerequisites.json':
-        continue
+for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.listdir(data_path)),
+                        key=lambda announcer_path: semester_value(os.path.basename(announcer_path)[:-4])):
     print(announcer)
     data[announcer[:-4]] = []
     pages = read_pdf(
@@ -218,12 +225,13 @@ for semester in data:
 
         try:
             teacher = next(teacher for teacher in teachers_to_insert if teacher['name'] == class_['teacher'])
+            if class_['semester'] not in teacher['semesters']:
+                teacher['semesters'].append(class_['semester'])
+                teacher['departments'] = []
             if department not in teacher['departments']:
                 teacher['departments'].append(department)
                 if len(teacher['departments']) > 1 and 'Miscellaneous' in teacher['departments']:
                     teacher['departments'].remove('Miscellaneous')
-            if class_['semester'] not in teacher['semesters']:
-                teacher['semesters'].append(class_['semester'])
         except StopIteration:
             teachers_to_insert.append({
                 'name': class_['teacher'],
