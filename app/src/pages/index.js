@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import Review from '../components/Review';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
 import Icon from '@mdi/react';
-import { mdiInstagram } from '@mdi/js';
+import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS } from '../graphql'
@@ -29,6 +29,11 @@ const Sidebar = withStyles(styles)(({ classes }) => {
         }
     `);
 
+    const links = [
+        { icon: mdiInstagram, link: 'https://www.instagram.com/lowellstudentsreview/' },
+        { icon: mdiGithubCircle, link: 'https://www.github.com/kajchang/studentsreview.me' }
+    ];
+
     return (
         <Paper className={ classes.control }>
             <List>
@@ -42,19 +47,54 @@ const Sidebar = withStyles(styles)(({ classes }) => {
                 <ListItem><Typography variant='body1'>Links</Typography></ListItem>
                 <Divider/>
                 <ListItem>
+                    { links.map(({ icon, link }, idx) => (
+                        <OutboundLink key={ idx } href={ link } target='_blank' rel='noopener noreferrer'>
+                            <Icon
+                                path={ icon }
+                                size={ 1 }
+                                color='black'
+                                style={ { marginRight: 5 } }
+                            />
+                        </OutboundLink>
+                    ))  }
                     <OutboundLink href={ process.env.GRAPHQL_URI } target='_blank' rel='noopener noreferrer'>
                         <Typography variant='body2'>GraphQL API</Typography>
-                    </OutboundLink>
-                </ListItem>
-                <ListItem>
-                    <OutboundLink href='https://github.com/kajchang/studentsreview.me' target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body2'>Source</Typography>
                     </OutboundLink>
                 </ListItem>
                 <ListItem>
                     <Typography variant='body2'>Created by Kai Chang</Typography>
                 </ListItem>
             </List>
+        </Paper>
+    );
+});
+
+const HeaderCard = withStyles(styles)(({ classes }) => {
+    return (
+        <Paper className={ classes.control }>
+            <Grid container direction='column' alignItems='center' spacing={ 3 }>
+                <Grid item>
+                    <Typography variant='h5'>Making an Arena Schedule?</Typography>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
+                        <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
+                    </OutboundLink>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://www.instagram.com/lowellstudentsreview/' target='_blank' rel='noopener noreferrer'>
+                        <Button variant='contained' color='secondary'>
+                            <Icon
+                                path={ mdiInstagram }
+                                size={ 1 }
+                                color='red'
+                                style={ { marginRight: 5 } }
+                            />
+                            Follow Us on Instagram!
+                        </Button>
+                    </OutboundLink>
+                </Grid>
+            </Grid>
         </Paper>
     );
 });
@@ -75,31 +115,7 @@ const IndexPage = ({ classes, client }) => {
                         <Sidebar/>
                     </Grid> }
                     <Grid item xs={ 12 } sm={ 9 }>
-                        <Paper className={ classes.control }>
-                            <Grid container direction='column' alignItems='center' spacing={ 3 }>
-                                <Grid item>
-                                    <Typography variant='h5'>Making an Arena Schedule?</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
-                                        <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
-                                    </OutboundLink>
-                                </Grid>
-                                <Grid item>
-                                    <OutboundLink href='https://www.instagram.com/lowellstudentsreview/' target='_blank' rel='noopener noreferrer'>
-                                        <Button variant='contained' color='secondary'>
-                                            <Icon
-                                                path={ mdiInstagram }
-                                                size={ 1 }
-                                                color='red'
-                                                style={ { marginRight: 5 } }
-                                            />
-                                            Follow Us on Instagram!
-                                        </Button>
-                                    </OutboundLink>
-                                </Grid>
-                            </Grid>
-                        </Paper>
+                        <HeaderCard/>
                         <Typography variant='h4' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                         <Query
                             query={ FIND_LATEST_REVIEWS }
