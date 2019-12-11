@@ -15,13 +15,6 @@ classes = db['classes']
 reviews = db['reviews']
 teachers = db['teachers']
 
-courses.delete_many({})
-classes.delete_many({})
-teachers.delete_many({})
-reviews.delete_many({
-    'version': 1
-})
-
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
     aliases = json.load(alias_file)
 data = {}
@@ -221,6 +214,7 @@ for semester in data:
             class_['name'] = 'AP Environmental Science'
 
         class_['semester'] = semester
+        class_['department'] = department
         classes_to_insert.append(class_)
 
         try:
@@ -255,6 +249,13 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'prerequisites.j
     prerequisites_data = json.load(prerequisites_file)
     for course in courses_to_insert:
         course['prerequisites'] = prerequisites_data.get(course['name'], [])
+
+courses.delete_many({})
+classes.delete_many({})
+teachers.delete_many({})
+reviews.delete_many({
+    'version': 1
+})
 
 courses.insert_many(courses_to_insert)
 classes.insert_many(classes_to_insert)

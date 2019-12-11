@@ -2,45 +2,26 @@ import React, { useState } from 'react';
 import {
     Checkbox,
     FormControlLabel,
-    IconButton,
     Table,
     TableHead,
     TableBody,
     TableRow,
     TableCell
 } from '@material-ui/core';
-import { Maximize, Minimize } from '@material-ui/icons';
 import { Helmet } from 'react-helmet';
-import { withStyles } from '@material-ui/styles';
+import TableSection from '../components/TableSection';
 
+import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { graphql, Link } from 'gatsby';
 import { sortSemesters, formatSemesterRange, getCurrentSemester } from '../utils';
 
 import styles from '../styles/styles';
 
-const TableSection = ({ header, initialExpanded=true, children }) => {
-    const [expanded, setExpanded] = useState(initialExpanded);
-
-    return (
-        <>
-            <TableRow>
-                <TableCell colSpan={ 3 } style={ { textAlign: 'center' } }>
-                    <IconButton onClick={ () => setExpanded(!expanded) } size='small'>
-                        { expanded ? <Minimize/> : <Maximize/> }
-                    </IconButton>{ header }
-                </TableCell>
-            </TableRow>
-            { expanded ? children : null }
-        </>
-    )
-}
-
 const TeachersPage = ({ classes, data }) => {
     const [currentTeachersFilter, setCurrentTeachersFilter] = useState(true);
 
     const departments = ['English', 'Math', 'Social Science', 'Science', 'Physical Education', 'Foreign Language', 'Computer Science', 'Miscellaneous'];
-
 
     const teachers = data.srapi.findManyTeacher
         .filter(teacher => (!currentTeachersFilter || teacher.semesters.includes(getCurrentSemester())));
@@ -68,7 +49,7 @@ const TeachersPage = ({ classes, data }) => {
                     <TableBody>
                         {
                             departments.map((department, idx) => (
-                                <TableSection key={ idx } header={ department }>
+                                <TableSection key={ idx } header={ department } colSpan={ 3 }>
                                     {
                                         teachers
                                             .filter(teacher => teacher.departments.includes(department))

@@ -18,9 +18,9 @@ import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
 import { semesterValue, formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
+import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments, name }) => {
     const [modalExposed, setModalExposed] = useState(false);

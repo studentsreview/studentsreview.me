@@ -6,6 +6,7 @@ import { Query, withApollo } from 'react-apollo'
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from '../components/Review';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
+import { Link } from 'gatsby';
 import Icon from '@mdi/react';
 import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
 
@@ -40,9 +41,9 @@ const Sidebar = withStyles(styles)(({ classes }) => {
                 <ListItem><Typography variant='body1'>Announcers</Typography></ListItem>
                 <Divider/>
                 { sortSemesters(data.site.siteMetadata.announcers).map((announcer, idx) => <ListItem key={ idx }>
-                    <OutboundLink href={ `${ process.env.GRAPHQL_URI }/data/${ announcer }.pdf` } target='_blank' rel='noopener noreferrer'>
+                    <Link to={ `/announcers/${ announcer.toLowerCase() }` }>
                         <Typography variant='body2'>{ splitSemester(announcer) }</Typography>
-                    </OutboundLink>
+                    </Link>
                 </ListItem>) }
                 <ListItem><Typography variant='body1'>Links</Typography></ListItem>
                 <Divider/>

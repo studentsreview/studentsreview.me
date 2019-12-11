@@ -54,7 +54,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                 <title>{ name }</title>
                 <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', department, name] }/>
-                <script type="application/ld+json">
+                <script type='application/ld+json'>
                     { JSON.stringify({
                         '@context': 'https://schema.org',
                         '@type': 'Course',
