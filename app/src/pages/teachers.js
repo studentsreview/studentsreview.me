@@ -1,56 +1,49 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
-    Button,
-    ClickAwayListener,
     Checkbox,
-    FormGroup,
     FormControlLabel,
-    Popper,
-    Paper,
+    IconButton,
     Table,
     TableHead,
     TableBody,
     TableRow,
     TableCell
 } from '@material-ui/core';
+import { Maximize, Minimize } from '@material-ui/icons';
 import { Helmet } from 'react-helmet';
-import { FilterList } from '@material-ui/icons';
-import { createStyles, withStyles } from '@material-ui/styles';
+import { withStyles } from '@material-ui/styles';
 
 import slugify from 'slugify';
 import { graphql, Link } from 'gatsby';
-import { sortSemesters, formatSemesterRange, getCurrentSemester, combineStyles } from '../utils';
+import { sortSemesters, formatSemesterRange, getCurrentSemester } from '../utils';
 
 import styles from '../styles/styles';
 
-const styles0 = createStyles({
-    gutters: {
-        '& > *': {
-            marginRight: 5
-        }
-    }
-});
+const TableSection = ({ header, initialExpanded=true, children }) => {
+    const [expanded, setExpanded] = useState(initialExpanded);
+
+    return (
+        <>
+            <TableRow>
+                <TableCell colSpan={ 3 } style={ { textAlign: 'center' } }>
+                    <IconButton onClick={ () => setExpanded(!expanded) } size='small'>
+                        { expanded ? <Minimize/> : <Maximize/> }
+                    </IconButton>{ header }
+                </TableCell>
+            </TableRow>
+            { expanded ? children : null }
+        </>
+    )
+}
 
 const TeachersPage = ({ classes, data }) => {
     const [currentTeachersFilter, setCurrentTeachersFilter] = useState(true);
-    const [departmentFilterMenuOpen, setDepartmentFilterMenuOpen] = useState(false);
 
-    const buttonRef = useRef(null);
+    const departments = ['English', 'Math', 'Social Science', 'Science', 'Physical Education', 'Foreign Language', 'Computer Science', 'Miscellaneous'];
 
-    const departments = data.srapi.findManyTeacher.reduce((acc, cur) => {
-        for (let department of cur.departments) {
-            if (!acc.includes(department)) {
-                acc.push(department);
-            }
-        }
-        return acc;
-    }, []).sort();
-
-    const [departmentFilter, setDepartmentFilter] = useState(departments.filter(el => el !== 'Miscellaneous'));
 
     const teachers = data.srapi.findManyTeacher
-        .filter(teacher => (!currentTeachersFilter || teacher.semesters.includes(getCurrentSemester())) && teacher.departments.some(department => departmentFilter.includes(department)))
-        .sort((a, b) => a.name.split(' ').slice(1).join(' ').localeCompare(b.name.split(' ').slice(1).join(' ')));
+        .filter(teacher => (!currentTeachersFilter || teacher.semesters.includes(getCurrentSemester())));
 
     return (
         <>
@@ -60,61 +53,39 @@ const TeachersPage = ({ classes, data }) => {
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>
-                <FormGroup row className={ classes.gutters }>
-                    <Button
-                        ref={ buttonRef }
-                        onClick={ () => setDepartmentFilterMenuOpen(!departmentFilterMenuOpen) }
-                    ><FilterList/>Filter Departments</Button>
-                    <Popper anchorEl={ buttonRef.current } open={ departmentFilterMenuOpen }>
-                        <ClickAwayListener onClickAway={ () => setDepartmentFilterMenuOpen(false) }>
-                            <Paper className={ classes.control }>
-                                <FormGroup>
-                                    {
-                                        departmentFilter.length === 0 ?
-                                            <Button variant='outlined' onClick={ () => setDepartmentFilter(departments) }>Select All</Button> :
-                                            <Button variant='outlined' onClick={ () => setDepartmentFilter([]) }>Deselect All</Button>
-                                    }
-                                    {
-                                        departments.map((department, idx) => (
-                                            <FormControlLabel
-                                                key={ idx }
-                                                control={ <Checkbox
-                                                    checked={ departmentFilter.includes(department) }
-                                                    onChange={ () => departmentFilter.includes(department) ?
-                                                        setDepartmentFilter(departmentFilter.filter(el => el !== department)) :
-                                                        setDepartmentFilter(departmentFilter.concat(department)) }/>
-                                                }
-                                                label={ department }
-                                            />
-                                        ))
-                                    }
-                                </FormGroup>
-                            </Paper>
-                        </ClickAwayListener>
-                    </Popper>
-                    <FormControlLabel
-                        control={ <Checkbox checked={ currentTeachersFilter } onChange={ e => setCurrentTeachersFilter(e.target.checked) }/> }
-                        label='Current Teachers Only'
-                    />
-                </FormGroup>
+                <FormControlLabel
+                    control={ <Checkbox checked={ currentTeachersFilter } onChange={ e => setCurrentTeachersFilter(e.target.checked) }/> }
+                    label='Current Teachers Only'
+                />
                 <Table size='small'>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Semesters</TableCell>
-                            <TableCell>Department(s)</TableCell>
+                            <TableCell style={ { width: '40%' } }>Name</TableCell>
+                            <TableCell style={ { width: '30%' } }>Semesters</TableCell>
+                            <TableCell style={ { width: '30%' } }>Departments</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
-                            teachers.map((teacher, idx) => (
-                                <TableRow key={ idx }>
-                                    <TableCell style={ { cursor: 'pointer', width: '33%' } }>
-                                        <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
-                                    </TableCell>
-                                    <TableCell style={ { width: '33%' } }>{ formatSemesterRange(sortSemesters(teacher.semesters)) }</TableCell>
-                                    <TableCell>{ teacher.departments.join(', ') }</TableCell>
-                                </TableRow>
+                            departments.map((department, idx) => (
+                                <TableSection key={ idx } header={ department }>
+                                    {
+                                        teachers
+                                            .filter(teacher => teacher.departments.includes(department))
+                                            .sort((a, b) => a.name.split(' ').slice(1).join(' ').localeCompare(b.name.split(' ').slice(1).join(' ')))
+                                            .map((teacher, idx) => <TableRow key={ idx }>
+                                                <TableCell style={ { cursor: 'pointer', width: '40%' } }>
+                                                    <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
+                                                </TableCell>
+                                                <TableCell style={ { width: '30%' } }>
+                                                    { formatSemesterRange(sortSemesters(teacher.semesters)) }
+                                                </TableCell>
+                                                <TableCell style={ { width: '30%' } }>
+                                                    { teacher.departments.join(', ') }
+                                                </TableCell>
+                                            </TableRow>)
+                                    }
+                                </TableSection>
                             ))
                         }
                     </TableBody>
@@ -142,4 +113,4 @@ export const query = graphql`
     }
 `;
 
-export default withStyles(combineStyles(styles, styles0))(TeachersPage);
+export default withStyles(styles)(TeachersPage);
