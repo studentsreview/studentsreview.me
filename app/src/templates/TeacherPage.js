@@ -17,6 +17,7 @@ import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
+import { LowellHighSchool } from '../schema';
 import { semesterValue, formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -155,7 +156,7 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
                         name,
                         jobTitle: 'Teacher',
                         knowsAbout: departments.join(', '),
-                        affiliation: 'Lowell High School'
+                        affiliation: LowellHighSchool
                     }) }
                 </script>
             </Helmet>

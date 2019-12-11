@@ -7,6 +7,7 @@ import { graphql } from 'gatsby';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
+import { LowellHighSchool } from '../schema';
 import { splitSemester } from '../utils';
 
 import styles from '../styles/styles';
@@ -24,6 +25,15 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                 <title>{ `${ splitSemester(semester) } Announcer` }</title>
                 <meta name='description' content={ `` }/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Announcer', splitSemester(semester)] }/>
+                <script type='application/ld+json'>
+                    { JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'DigitalDocument',
+                        name: `${ splitSemester(semester) } Announcer`,
+                        accessMode: 'textual',
+                        publisher: LowellHighSchool
+                    }) }
+                </script>
             </Helmet>
             <div className={ classes.root }>
                 <Table size='small'>
