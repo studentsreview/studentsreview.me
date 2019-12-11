@@ -23,7 +23,7 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
         <>
             <Helmet>
                 <title>{ `${ splitSemester(semester) } Announcer` }</title>
-                <meta name='description' content={ `` }/>
+                <meta name='description' content={ `View the classes offered at Lowell High School in ${ splitSemester(semester) }.` }/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Announcer', splitSemester(semester)] }/>
                 <script type='application/ld+json'>
                     { JSON.stringify({

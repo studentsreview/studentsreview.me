@@ -31,7 +31,7 @@ const Sidebar = withStyles(styles)(({ classes }) => {
     `);
 
     const links = [
-        { icon: mdiInstagram, link: 'https://www.instagram.com/lowellstudentsreview/' },
+        { icon: mdiInstagram, link: 'https://urlgeni.us/instagram/lhssr' },
         { icon: mdiGithubCircle, link: 'https://www.github.com/kajchang/studentsreview.me' }
     ];
 
@@ -58,9 +58,6 @@ const Sidebar = withStyles(styles)(({ classes }) => {
                             />
                         </OutboundLink>
                     ))  }
-                    <OutboundLink href={ process.env.GRAPHQL_URI } target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body2'>GraphQL API</Typography>
-                    </OutboundLink>
                 </ListItem>
                 <ListItem>
                     <Typography variant='body2'>Created by Kai Chang</Typography>
@@ -83,7 +80,7 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
                     </OutboundLink>
                 </Grid>
                 <Grid item>
-                    <OutboundLink href='https://www.instagram.com/lowellstudentsreview/' target='_blank' rel='noopener noreferrer'>
+                    <OutboundLink href='https://urlgeni.us/instagram/lhssr' target='_blank' rel='noopener noreferrer'>
                         <Button variant='contained' color='secondary'>
                             <Icon
                                 path={ mdiInstagram }
