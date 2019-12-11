@@ -6,6 +6,8 @@ import { Query, withApollo } from 'react-apollo'
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from '../components/Review';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
+import Icon from '@mdi/react';
+import { mdiInstagram } from '@mdi/js';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS } from '../graphql'
@@ -74,11 +76,28 @@ const IndexPage = ({ classes, client }) => {
                     </Grid> }
                     <Grid item xs={ 12 } sm={ 9 }>
                         <Paper className={ classes.control }>
-                            <Grid container direction='column' alignItems='center'>
-                                <Typography className={ classes.control } variant='h5'>Making an Arena Schedule?</Typography>
-                                <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
-                                    <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
-                                </OutboundLink>
+                            <Grid container direction='column' alignItems='center' spacing={ 3 }>
+                                <Grid item>
+                                    <Typography variant='h5'>Making an Arena Schedule?</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
+                                        <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
+                                    </OutboundLink>
+                                </Grid>
+                                <Grid item>
+                                    <OutboundLink href='https://www.instagram.com/lowellstudentsreview/' target='_blank' rel='noopener noreferrer'>
+                                        <Button variant='contained' color='secondary'>
+                                            <Icon
+                                                path={ mdiInstagram }
+                                                size={ 1 }
+                                                color='red'
+                                                style={ { marginRight: 5 } }
+                                            />
+                                            Follow Us on Instagram!
+                                        </Button>
+                                    </OutboundLink>
+                                </Grid>
                             </Grid>
                         </Paper>
                         <Typography variant='h4' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
