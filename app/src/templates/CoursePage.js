@@ -141,7 +141,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                         label={ teacher }
                                     /> : <Chip
                                         key={ idx }
-                                        label={ teacher.split(' ').slice(1).join(' ') }
+                                        label={ teacher.includes(' ') ? teacher.split(' ').slice(1).join(' ') : teacher }
                                         onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
                                             state: {
                                                 semester: semester === semesters[0] ? null : semester

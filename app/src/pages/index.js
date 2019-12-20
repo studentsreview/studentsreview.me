@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Typography, Button, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
