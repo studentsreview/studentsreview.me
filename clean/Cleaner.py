@@ -12,7 +12,11 @@ def semester_value(semester):
     return year + (0.5 if semester == 'Fall' else 0)
 
 
-HEADERS = {'code': ['id', 'cuomdb'], 'name': ['title'], 'room': [], 'block': [], 'teacher': []}
+def normalize(string):
+    return ' '.join(re.split(r'\s+', re.sub(r'\s', ' ', string)))
+
+
+HEADERS = {'code': ['course id', 'cuomdb', 'courseid'], 'name': ['title'], 'room': [], 'block': [], 'teacher': []}
 DIRNAME = os.path.dirname(__file__)
 DATA_PATH = os.path.join(DIRNAME, '..', 'data')
 ANNOUNCERS = sorted((os.path.join(DATA_PATH, announcer_path) for announcer_path in
@@ -21,7 +25,7 @@ ANNOUNCERS = sorted((os.path.join(DATA_PATH, announcer_path) for announcer_path 
 
 
 class Announcer:
-    def __init__(self, path):
+    def __init__(self, path: str):
         if not os.path.exists(os.path.join(DIRNAME, 'cache')):
             os.mkdir('cache')
 
@@ -49,35 +53,77 @@ class Announcer:
         self.headers = {}
 
         for raw_header in raw_headers:
+            normalized_header = normalize(raw_header)
             for HEADER in HEADERS:
-                if HEADER in raw_header.lower() or any(alias in raw_header.lower() for alias in HEADERS[HEADER]):
+                if (HEADER not in self.headers.values()) and \
+                        (HEADER in normalized_header.lower() or any(alias in normalized_header.lower() for alias in HEADERS[HEADER])):
                     self.headers[raw_headers.index(raw_header)] = HEADER
                     break
-
-        print(self.headers)
 
     def __iter__(self):
         for page in self.pages:
             yield [
-                {k: v for (k, v) in zip(self.headers.values(), (
-                    ' '.join(re.split(r'\s+', re.sub(r'\s', ' ', cell[0]))) for cell
-                    in filter(lambda cell: cell[1] in self.headers,
-                              ((row[i]['text'], i) for i in range(len(row))))
-                ))} for row in
-                (page['data'][1:] if (self.header_on_every_page or self.pages.index(page) == 0) else page['data'])
+                {k: v for (k, v) in zip(
+                    self.headers.values(),
+                    (normalize(row[header_idx]['text']) for header_idx in self.headers.keys())
+                )} for row in
+                filter(
+                    lambda row: any((normalize(cell['text']) != '' and idx in self.headers) for
+                                    (idx, cell) in enumerate(row)),
+                    (page['data'][1:] if (self.header_on_every_page or self.pages.index(page) == 0) else page['data'])
+                )
             ]
 
 
-class Cleaner:
-    @staticmethod
-    def clean_announcer(announcer):
-        pass
-
-    @staticmethod
-    def clean_teacher(ctx, teacher):
-        pass
+class Cache:
+    pass
 
 
 class Context:
-    def __init__(self, row):
+    def __init__(self, announcer: Announcer, page: iter, row: dict):
+        self.announcer = announcer
+        self.page = page
         self.row = row
+
+
+class Cleaner:
+    @classmethod
+    def clean_announcer(cls, announcer: Announcer):
+        for page in announcer:
+            for row in page:
+                for key in row:
+                    ctx = Context(announcer, page, row)
+                    clean = getattr(cls, 'clean_' + key, lambda _, x: x)
+                    row[key] = clean(ctx, row[key])
+                yield row
+
+    @staticmethod
+    def clean_teacher(ctx: Context, teacher: str):
+        # Last, First
+        match = re.match(r'([A-z- ]+), ([A-z]+)', teacher)
+        if match:
+            last, first = match.groups()
+            return first.capitalize() + ' ' + last.capitalize()
+
+        # Last, F.
+        match = re.match(r'([A-z- ]+), ([A-Z]).', teacher)
+        if match:
+            last, first_initial = match.groups()
+            return first_initial + ' ' + last
+
+        # Staff A-Z
+        match = re.match(r'Staff[ -]([A-Z])', teacher)
+        if match:
+            undetermined_id = match.groups()
+            return undetermined_id
+
+        # Last
+        match = re.match(r'([A-z- ]+)', teacher)
+        if match:
+            last = match.groups()
+            return last
+
+        # Fallback
+        print(ctx.announcer.name, ctx.row)
+
+        return teacher
