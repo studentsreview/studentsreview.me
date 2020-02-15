@@ -17,9 +17,9 @@ import ReportForm from '../components/ReportForm';
 import moment from 'moment';
 import slugify from 'slugify';
 import { hashReview, isMigrant, copyToClipboard } from '../utils';
+import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics'
 
 const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) => {
     const anchorEl = useRef(null);
@@ -29,10 +29,6 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
     const truncateLength = 500;
     const fullText = review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '');
     const [shownText, setShownText] = useState(fullText.slice(0, truncateLength + 1));
-
-    if (!fullText.includes(shownText)) {
-        setShownText(fullText.slice(0, truncateLength + 1));
-    }
 
     useEffect(() => {
         if (selected) {
@@ -115,8 +111,11 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
             <Typography variant='body1'>
                 { shownText.length < fullText.length ?
                     <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Expand</p> : (
-                        shownText.length > truncateLength ? <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Collapse</p> : null
-                    ) }
+                        shownText.length > truncateLength ?
+                            <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Collapse</p> :
+                            null
+                    )
+                }
             </Typography>
             <Modal shown={ modalExposed }>
                 <Grid item xs={ 12 } sm={ 6 }>
@@ -130,6 +129,6 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
             </Modal>
         </div>
     );
-}
+};
 
 export default withStyles(styles)(Review);

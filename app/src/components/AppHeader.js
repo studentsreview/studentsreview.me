@@ -76,13 +76,13 @@ const AppHeader = ({ classes, client }) => {
             navigate(`/courses/${ slugify(suggestion, { lower: true }) }`);
         }
         setValue('');
-    }
+    };
 
     const keyDownHandler = e => {
         if (e.key === 'Enter') {
             navigateToSuggestion(suggestions[0]);
         }
-    }
+    };
 
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);
@@ -109,12 +109,12 @@ const AppHeader = ({ classes, client }) => {
         <AppBar position='static'>
             <Toolbar>
                 <Link to='/'><Image fixed={ data.file.childImageSharp.fixed }/></Link>
-                { isWidthUp('md', width) && <>
+                { isWidthUp('md', width) ? <>
                     <div style={ { flexGrow: 1 } }/>
                     <Link to='/teachers'><Typography variant='h6'>teachers</Typography></Link>
                     <div style={ { flexGrow: 1 } }/>
                     <Link to='/courses'><Typography variant='h6'>courses</Typography></Link>
-                </> }
+                </> : null }
                 <div style={ { flexGrow: 25 } }/>
                 <TextField
                     style={ { width: 300 } }

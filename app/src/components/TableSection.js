@@ -17,6 +17,6 @@ const TableSection = ({ children, colSpan, header, initialExpanded=true }) => {
             { expanded ? children : null }
         </>
     )
-}
+};
 
 export default TableSection;

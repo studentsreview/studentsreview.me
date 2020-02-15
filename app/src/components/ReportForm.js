@@ -6,9 +6,9 @@ import { Mutation } from 'react-apollo';
 
 import { getReviewId } from '../utils';
 import { CREATE_REPORT } from '../graphql';
+import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
-import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 const ReportForm = ({ classes, review, teacher, onClose }) => {
     const [value, setValue] = useState('inappropriate');
@@ -19,7 +19,7 @@ const ReportForm = ({ classes, review, teacher, onClose }) => {
                 onClose();
             }
         }
-    }
+    };
 
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);

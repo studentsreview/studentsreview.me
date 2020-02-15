@@ -70,7 +70,7 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
             </div>
         </>
     );
-}
+};
 
 export default withStyles(styles)(AnnouncerPage);
 

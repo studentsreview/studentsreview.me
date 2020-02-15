@@ -21,9 +21,9 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
 
     const courses = data.srapi.findManyClass;
     const department = data.srapi.findOneCourse.department;
-    const prerequisites = data.srapi.findOneCourse.prerequisites
+    const prerequisites = data.srapi.findOneCourse.prerequisites;
     const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
-    const codes = removeDupes(data.srapi.findManyClass.map(course => course.code))
+    const codes = removeDupes(data.srapi.findManyClass.map(course => course.code));
 
     const initialSemester = location.state && location.state.semester;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);

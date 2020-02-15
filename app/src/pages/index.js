@@ -57,7 +57,7 @@ const Sidebar = withStyles(styles)(({ classes }) => {
                                 style={ { marginRight: 5 } }
                             />
                         </OutboundLink>
-                    ))  }
+                    )) }
                 </ListItem>
                 <ListItem>
                     <Typography variant='body2'>Created by Kai Chang</Typography>
@@ -179,6 +179,6 @@ const IndexPage = ({ classes, client }) => {
             </div>
         </>
     );
-}
+};
 
 export default withStyles(styles)(withApollo(IndexPage));

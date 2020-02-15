@@ -74,7 +74,7 @@ const TeachersPage = ({ classes, data }) => {
             </div>
         </>
     );
-}
+};
 
 export const query = graphql`
     query {

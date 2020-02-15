@@ -38,13 +38,13 @@ const CoursesPage = ({ classes, data }) => {
         Science: `* Juniors and Seniors can also take electives not part of the 3 "main" sciences (${ data.srapi.findManyCourse.filter(course => course.department === 'Science' && course.prerequisites.length === 0 && course.name !== 'Biology').map(course => course.name).join(', ') })`,
         English: `* Juniors and Seniors not taking AP Englishes or Critical Writing (1 semester required for non-AP Juniors) take English electives (${ data.srapi.findManyCourse.filter(course => course.department === 'English' && course.prerequisites.length === 0 && !(['English 1', 'English Support', 'Communication and Writing'].includes(course.name))).map(course => course.name).join(', ') })`,
         'Computer Science': '* Students can skip AP Computer Science prerequisites if they have previous experience'
-    }
+    };
 
     const popStateHandler = e => {
         if (Object.keys(diagrams).findIndex(diagram => slugify(diagram, { lower: true }) === e.target.location.hash.substr(1)) !== -1) {
             document.querySelector(`.${ e.target.location.hash.substr(1) }`).scrollIntoView({ behavior: 'smooth' });
         }
-    }
+    };
 
     useEffect(() => {
         popStateHandler({ target: window });
