@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Chip, Grid, Paper, Typography, ClickAwayListener } from '@material-ui/core';
+import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, Tabs, Tab } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { useTheme, withStyles } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
@@ -139,7 +139,9 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
     const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
     const departments = data.srapi.findOneTeacher.departments;
 
+
     const [rating, setRating] = useState(0);
+    const [currentTab, setCurrentTab] = useState(0);
 
     const width = useWidth();
 
@@ -162,25 +164,42 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
             </Helmet>
             <div className={ classes.root }>
                 <Grid container spacing={ 3 }>
-                    <Grid item xs={ 12 } sm={ 5 }>
-                        <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
-                        { isWidthUp('sm', width) && <Sidebar courses={ courses } semesters={ semesters } location={ location }/> }
-                    </Grid>
-                    <Grid item xs={ 12 } sm={ 7 }>
-                        <Query
-                            query={ FIND_REVIEWS }
-                            variables={ { name } }
-                            onCompleted={ data => setRating(data.findOneTeacher.rating) }
-                            notifyOnNetworkStatusChange={ true }
-                        >
-                            { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
-                        </Query>
-                    </Grid>
+                    <Query
+                        query={ FIND_REVIEWS }
+                        variables={ { name } }
+                        onCompleted={ data => setRating(data.findOneTeacher.rating) }
+                        notifyOnNetworkStatusChange={ true }
+                    >
+                        { ({ data }) => isWidthUp('sm', width) ? <>
+                            <Grid item sm={ 5 }>
+                                <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
+                                <Sidebar courses={ courses } semesters={ semesters } location={ location }/>
+                            </Grid>
+                            <Grid item sm={ 7 }>
+                                <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/>
+                            </Grid>
+                        </> : <>
+                            <Grid item xs={ 12 }>
+                                <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
+                                <Tabs value={ currentTab } onChange={ (_, tab) => setCurrentTab(tab) } style={ { alignItems: 'center' } }>
+                                    <Tab label='Reviews'/>
+                                    <Tab label='Courses'/>
+                                </Tabs>
+                            </Grid>
+                            <Grid item xs={ 12 }>
+                                {
+                                    currentTab === 0 ?
+                                        <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> :
+                                        <Sidebar courses={ courses } semesters={ semesters } location={ location }/>
+                                }
+                            </Grid>
+                        </> }
+                    </Query>
                 </Grid>
             </div>
         </>
     );
-}
+};
 
 export default withStyles(styles)(TeacherPage);
 
