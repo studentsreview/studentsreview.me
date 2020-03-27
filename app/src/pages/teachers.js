@@ -15,7 +15,8 @@ import TableSection from '../components/TableSection';
 import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { graphql, Link } from 'gatsby';
-import { getCurrentSemester } from '../utils'
+import { navigate } from '@reach/router';
+import { getCurrentSemester } from '../utils';
 
 import styles from '../styles/styles';
 
@@ -56,7 +57,10 @@ const TeachersPage = ({ classes, data }) => {
                                             .filter(teacher => teacher.departments.includes(department))
                                             .sort((a, b) => a.name.split(' ').slice(1).join(' ').localeCompare(b.name.split(' ').slice(1).join(' ')))
                                             .map((teacher, idx) => <TableRow key={ idx }>
-                                                <TableCell style={ { cursor: 'pointer', width: '70%' } }>
+                                                <TableCell
+                                                    onClick={ () => navigate(`/teachers/${ slugify(teacher.name, { lower: true }) }`) }
+                                                    style={ { cursor: 'pointer', width: '70%' } }
+                                                >
                                                     <Link to={ `/teachers/${ slugify(teacher.name, { lower: true }) }` }>{ teacher.name }</Link>
                                                 </TableCell>
                                                 <TableCell style={ { width: '30%' } }>

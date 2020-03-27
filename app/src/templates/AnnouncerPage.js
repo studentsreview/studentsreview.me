@@ -1,10 +1,11 @@
 import React from 'react';
+import { Table, TableHead, TableBody, TableRow, TableCell, Typography } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import { Link } from 'gatsby';
 import TableSection from '../components/TableSection';
 
 import { graphql } from 'gatsby';
-import { Table, TableHead, TableBody, TableRow, TableCell, Typography } from '@material-ui/core';
+import { navigate } from '@reach/router';
 import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { LowellHighSchool } from '../schema';
@@ -61,10 +62,16 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                                             })
                                             .map((class_, idx) => <TableRow key={ idx }>
                                                 <TableCell style={ { width: '10%', textAlign: 'center' } }>{ class_.block }</TableCell>
-                                                <TableCell style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }>
+                                                <TableCell
+                                                    onClick={ () => navigate(`/courses/${ slugify(class_.name, { lower: true }) }`) }
+                                                    style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
+                                                >
                                                     <Link to={ `/courses/${ slugify(class_.name, { lower: true }) }` }>{ class_.name } { class_.section ? class_.section : null }</Link>
                                                 </TableCell>
-                                                <TableCell style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }>
+                                                <TableCell
+                                                    onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`) }
+                                                    style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
+                                                >
                                                     <Link to={ `/teachers/${ slugify(class_.teacher, { lower: true }) }` }>{ class_.teacher }</Link>
                                                 </TableCell>
                                             </TableRow>)
