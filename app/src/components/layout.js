@@ -1,5 +1,6 @@
 import React from 'react';
 import AppHeader from './AppHeader';
+import InfoBanner from './InfoBanner';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
@@ -54,6 +55,7 @@ const Layout = ({ children }) => (
     <ApolloProvider client={ client }>
         <MuiThemeProvider theme={ theme }>
             <AppHeader/>
+            <InfoBanner/>
             { children }
         </MuiThemeProvider>
     </ApolloProvider>
