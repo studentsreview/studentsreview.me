@@ -72,24 +72,21 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
         <Paper className={ classes.control }>
             <Grid container direction='column' alignItems='center' spacing={ 3 }>
                 <Grid item>
-                    <Typography variant='h5'>Making an Arena Schedule?</Typography>
+                    <Typography variant='h5' align='center'>Fall 2020 Course Selection Information</Typography>
                 </Grid>
                 <Grid item>
-                    <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
-                        <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
+                    <OutboundLink href='https://docs.google.com/forms/d/e/1FAIpQLSd_Hv1b19BQWu9YiZh-3_GLeS2NlP_v2h36KBGb27PkYTyYFw/viewform' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>Statement of Awareness Form</Typography>
                     </OutboundLink>
                 </Grid>
                 <Grid item>
-                    <OutboundLink href='https://urlgeni.us/instagram/lhssr' target='_blank' rel='noopener noreferrer'>
-                        <Button variant='contained' color='secondary'>
-                            <Icon
-                                path={ mdiInstagram }
-                                size={ 1 }
-                                color='red'
-                                style={ { marginRight: 5 } }
-                            />
-                            Follow Us on Instagram!
-                        </Button>
+                    <OutboundLink href='https://drive.google.com/file/d/1afwdSiNUCj2x1I3GcgWNZmuas-jpXEiR/view' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>Statement of Awareness Video</Typography>
+                    </OutboundLink>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://docs.google.com/document/d/1CnM-ff73bMnli3BDGoKJAOZ5SHCrNP0ErcqA8S3zyE4/edit' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>Course Descriptions</Typography>
                     </OutboundLink>
                 </Grid>
             </Grid>
