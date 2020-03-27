@@ -39,9 +39,9 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                 <Table size='small'>
                     <TableHead>
                         <TableRow>
-                            <TableCell style={ { width: '35%' } }>Name</TableCell>
-                            <TableCell style={ { width: '35%' } }>Teacher</TableCell>
-                            <TableCell style={ { width: '30%' } }>Block</TableCell>
+                            <TableCell style={ { width: '10%', textAlign: 'center' } }>Block</TableCell>
+                            <TableCell style={ { width: '45%', textAlign: 'center' } }>Name</TableCell>
+                            <TableCell style={ { width: '45%', textAlign: 'center' } }>Teacher</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -53,13 +53,13 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                                             .filter(class_ => class_.department === department)
                                             .sort((a, b) => a.name.localeCompare(b.name))
                                             .map((class_, idx) => <TableRow key={ idx }>
-                                                <TableCell style={ { cursor: 'pointer', width: '35%' } }>
+                                                <TableCell style={ { width: '10%', textAlign: 'center' } }>{ class_.block }</TableCell>
+                                                <TableCell style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }>
                                                     <Link to={ `/courses/${ slugify(class_.name, { lower: true }) }` }>{ class_.name } { class_.section ? class_.section : null }</Link>
                                                 </TableCell>
-                                                <TableCell style={ { cursor: 'pointer', width: '35%' } }>
+                                                <TableCell style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }>
                                                     <Link to={ `/teachers/${ slugify(class_.teacher, { lower: true }) }` }>{ class_.teacher }</Link>
                                                 </TableCell>
-                                                <TableCell style={ { width: '30%' } }>{ class_.block }</TableCell>
                                             </TableRow>)
                                     }
                                 </TableSection>

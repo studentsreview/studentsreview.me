@@ -121,7 +121,7 @@ const AppHeader = ({ classes, client }) => {
                     variant='filled'
                     className={ classes.textField }
                     InputLabelProps={ { classes: { root: classes.label, shrink: classes.shrink } } }
-                    label='Search'
+                    label='Search Teachers and Courses'
                     inputRef={ inputRef }
                     value={ value }
                     onChange={ e => setValue(e.target.value) }
