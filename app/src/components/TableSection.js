@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import { IconButton, TableCell, TableRow } from '@material-ui/core';
-import { Maximize, Minimize } from '@material-ui/icons';
+import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
 
-const TableSection = ({ children, colSpan, header, initialExpanded=true }) => {
+const TableSection = ({ children, colSpan, header, initialExpanded=false }) => {
     const [expanded, setExpanded] = useState(initialExpanded);
 
     return (
         <>
             <TableRow>
-                <TableCell colSpan={ colSpan } style={ { textAlign: 'center' } }>
-                    <IconButton onClick={ () => setExpanded(!expanded) } size='small'>
-                        { expanded ? <Minimize/> : <Maximize/> }
+                <TableCell onClick={ () => setExpanded(!expanded) } colSpan={ colSpan } style={ { textAlign: 'center' } }>
+                    <IconButton size='small'>
+                        { expanded ? <ArrowDropDown/> : <ArrowRight/> }
                     </IconButton>{ header }
                 </TableCell>
             </TableRow>

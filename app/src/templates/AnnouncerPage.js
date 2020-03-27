@@ -40,7 +40,7 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                     <TableHead>
                         <TableRow>
                             <TableCell style={ { width: '10%', textAlign: 'center' } }>Block</TableCell>
-                            <TableCell style={ { width: '45%', textAlign: 'center' } }>Name</TableCell>
+                            <TableCell style={ { width: '45%', textAlign: 'center' } }>Course</TableCell>
                             <TableCell style={ { width: '45%', textAlign: 'center' } }>Teacher</TableCell>
                         </TableRow>
                     </TableHead>
