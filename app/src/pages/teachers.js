@@ -6,15 +6,16 @@ import {
     TableHead,
     TableBody,
     TableRow,
-    TableCell
-} from '@material-ui/core';
+    TableCell,
+    Typography
+} from '@material-ui/core'
 import { Helmet } from 'react-helmet';
 import TableSection from '../components/TableSection';
 
 import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { graphql, Link } from 'gatsby';
-import { getCurrentSemester } from '../utils';
+import { getCurrentSemester } from '../utils'
 
 import styles from '../styles/styles';
 
@@ -34,6 +35,7 @@ const TeachersPage = ({ classes, data }) => {
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>
+                <Typography variant='h4' align='center'>Teachers</Typography>
                 <FormControlLabel
                     control={ <Checkbox checked={ currentTeachersFilter } onChange={ e => setCurrentTeachersFilter(e.target.checked) }/> }
                     label='Current Teachers Only'

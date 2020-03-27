@@ -4,7 +4,7 @@ import { Link } from 'gatsby';
 import TableSection from '../components/TableSection';
 
 import { graphql } from 'gatsby';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Table, TableHead, TableBody, TableRow, TableCell, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { LowellHighSchool } from '../schema';
@@ -36,6 +36,7 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                 </script>
             </Helmet>
             <div className={ classes.root }>
+                <Typography variant='h4' align='center'>{ splitSemester(semester) } Announcer</Typography>
                 <Table size='small'>
                     <TableHead>
                         <TableRow>
@@ -51,7 +52,13 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                                     {
                                         classes_
                                             .filter(class_ => class_.department === department)
-                                            .sort((a, b) => a.name.localeCompare(b.name))
+                                            .sort((a, b) => {
+                                                let diff = a.name.localeCompare(b.name);
+                                                if (diff === 0) {
+                                                    diff = a.block - b.block;
+                                                }
+                                                return diff;
+                                            })
                                             .map((class_, idx) => <TableRow key={ idx }>
                                                 <TableCell style={ { width: '10%', textAlign: 'center' } }>{ class_.block }</TableCell>
                                                 <TableCell style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }>

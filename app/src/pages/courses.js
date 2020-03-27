@@ -63,6 +63,7 @@ const CoursesPage = ({ classes, data }) => {
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teachers'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>
+                <Typography variant='h4' align='center'>Courses</Typography>
                 <Grid container spacing={ 3 }>
                     {
                         Object.keys(diagrams).map((diagram, idx) => <Grid key={ idx } item xs={ 12 } sm={ 6 }>
