@@ -102,7 +102,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                             */ }
                             { course.AtoG ? <Chip label={ course.AtoG }/> : null }
                             { course.length ? <Chip label={ course.length }/> : null }
-                            { course.grades ? <Chip label={ `Grades ${ course.grades }` }/> : null }
+                            { course.grades ? <Chip label={ `Grade${ course.grades.includes('-') ? 's' : '' } ${ course.grades }` }/> : null }
                             <div style={ { marginTop: theme.spacing(1) } }/>
                             { course.notes ? <>
                                 <div style={ { marginTop: theme.spacing(1) } }/>
