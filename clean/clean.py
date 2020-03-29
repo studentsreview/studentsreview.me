@@ -246,9 +246,18 @@ for semester in data:
             })
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'prerequisites.json')) as prerequisites_file:
-    prerequisites_data = json.load(prerequisites_file)
-    for course in courses_to_insert:
-        course['prerequisites'] = prerequisites_data.get(course['name'], [])
+    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'course_descriptions.json')) as course_descriptions_file:
+        prerequisites_data = json.load(prerequisites_file)
+        course_descriptions_data = json.load(course_descriptions_file)
+
+        for course in courses_to_insert:
+            course_description = course_descriptions_data.get(course['name'])
+            course['prerequisites'] = prerequisites_data.get(course['name'], [])
+            course['notes'] = course_description['notes_prerequisites'] if course_description else ''
+            course['grades'] = course_description['grades'] if course_description else ''
+            course['length'] = course_description['length'] if course_description else ''
+            course['A-G'] = course_description['A-G'] if course_description else ''
+            course['description'] = course_description['description'] if course_description else ''
 
 courses.delete_many({})
 classes.delete_many({})
