@@ -182,9 +182,9 @@ for semester in data:
             department = 'Science'
         elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Microeconomics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
             department = 'Social Science'
-        elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater']):
+        elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater', 'Dance']):
             department = 'Visual Performing Arts'
-        elif any(test in class_['name'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga', 'Dance']):
+        elif any(test in class_['name'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga']):
             department = 'Physical Education'
         elif any(test in class_['name'] for test in ['JROTC']):
             department = 'JROTC'
@@ -256,7 +256,7 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'prerequisites.j
             course['notes'] = course_description['notes_prerequisites'] if course_description else ''
             course['grades'] = course_description['grades'] if course_description else ''
             course['length'] = course_description['length'] if course_description else ''
-            course['A-G'] = course_description['A-G'] if course_description else ''
+            course['AtoG'] = course_description['A-G'] if course_description else ''
             course['description'] = course_description['description'] if course_description else ''
 
 courses.delete_many({})

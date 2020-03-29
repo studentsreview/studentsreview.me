@@ -13,6 +13,7 @@ import { Close, MoreVert } from '@material-ui/icons'
 import StarRatings from 'react-star-ratings';
 import Modal from '../components/Modal';
 import ReportForm from '../components/ReportForm';
+import CollapsibleText from '../components/CollapsibleText';
 
 import moment from 'moment';
 import slugify from 'slugify';
@@ -26,9 +27,7 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
     const [menuOpen, setMenuOpen] = useState(false);
     const [modalExposed, setModalExposed] = useState(false);
 
-    const truncateLength = 500;
-    const fullText = review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '');
-    const [shownText, setShownText] = useState(fullText.slice(0, truncateLength + 1));
+    const reviewText = review.text.replace(/Submitted by a student$/, '').replace(/Submitted by a Parent$/, '');
 
     useEffect(() => {
         if (selected) {
@@ -104,19 +103,8 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
                         </Typography> : null }
                     </> : <Typography variant='caption'>Restored from ratemyteachers.com</Typography>
                 }
-                <Typography variant='body1'>
-                    { shownText }{ shownText.length < fullText.length ? '…' : '' }
-                </Typography>
+                <CollapsibleText text={ reviewText }/>
             </div>
-            <Typography variant='body1'>
-                { shownText.length < fullText.length ?
-                    <p onClick={ () => setShownText(fullText) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Expand</p> : (
-                        shownText.length > truncateLength ?
-                            <p onClick={ () => setShownText(fullText.slice(0, truncateLength + 1)) } style={ { margin: 0, color: theme.palette.secondary.dark, cursor: 'pointer' } }>Collapse</p> :
-                            null
-                    )
-                }
-            </Typography>
             <Modal shown={ modalExposed }>
                 <Grid item xs={ 12 } sm={ 6 }>
                     <ClickAwayListener onClickAway={ () => setModalExposed(false) }>
