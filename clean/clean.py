@@ -160,7 +160,7 @@ classes_to_insert = []
 for semester in data:
     for class_ in data[semester]:
         sectioned = False
-        if class_['name'].startswith('AP English') and len(class_['name'].split()) == 4:
+        if class_['name'].startswith('AP English') and len(class_['name'].split()) == 6:
             class_['section'] = class_['name'].split()[-1]
             class_['name'] = ' '.join(class_['name'].split()[:-1])
             try:
