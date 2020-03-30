@@ -66,7 +66,7 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                                                     onClick={ () => navigate(`/courses/${ slugify(class_.name, { lower: true }) }`) }
                                                     style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
                                                 >
-                                                    <Link to={ `/courses/${ slugify(class_.name, { lower: true }) }` }>{ class_.name } { class_.section ? class_.section : null }</Link>
+                                                    <Link to={ `/courses/${ slugify(class_.name, { lower: true }) }` }>{ class_.name }{ class_.section ? ` (${ class_.section })`: '' }</Link>
                                                 </TableCell>
                                                 <TableCell
                                                     onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`) }
