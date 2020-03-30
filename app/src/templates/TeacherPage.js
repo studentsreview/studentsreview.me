@@ -113,11 +113,9 @@ const Sidebar = withStyles(styles)(({ classes, classes_, semesters, location }) 
                         <Chip
                             key={ idx }
                             className={ class_.name.length > 25 ? classes.scalingText : null }
-                            label={ class_.name }
+                            label={ `${ class_.name }${ class_.section ? ` (${ class_.section })` : '' }` }
                             onClick={ () => navigate(`/courses/${ slugify(class_.name, { lower: true }) }`, {
-                                state: {
-                                    semester: semester === semesters[0] ? null : semester
-                                }
+                                state: { semester: semester === semesters[0] ? null : semester }
                             }) }
                         />)
                 }
@@ -212,6 +210,7 @@ export const query = graphql`
                 semester
                 name
                 block
+                section
             }
         }
     }
