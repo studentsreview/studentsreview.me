@@ -137,22 +137,20 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                         <ScheduleTable
                             blocks={ getBlocks().concat(removeDupes(semesterClasses.map(class_ => class_.block).filter(block => block > 8))) }
                         >
-                            { ({ block }) => removeDupes(
-                                semesterClasses
-                                    .filter(class_ => class_.block === block)
-                                    .map(class_ => class_.teacher)
-                            )
-                                .map((teacher, idx) =>
-                                    teacher === 'Undetermined' ? <Chip
+                            { ({ block }) => semesterClasses
+                                .filter(class_ => class_.block === block)
+                                .map((class_, idx) =>
+                                    class_.teacher === 'Undetermined' ? <Chip
                                         key={ idx }
-                                        label={ teacher }
+                                        label={ class_.teacher }
                                     /> : <Chip
                                         key={ idx }
-                                        label={ teacher.includes(' ') ? teacher.split(' ').slice(1).join(' ') : teacher }
-                                        onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
-                                            state: {
-                                                semester: semester === semesters[0] ? null : semester
-                                            }
+                                        label={
+                                            `${ class_.teacher.includes(' ') ? class_.teacher.split(' ').slice(1).join(' ') : class_.teacher }${
+                                                class_.section ? ` (${ class_.section })` : '' }`
+                                        }
+                                        onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`, {
+                                            state: { semester: semester === semesters[0] ? null : semester }
                                         }) }
                                     />)
                             }
@@ -176,6 +174,7 @@ export const query = graphql`
                 semester
                 teacher
                 block
+                section
             }
             findOneCourse(filter: {
                 name: $name
