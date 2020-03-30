@@ -113,7 +113,10 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                             { course.description ? <>
                                 <div style={ { marginTop: theme.spacing(1) } }/>
                                 <b>Description: </b>
-                                <CollapsibleText text={ course.description } truncateLength={ 100 }/>
+                                <CollapsibleText
+                                    text={ course.description } truncateLength={ 100 }
+                                    typographyProps={ { style: { whiteSpace: 'pre-wrap' } } }
+                                />
                             </>: null }
                         </Paper>
                     </Grid>

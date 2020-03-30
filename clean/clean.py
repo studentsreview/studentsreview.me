@@ -159,17 +159,24 @@ classes_to_insert = []
 
 for semester in data:
     for class_ in data[semester]:
-        sectioned = False
         if class_['name'].startswith('AP English') and len(class_['name'].split()) == 6:
             class_['section'] = class_['name'].split()[-1]
             class_['name'] = ' '.join(class_['name'].split()[:-1])
+        elif class_['name'].startswith('AP') and class_['name'].endswith('economics'):
+            class_['section'] = class_['name'][3:-9]
+            class_['name'] = 'AP Economics'
+        else:
+            class_['section'] = None
+
+        sectioned = False
+
+        if class_['section'] is not None:
             try:
                 course = next(course for course in courses_to_insert if course['name'] == class_['name'])
                 course['sectioned'] = True
             except StopIteration:
                 sectioned = True
-        else:
-            class_['section'] = None
+
         if any(test in class_['name'] for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
             department = 'Math'
         elif any(test in class_['name'] for test in ['Computer']):
@@ -180,7 +187,7 @@ for semester in data:
             department = 'English'
         elif any(test in class_['name'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             department = 'Science'
-        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Microeconomics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
+        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Microeconomics', 'Macroeconomics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
             department = 'Social Science'
         elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater', 'Dance']):
             department = 'Visual Performing Arts'
