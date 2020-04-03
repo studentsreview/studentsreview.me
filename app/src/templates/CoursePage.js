@@ -15,6 +15,7 @@ import { formatSemesterRange, getBlocks, removeDupes, semesterValue, sortSemeste
 import { FIND_REVIEWS } from '../graphql';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
+import { LowellHighSchool } from '../schema';
 import styles from '../styles/styles';
 
 const CoursePage = ({ data, pageContext, classes, location, client }) => {
@@ -51,8 +52,8 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
         <>
             <Helmet>
                 <title>{ name }</title>
-                <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
-                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', course.department, name] }/>
+                <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School in San Francisco.` }/>
+                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', 'Course', 'San Francisco', course.department, name] }/>
                 <script type='application/ld+json'>
                     { JSON.stringify({
                         '@context': 'https://schema.org',
@@ -60,11 +61,9 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                         courseCode: codes.join(', '),
                         coursePrerequisites: course.prerequisites.join(', '),
                         name,
-                        description: `${ name } is a${ /^[AEIOU]/.test(course.department) ? 'n' : '' } ${ course.department } class offered at Lowell High School.`,
-                        provider: {
-                            '@type': 'Organization',
-                            name: 'Lowell High School'
-                        }
+                        description: course.description ? course.description :
+                            `${ name } is a${ /^[AEIOU]/.test(course.department) ? 'n' : '' } ${ course.department } class offered at Lowell High School in San Francisco.`,
+                        provider: LowellHighSchool
                     }) }
                 </script>
             </Helmet>

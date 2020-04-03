@@ -17,10 +17,10 @@ import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
-import { LowellHighSchool } from '../schema';
 import { semesterValue, formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
+import { LowellHighSchool } from '../schema';
 import styles from '../styles/styles';
 
 const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments, name }) => {
