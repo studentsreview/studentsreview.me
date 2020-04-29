@@ -75,13 +75,8 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
                     <Typography variant='h5' align='center'>Fall 2020 Course Selection Information</Typography>
                 </Grid>
                 <Grid item>
-                    <OutboundLink href='https://docs.google.com/forms/d/e/1FAIpQLSd_Hv1b19BQWu9YiZh-3_GLeS2NlP_v2h36KBGb27PkYTyYFw/viewform' target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body1' color='secondary'>Statement of Awareness Form</Typography>
-                    </OutboundLink>
-                </Grid>
-                <Grid item>
-                    <OutboundLink href='https://drive.google.com/file/d/1afwdSiNUCj2x1I3GcgWNZmuas-jpXEiR/view' target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body1' color='secondary'>Statement of Awareness Video</Typography>
+                    <OutboundLink href='https://docs.google.com/document/d/1bRE4BhiQv8XFceqO7sGFkIp7jKozAxdUh3qdF8JG5sU/edit' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>Arena Timeline</Typography>
                     </OutboundLink>
                 </Grid>
                 <Grid item>

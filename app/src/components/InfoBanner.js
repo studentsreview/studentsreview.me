@@ -9,7 +9,7 @@ const InfoBanner = () => {
 
     return (
         <Paper style={ { margin: theme.spacing(2), padding: theme.spacing(2), background: theme.palette.secondary.main } }>
-            <Typography variant='body1' align='center'>The Fall 2020 Announcer is not expected to come out until 4/24.</Typography>
+            <Typography variant='body1' align='center'>The Fall 2020 Announcer is not expected to come out until 5/1.</Typography>
         </Paper>
     );
 }
