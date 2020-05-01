@@ -142,6 +142,9 @@ with open(os.path.join(data_path, '2020-2021 Class Announcer - Announcer.csv')) 
             class_['name'] = notes
             if class_['name'].startswith('Critical Writing'):
                 class_['name'] = 'Critical Writing'
+        elif class_['name'].startswith('English 2'):
+            class_['section'] = class_['name'][9]
+            class_['name'] = 'English 2'
         else:
             aliased_attrs.append('name')
 
