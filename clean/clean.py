@@ -6,6 +6,7 @@ from datetime import datetime
 from tabula import read_pdf
 
 from pymongo import MongoClient
+from pymongo.errors import BulkWriteError
 
 client = MongoClient(sys.argv[1] if len(sys.argv) > 1 else 'mongodb://localhost:27017/StudentsReview')
 
@@ -15,8 +16,15 @@ classes = db['classes']
 reviews = db['reviews']
 teachers = db['teachers']
 
-with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
-    aliases = json.load(alias_file)
+def reload_alias_file():
+    with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
+        return json.load(alias_file)
+
+def write_to_alias_file(aliases):
+    with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
+        json.dump(aliases, alias_file)
+
+aliases = reload_alias_file()
 data = {}
 
 header_on_every_page = {
@@ -41,7 +49,6 @@ def semester_value(semester):
 
     return year + (0.5 if semester == 'Fall' else 0)
 
-
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
 for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.listdir(data_path)),
                         key=lambda announcer_path: semester_value(os.path.basename(announcer_path)[:-4])):
@@ -61,8 +68,7 @@ for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.
         if alias is None:
             alias = input(f'{header["text"]}:')
             aliases[header['text']] = alias
-            with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
-                json.dump(aliases, alias_file)
+            write_to_alias_file(aliases)
         if alias not in ['code', 'name', 'room', 'block', 'teacher']:
             alias = ''
         headers.append(alias)
@@ -82,18 +88,15 @@ for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.
                     if alias is None:
                         alias = input(f'{ cell["text"] }:')
                         # allows for fixing the file without reloading everything
-                        with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:
-                            aliases = json.load(alias_file)
+                        aliases = reload_alias_file()
                         aliases[cell['text']] = alias
-                        with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
-                            json.dump(aliases, alias_file)
+                        write_to_alias_file(aliases)
                     if cell['width'] == 0:
                         alias = aliases.get(f'{ announcer }{ pages.index(page) }{ page["data"].index(row) }{ row.index(cell) }')
                         if alias is None:
                             alias = input(f'truncated:')
                             aliases[f'{ announcer }{ pages.index(page) }{ page["data"].index(row) }{ row.index(cell) }'] = alias
-                            with open(os.path.join(os.path.dirname(__file__), 'aliases.json'), 'w') as alias_file:
-                                json.dump(aliases, alias_file)
+                            write_to_alias_file(aliases)
                     data[announcer[:-4]][-1][header] = alias
             if all(field == '' for field in data[announcer[:-4]][-1].values()) or all(x == y for (x, y) in data[announcer[:-4]][-1].items()):
                 data[announcer[:-4]].remove(data[announcer[:-4]][-1])
@@ -108,12 +111,62 @@ for x in range(301, 303):
 
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
-"""
-for i in range(len(data['Fall2019'])):
-    class_ = data['Fall2019'][i]
-    if class_['teacher'] == 'Undetermined':
-        print(i, class_)
-"""
+import csv
+
+with open(os.path.join(data_path, '2020-2021 Class Announcer - Announcer.csv')) as _2020_2021_announcer_file:
+    data['Fall2020'] = []
+    data['Spring2021'] = []
+    reader = csv.reader(_2020_2021_announcer_file, delimiter=',', quotechar='"')
+    for row in reader:
+        # ['code', 'name', 'room', 'block', 'teacher']
+        class_ = {}
+        class_['code'] = None
+        class_['name'] = row[2]
+        while class_['name'].endswith('*'):
+            class_['name'] = class_['name'][:-1]
+        class_['room'] = row[3]
+        class_['block'] = row[1][:-1]
+        class_['teacher'] = row[4]
+
+        notes = row[6][2:]
+
+        aliased_attrs = ['teacher']
+
+        if class_['name'].endswith('(Off Semester)'):
+            continue
+
+        if class_['name'].startswith('AP English'):
+            class_['name'] = ' '.join(class_['name'].split()[:5])
+            class_['section'] = notes
+        elif class_['name'] == 'Upper Division Junior/Senior English A (Non AP)' or class_['name'] == 'Upper Division Junior/Senior English B (Non AP)':
+            class_['name'] = notes
+            if class_['name'].startswith('Critical Writing'):
+                class_['name'] = 'Critical Writing'
+        else:
+            aliased_attrs.append('name')
+
+        for attr in aliased_attrs:
+            if aliases.get(class_[attr]) is None:
+                alias = input(class_[attr] + '( ' + notes + ' ) :')
+                aliases[class_[attr]] = alias
+
+            class_[attr] = aliases[class_[attr]]
+            write_to_alias_file(aliases)
+
+        if len(class_['block']) == 2:
+            if class_['block'][0] == '1':
+                semesters = ['Fall2020']
+            elif class_['block'][0] == '2':
+                semesters = ['Spring2021']
+
+            class_['block'] = class_['block'][1]
+
+        else:
+            semesters = ['Fall2020', 'Spring2021']
+
+        for semester in semesters:
+            data[semester].append(class_.copy())
+
 
 # undetermined fixes
 
@@ -165,7 +218,7 @@ for semester in data:
         elif class_['name'].startswith('AP') and class_['name'].endswith('economics'):
             class_['section'] = class_['name'][3:-9]
             class_['name'] = 'AP Economics'
-        else:
+        elif class_.get('section') is None:
             class_['section'] = None
 
         sectioned = False
@@ -273,9 +326,12 @@ reviews.delete_many({
     'version': 1
 })
 
-courses.insert_many(courses_to_insert)
-classes.insert_many(classes_to_insert)
-teachers.insert_many(teachers_to_insert)
+try:
+    courses.insert_many(courses_to_insert)
+    classes.insert_many(classes_to_insert)
+    teachers.insert_many(teachers_to_insert)
+except BulkWriteError as bwe:
+    print(bwe.details)
 
 reviews_to_insert = []
 
