@@ -73,7 +73,12 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
         <Paper className={ classes.control }>
             <Grid container direction='column' alignItems='center' spacing={ 3 }>
                 <Grid item>
-                    <Typography variant='h5' align='center'>Fall 2020 Course Selection Information</Typography>
+                    <Typography variant='h5' align='center'>Course Selection Information</Typography>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://docs.google.com/spreadsheets/u/1/d/19HiRTFWIwjkuS-Le_PJAobLM0vA4IY8GkMs9P1_g9Mo/edit#gid=0' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>2020-2021 Class Announcer</Typography>
+                    </OutboundLink>
                 </Grid>
                 <Grid item>
                     <OutboundLink href='https://docs.google.com/document/d/1bRE4BhiQv8XFceqO7sGFkIp7jKozAxdUh3qdF8JG5sU/edit' target='_blank' rel='noopener noreferrer'>
