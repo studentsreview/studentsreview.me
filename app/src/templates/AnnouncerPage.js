@@ -9,7 +9,7 @@ import { navigate } from '@reach/router';
 import { withStyles } from '@material-ui/styles';
 import slugify from 'slugify';
 import { LowellHighSchool } from '../schema';
-import { splitSemester } from '../utils';
+import { splitSemester, removeDupes } from '../utils';
 
 import styles from '../styles/styles';
 
@@ -51,30 +51,28 @@ const AnnouncerPage = ({ classes, data, pageContext }) => {
                             departments.map((department, idx) => (
                                 <TableSection key={ idx } header={ department } colSpan={ 3 }>
                                     {
-                                        classes_
-                                            .filter(class_ => class_.department === department)
-                                            .sort((a, b) => {
-                                                let diff = a.name.localeCompare(b.name);
-                                                if (diff === 0) {
-                                                    diff = a.block - b.block;
+                                        removeDupes(classes_.filter(class_ => class_.department === department).map(class_ => class_.name).sort())
+                                            .map((courseName, idx) => <TableSection key={ idx } header={ courseName } colSpan={ 3 } cellStyle={ { textAlign: 'left' } }>
+                                                {
+                                                    classes_.filter(class_ => class_.name === courseName).map((class_, idx) => (
+                                                        <TableRow key={ idx }>
+                                                            <TableCell style={ { width: '10%', textAlign: 'center' } }>{ class_.block }</TableCell>
+                                                            <TableCell
+                                                                onClick={ () => navigate(`/courses/${ slugify(class_.name, { lower: true }) }`) }
+                                                                style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
+                                                            >
+                                                                <Link to={ `/courses/${ slugify(class_.name, { lower: true }) }` }>{ class_.name }{ class_.section ? ` (${ class_.section })`: '' }</Link>
+                                                            </TableCell>
+                                                            <TableCell
+                                                                onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`) }
+                                                                style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
+                                                            >
+                                                                <Link to={ `/teachers/${ slugify(class_.teacher, { lower: true }) }` }>{ class_.teacher }</Link>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
                                                 }
-                                                return diff;
-                                            })
-                                            .map((class_, idx) => <TableRow key={ idx }>
-                                                <TableCell style={ { width: '10%', textAlign: 'center' } }>{ class_.block }</TableCell>
-                                                <TableCell
-                                                    onClick={ () => navigate(`/courses/${ slugify(class_.name, { lower: true }) }`) }
-                                                    style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
-                                                >
-                                                    <Link to={ `/courses/${ slugify(class_.name, { lower: true }) }` }>{ class_.name }{ class_.section ? ` (${ class_.section })`: '' }</Link>
-                                                </TableCell>
-                                                <TableCell
-                                                    onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`) }
-                                                    style={ { cursor: 'pointer', width: '45%', textAlign: 'center' } }
-                                                >
-                                                    <Link to={ `/teachers/${ slugify(class_.teacher, { lower: true }) }` }>{ class_.teacher }</Link>
-                                                </TableCell>
-                                            </TableRow>)
+                                            </TableSection>)
                                     }
                                 </TableSection>
                             ))
