@@ -40,7 +40,6 @@ const Sidebar = withStyles(styles)(({ classes }) => {
             <List>
                 <ListItem><Typography variant='body1'>Announcers</Typography></ListItem>
                 <Divider/>
-                <ListItem>2020 - 2021 Announcer Page Coming Soon.</ListItem>
                 { sortSemesters(data.site.siteMetadata.announcers).map((announcer, idx) => <ListItem key={ idx }>
                     <Link to={ `/announcers/${ announcer.toLowerCase() }` }>
                         <Typography variant='body2'>{ splitSemester(announcer) }</Typography>
