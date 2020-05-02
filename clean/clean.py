@@ -215,11 +215,16 @@ classes_to_insert = []
 
 for semester in data:
     for class_ in data[semester]:
+        class_['semester'] = semester
+
         if class_['name'].startswith('AP English') and len(class_['name'].split()) == 6:
             class_['section'] = class_['name'].split()[-1]
             class_['name'] = ' '.join(class_['name'].split()[:-1])
         elif class_['name'].startswith('AP') and class_['name'].endswith('economics'):
-            class_['section'] = class_['name'][3:-9]
+            if class_['semester'].startswith('Fall'):
+                class_['section'] = 'Micro'
+            elif class_['semester'].startswith('Spring'):
+                class_['section'] = 'Macro'
             class_['name'] = 'AP Economics'
         elif class_.get('section') is None:
             class_['section'] = None
@@ -276,7 +281,6 @@ for semester in data:
         if class_['name'] == 'AP Enivronmental Science':
             class_['name'] = 'AP Environmental Science'
 
-        class_['semester'] = semester
         class_['department'] = department
         classes_to_insert.append(class_)
 
