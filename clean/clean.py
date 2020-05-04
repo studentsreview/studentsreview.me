@@ -113,7 +113,7 @@ data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
 import csv
 
-with open(os.path.join(data_path, '2020-2021 Class Announcer - Announcer.csv')) as _2020_2021_announcer_file:
+with open(os.path.join(data_path, '2020-2021 Class Announcer - Full Announcer.csv')) as _2020_2021_announcer_file:
     data['Fall2020'] = []
     data['Spring2021'] = []
     reader = csv.reader(_2020_2021_announcer_file, delimiter=',', quotechar='"')
