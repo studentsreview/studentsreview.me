@@ -105,7 +105,7 @@ const IndexPage = ({ classes, client }) => {
             <Helmet>
                 <title>Students Review</title>
                 <meta name='google-site-verification' content='Eibu7BNTmaTy7LrXwVV-i0qffe8pjZZL0YvB-1cpSlQ'/>
-                <meta name='description' content='studentsreview.me is a teacher and course database site for Lowell High School in San Francisco.'/>
+                <meta name='description' content='Students Review is a teacher review and course information site for students at Lowell High School in San Francisco.'/>
                 <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review', 'San Francisco', 'Teacher', 'Course'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>
