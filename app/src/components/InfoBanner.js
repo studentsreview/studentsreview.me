@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Paper, Typography } from '@material-ui/core';
+import { OutboundLink } from 'gatsby-plugin-google-analytics';
 
 import { useTheme } from '@material-ui/styles';
 
@@ -9,7 +10,9 @@ const InfoBanner = () => {
 
     return (
         <Paper style={ { margin: theme.spacing(2), padding: theme.spacing(2), background: theme.palette.secondary.main } }>
-            <Typography variant='body1' align='center'>Updated with the 2020-2021 Announcer. Arena Rolodex will be updated soon!</Typography>
+            <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
+                <Typography variant='body1' align='center'>Click to visit Arena Rolodex!</Typography>
+            </OutboundLink>
         </Paper>
     );
 }

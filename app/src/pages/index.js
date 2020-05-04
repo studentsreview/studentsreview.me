@@ -60,6 +60,9 @@ const Sidebar = withStyles(styles)(({ classes }) => {
                     )) }
                 </ListItem>
                 <ListItem>
+                    <OutboundLink href='https://www.iubenda.com/privacy-policy/95214385/legal' target='_blank' rel='noopener noreferrer'>Privacy Policy</OutboundLink>
+                </ListItem>
+                <ListItem>
                     <Typography variant='body2'>Created by Kai Chang</Typography>
                 </ListItem>
             </List>
