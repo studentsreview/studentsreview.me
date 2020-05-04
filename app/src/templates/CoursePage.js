@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet';
 import DepartmentChip from '../components/DepartmentChip';
 import SemesterSelect from '../components/SemesterSelect';
 import ScheduleTable from '../components/ScheduleTable';
+import CollapsibleText from '../components/CollapsibleText';
 
 import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
@@ -14,28 +15,27 @@ import { formatSemesterRange, getBlocks, removeDupes, semesterValue, sortSemeste
 import { FIND_REVIEWS } from '../graphql';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
+import { LowellHighSchool } from '../schema';
 import styles from '../styles/styles';
 
 const CoursePage = ({ data, pageContext, classes, location, client }) => {
     const { name } = pageContext;
 
-    const courses = data.srapi.findManyClass;
-    const department = data.srapi.findOneCourse.department;
-    const prerequisites = data.srapi.findOneCourse.prerequisites
-    const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
-    const codes = removeDupes(data.srapi.findManyClass.map(course => course.code))
+    const course = data.srapi.findOneCourse;
+    const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(class_ => class_.semester)));
+    const codes = removeDupes(data.srapi.findManyClass.map(class_ => class_.code));
 
     const initialSemester = location.state && location.state.semester;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
-    const semesterCourses = courses
-        .filter(course => course.semester === semester);
+    const semesterClasses = data.srapi.findManyClass
+        .filter(class_ => class_.semester === semester);
 
     const theme = useTheme();
 
     useEffect(() => {
-        const teachers = removeDupes(semesterCourses.map(course => course.teacher));
-        for (let teacher of teachers) {
+        const shownTeachers = removeDupes(semesterClasses.map(class_ => class_.teacher));
+        for (let teacher of shownTeachers) {
             if (teacher !== 'Undetermined') {
                 prefetchPathname(`/teachers/${ slugify(teacher, { lower: true }) }`);
                 client.query({
@@ -46,26 +46,24 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                 });
             }
         }
-    }, [semesterCourses]);
+    }, [semesterClasses]);
 
     return (
         <>
             <Helmet>
                 <title>{ name }</title>
-                <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School.` }/>
-                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Course', department, name] }/>
-                <script type="application/ld+json">
+                <meta name='description' content={ `See which teachers teach ${ name } at Lowell High School in San Francisco.` }/>
+                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Teacher', 'Course', 'San Francisco', course.department, name] }/>
+                <script type='application/ld+json'>
                     { JSON.stringify({
                         '@context': 'https://schema.org',
                         '@type': 'Course',
                         courseCode: codes.join(', '),
-                        coursePrerequisites: prerequisites.join(', '),
+                        coursePrerequisites: course.prerequisites.join(', '),
                         name,
-                        description: `${ name } is a${ /^[AEIOU]/.test(department) ? 'n' : '' } ${ department } class offered at Lowell High School.`,
-                        provider: {
-                            '@type': 'Organization',
-                            name: 'Lowell High School'
-                        }
+                        description: course.description ? course.description :
+                            `${ name } is a${ /^[AEIOU]/.test(course.department) ? 'n' : '' } ${ course.department } class offered at Lowell High School in San Francisco.`,
+                        provider: LowellHighSchool
                     }) }
                 </script>
             </Helmet>
@@ -77,40 +75,48 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                 display: 'inline',
                                 marginRight: theme.spacing(2)
                             } }>{ name }</Typography>
-                            <DepartmentChip
-                                department={ data.srapi.findOneCourse.department }
-                            />
+                            <DepartmentChip department={ course.department }/>
                             {
                                 name.includes('Honors') && <Chip
-                                    style={ {
-                                        background: '#6a4f6b'
-                                    } }
+                                    style={ { background: '#6a4f6b' } }
                                     label='Honors'
                                 />
                             }
                             {
                                 name.includes('AP') && <Chip
-                                    style={ {
-                                        background: '#cfb53b'
-                                    } }
+                                    style={ { background: '#cfb53b' } }
                                     label='AP'
                                 />
                             }
-                            <Chip
-                                label={ formatSemesterRange(semesters) }
-                            />
-                            <br/>
-                            {
+                            <Chip label={ formatSemesterRange(semesters) }/>
+                            <div style={ { marginTop: theme.spacing(1) } }/>
+                            { /*
                                 codes
                                     .filter(code => !code.endsWith('A') && !code.endsWith('B'))
                                     .map((code, idx) => <Chip
-                                        style={ {
-                                            marginTop: theme.spacing(2)
-                                        } }
                                         key={ idx }
                                         label={ code }
                                     />)
-                            }
+                                 <br/>
+                            */ }
+                            { course.AtoG ? <Chip label={ course.AtoG }/> : null }
+                            { course.length ? <Chip label={ course.length }/> : null }
+                            { course.grades ? <Chip label={ `Grade${ course.grades.includes('-') ? 's' : '' } ${ course.grades }` }/> : null }
+                            <div style={ { marginTop: theme.spacing(1) } }/>
+                            { course.notes ? <>
+                                <div style={ { marginTop: theme.spacing(1) } }/>
+                                <Typography variant='body1'>
+                                    <b>Notes: </b> { course.notes }
+                                </Typography>
+                            </>: null }
+                            { course.description ? <>
+                                <div style={ { marginTop: theme.spacing(1) } }/>
+                                <b>Description: </b>
+                                <CollapsibleText
+                                    text={ course.description } truncateLength={ 100 }
+                                    typographyProps={ { style: { whiteSpace: 'pre-wrap' } } }
+                                />
+                            </>: null }
                         </Paper>
                     </Grid>
                     <Grid item xs={ 12 } sm={ 6 }>
@@ -128,24 +134,22 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                             } }
                         />
                         <ScheduleTable
-                            blocks={ getBlocks().concat(removeDupes(semesterCourses.map(node => node.block).filter(block => block > 8))) }
+                            blocks={ getBlocks().concat(removeDupes(semesterClasses.map(class_ => class_.block).filter(block => block > 8))) }
                         >
-                            { ({ block }) => removeDupes(
-                                semesterCourses
-                                    .filter(course => course.block === block)
-                                    .map(course => course.teacher)
-                            )
-                                .map((teacher, idx) =>
-                                    teacher === 'Undetermined' ? <Chip
+                            { ({ block }) => semesterClasses
+                                .filter(class_ => class_.block === block)
+                                .map((class_, idx) =>
+                                    class_.teacher === 'Undetermined' ? <Chip
                                         key={ idx }
-                                        label={ teacher }
+                                        label={ class_.teacher }
                                     /> : <Chip
                                         key={ idx }
-                                        label={ teacher.split(' ').slice(1).join(' ') }
-                                        onClick={ () => navigate(`/teachers/${ slugify(teacher, { lower: true }) }`, {
-                                            state: {
-                                                semester: semester === semesters[0] ? null : semester
-                                            }
+                                        label={
+                                            `${ class_.teacher.includes(' ') ? class_.teacher.split(' ').slice(1).join(' ') : class_.teacher }${
+                                                class_.section ? ` (${ class_.section })` : '' }`
+                                        }
+                                        onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`, {
+                                            state: { semester: semester === semesters[0] ? null : semester }
                                         }) }
                                     />)
                             }
@@ -169,12 +173,18 @@ export const query = graphql`
                 semester
                 teacher
                 block
+                section
             }
             findOneCourse(filter: {
                 name: $name
             }) {
                 department
                 prerequisites
+                notes
+                grades
+                length
+                AtoG
+                description
             }
         }
     }

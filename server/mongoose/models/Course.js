@@ -12,7 +12,12 @@ const courseSchema = new mongoose.Schema({
     prerequisites: {
         type: [String],
         index: true
-    }
+    },
+    notes: String,
+    grades: String,
+    length: String,
+    AtoG: String,
+    description: String
 }, {
     toObject: {
         virtuals: true

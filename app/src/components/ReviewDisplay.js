@@ -95,7 +95,7 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             hasMore={ reviews && reviews.pageInfo.hasNextPage }
         >
             <Typography innerRef={ headerRef } variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>Reviews</Typography>
-            { linkedReview && <Review review={ linkedReview } teacher={ teacher } selected/> }
+            { linkedReview ? <Review idx={ hashReview(linkedReview, teacher) } review={ linkedReview } teacher={ teacher } selected/> : null }
             {
                 reviews && filteredReviews.length > 0 ? filteredReviews.map((review, idx) =>
                         <Review key={ idx } review={ review } teacher={ teacher }/>
@@ -103,6 +103,6 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             }
         </InfiniteScroll>
     );
-}
+};
 
 export default withStyles(styles)(withApollo(ReviewDisplay));

@@ -45,7 +45,7 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                 onClose();
             }
         }
-    }
+    };
 
     useEffect(() => {
         window.addEventListener('keydown', keyDownHandler);
@@ -140,7 +140,11 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                                 });
                             } }>Submit Review</Button>
                             <br/>
-                            { reviewText.length > 0 && restriction ? <Typography variant='body1' style={ { fontSize: 12, color: 'red' } }>{ restriction[1] }</Typography> : null }
+                            {
+                                reviewText.length > 0 && restriction ?
+                                    <Typography variant='body1' style={ { fontSize: 12, color: 'red' } }>{ restriction[1] }</Typography> :
+                                    null
+                            }
                         </>
                     );
                 }

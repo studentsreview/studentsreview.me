@@ -1,11 +1,14 @@
-import React from 'react'
-import { Typography, Button, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
+import React from 'react';
+import { Typography, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
 import { Query, withApollo } from 'react-apollo'
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from '../components/Review';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
+import { Link } from 'gatsby';
+import Icon from '@mdi/react';
+import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS } from '../graphql'
@@ -27,32 +30,69 @@ const Sidebar = withStyles(styles)(({ classes }) => {
         }
     `);
 
+    const links = [
+        { icon: mdiInstagram, link: 'https://urlgeni.us/instagram/lhssr' },
+        { icon: mdiGithubCircle, link: 'https://www.github.com/kajchang/studentsreview.me' }
+    ];
+
     return (
         <Paper className={ classes.control }>
             <List>
                 <ListItem><Typography variant='body1'>Announcers</Typography></ListItem>
                 <Divider/>
                 { sortSemesters(data.site.siteMetadata.announcers).map((announcer, idx) => <ListItem key={ idx }>
-                    <OutboundLink href={ `${ process.env.GRAPHQL_URI }/data/${ announcer }.pdf` } target='_blank' rel='noopener noreferrer'>
+                    <Link to={ `/announcers/${ announcer.toLowerCase() }` }>
                         <Typography variant='body2'>{ splitSemester(announcer) }</Typography>
-                    </OutboundLink>
+                    </Link>
                 </ListItem>) }
                 <ListItem><Typography variant='body1'>Links</Typography></ListItem>
                 <Divider/>
                 <ListItem>
-                    <OutboundLink href={ process.env.GRAPHQL_URI } target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body2'>GraphQL API</Typography>
-                    </OutboundLink>
+                    { links.map(({ icon, link }, idx) => (
+                        <OutboundLink key={ idx } href={ link } target='_blank' rel='noopener noreferrer'>
+                            <Icon
+                                path={ icon }
+                                size={ 1 }
+                                color='black'
+                                style={ { marginRight: 5 } }
+                            />
+                        </OutboundLink>
+                    )) }
                 </ListItem>
                 <ListItem>
-                    <OutboundLink href='https://github.com/kajchang/studentsreview.me' target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body2'>Source</Typography>
-                    </OutboundLink>
+                    <OutboundLink href='https://www.iubenda.com/privacy-policy/95214385/legal' target='_blank' rel='noopener noreferrer'>Privacy Policy</OutboundLink>
                 </ListItem>
                 <ListItem>
                     <Typography variant='body2'>Created by Kai Chang</Typography>
                 </ListItem>
             </List>
+        </Paper>
+    );
+});
+
+const HeaderCard = withStyles(styles)(({ classes }) => {
+    return (
+        <Paper className={ classes.control }>
+            <Grid container direction='column' alignItems='center' spacing={ 3 }>
+                <Grid item>
+                    <Typography variant='h5' align='center'>Course Selection Information</Typography>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://docs.google.com/spreadsheets/u/1/d/19HiRTFWIwjkuS-Le_PJAobLM0vA4IY8GkMs9P1_g9Mo/edit#gid=0' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>2020-2021 Class Announcer</Typography>
+                    </OutboundLink>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://docs.google.com/document/d/1bRE4BhiQv8XFceqO7sGFkIp7jKozAxdUh3qdF8JG5sU/edit' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>Arena Timeline</Typography>
+                    </OutboundLink>
+                </Grid>
+                <Grid item>
+                    <OutboundLink href='https://docs.google.com/document/d/1CnM-ff73bMnli3BDGoKJAOZ5SHCrNP0ErcqA8S3zyE4/edit' target='_blank' rel='noopener noreferrer'>
+                        <Typography variant='body1' color='secondary'>Course Descriptions</Typography>
+                    </OutboundLink>
+                </Grid>
+            </Grid>
         </Paper>
     );
 });
@@ -64,8 +104,9 @@ const IndexPage = ({ classes, client }) => {
         <>
             <Helmet>
                 <title>Students Review</title>
-                <meta name='description' content='Students Review is a education website for students to share and read reviews of courses and teachers at Lowell High School.'/>
-                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review'].join(',') }/>
+                <meta name='google-site-verification' content='Eibu7BNTmaTy7LrXwVV-i0qffe8pjZZL0YvB-1cpSlQ'/>
+                <meta name='description' content='Students Review is a teacher review and course information site for students at Lowell High School in San Francisco.'/>
+                <meta name='keywords' content={ ['Education', 'Lowell High School', 'Review', 'San Francisco', 'Teacher', 'Course'].join(',') }/>
             </Helmet>
             <div className={ classes.root }>
                 <Grid container spacing={ 3 } direction='row'>
@@ -73,14 +114,7 @@ const IndexPage = ({ classes, client }) => {
                         <Sidebar/>
                     </Grid> }
                     <Grid item xs={ 12 } sm={ 9 }>
-                        <Paper className={ classes.control }>
-                            <Grid container direction='column' alignItems='center'>
-                                <Typography className={ classes.control } variant='h5'>Making an Arena Schedule?</Typography>
-                                <OutboundLink href='https://arena.lowellhs.com' target='_blank' rel='noopener noreferrer'>
-                                    <Button variant='contained' color='secondary'>Check out Arena Rolodex!</Button>
-                                </OutboundLink>
-                            </Grid>
-                        </Paper>
+                        <HeaderCard/>
                         <Typography variant='h4' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                         <Query
                             query={ FIND_LATEST_REVIEWS }
@@ -137,7 +171,7 @@ const IndexPage = ({ classes, client }) => {
                             >
                                 { data.reviewPagination ? data.reviewPagination.items
                                     .map((review, idx) =>
-                                        <Review key={ idx } onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } review={ review } teacher={ review.teacher }/>)
+                                        <Review key={ idx } onClick={ () => navigate(`/teachers/${ slugify(review.teacher, { lower: true }) }`) } review={ review } teacher={ review.teacher } showTeacher={ true }/>)
                                     .reduce((acc, cur) => [acc, <Divider/>, cur]) : <Typography variant='body1' style={ { textAlign: 'center' } } key={ 1 }>Loading Latest Reviews...</Typography> }
                             </InfiniteScroll> }
                         </Query>
@@ -146,6 +180,6 @@ const IndexPage = ({ classes, client }) => {
             </div>
         </>
     );
-}
+};
 
 export default withStyles(styles)(withApollo(IndexPage));

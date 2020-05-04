@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Chip, Grid, Paper, Typography, ClickAwayListener } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { Button, Chip, Grid, Paper, Typography, ClickAwayListener, Tabs, Tab } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { useTheme, withStyles } from '@material-ui/styles';
 import { Helmet } from 'react-helmet';
@@ -18,9 +18,10 @@ import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
 import { semesterValue, formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
-
-import styles from '../styles/styles';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
+
+import { LowellHighSchool } from '../schema';
+import styles from '../styles/styles';
 
 const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments, name }) => {
     const [modalExposed, setModalExposed] = useState(false);
@@ -28,9 +29,7 @@ const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments
 
     return (
         <Paper className={ classes.control }>
-            <div style={ {
-                marginBottom: theme.spacing(1)
-            } }>
+            <div style={ { marginBottom: theme.spacing(1) } }>
                 <Typography variant='h6' style={ {
                     display: 'inline',
                     marginRight: theme.spacing(2)
@@ -44,18 +43,14 @@ const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments
                     starSpacing={ theme.spacing(0.5) }
                 />
             </div>
-            <Chip
-                label={ formatSemesterRange(semesters) }
-            />
+            <Chip label={ formatSemesterRange(semesters) }/>
             {
                 departments.map((department, idx) => <DepartmentChip
                     key={ idx }
                     department={ department }
                 />)
             }
-            <div style={ {
-                marginTop: theme.spacing(1)
-            } }>
+            <div style={ { marginTop: theme.spacing(1) } }>
                 <Button
                     variant='contained'
                     color='primary'
@@ -80,19 +75,19 @@ const HeaderCard = withStyles(styles)(({ classes, rating, semesters, departments
     );
 });
 
-const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) => {
+const Sidebar = withStyles(styles)(({ classes, classes_, semesters, location }) => {
     const initialSemester = location.state && location.state.semester;
     const [semester, setSemester] = useState(semesters.includes(initialSemester) ? initialSemester : semesters[0]);
 
-    const semesterCourses = courses
-        .filter(course => course.semester === semester);
+    const semesterClasses = classes_
+        .filter(class_ => class_.semester === semester);
 
     useEffect(() => {
-        const courses = removeDupes(semesterCourses.map(course => course.name));
-        for (let course of courses) {
-            prefetchPathname(`/courses/${ slugify(course, { lower: true }) }`);
+        const shownClasses = removeDupes(semesterClasses.map(class_ => class_.name));
+        for (let class_ of shownClasses) {
+            prefetchPathname(`/courses/${ slugify(class_, { lower: true }) }`);
         }
-    }, [semesterCourses]);
+    }, [semesterClasses]);
 
     return (
         <>
@@ -110,19 +105,17 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
                 } }
             />
             <ScheduleTable
-                blocks={ getBlocks().concat(removeDupes(semesterCourses.map(course => course.block).filter(block => block > 8))) }
+                blocks={ getBlocks().concat(removeDupes(semesterClasses.map(class_ => class_.block).filter(block => block > 8))) }
             >
-                { ({ block }) => semesterCourses
-                    .filter(course => course.block === block)
-                    .map((course, idx) =>
+                { ({ block }) => semesterClasses
+                    .filter(class_ => class_.block === block)
+                    .map((class_, idx) =>
                         <Chip
                             key={ idx }
-                            className={ course.name.length > 25 ? classes.scalingText : null }
-                            label={ course.name }
-                            onClick={ () => navigate(`/courses/${ slugify(course.name, { lower: true }) }`, {
-                                state: {
-                                    semester: semester === semesters[0] ? null : semester
-                                }
+                            className={ class_.name.length > 25 ? classes.scalingText : null }
+                            label={ `${ class_.name }${ class_.section ? ` (${ class_.section })` : '' }` }
+                            onClick={ () => navigate(`/courses/${ slugify(class_.name, { lower: true }) }`, {
+                                state: { semester: semester === semesters[0] ? null : semester }
                             }) }
                         />)
                 }
@@ -134,11 +127,12 @@ const Sidebar = withStyles(styles)(({ classes, courses, semesters, location }) =
 const TeacherPage = ({ data, pageContext, classes, location }) => {
     const { name } = pageContext;
 
-    const courses = data.srapi.findManyClass;
-    const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(course => course.semester)));
+    const classes_ = data.srapi.findManyClass;
+    const semesters = sortSemesters(removeDupes(data.srapi.findManyClass.map(class_ => class_.semester)));
     const departments = data.srapi.findOneTeacher.departments;
 
     const [rating, setRating] = useState(0);
+    const [currentTab, setCurrentTab] = useState(0);
 
     const width = useWidth();
 
@@ -155,31 +149,48 @@ const TeacherPage = ({ data, pageContext, classes, location }) => {
                         name,
                         jobTitle: 'Teacher',
                         knowsAbout: departments.join(', '),
-                        affiliation: 'Lowell High School'
+                        affiliation: LowellHighSchool
                     }) }
                 </script>
             </Helmet>
             <div className={ classes.root }>
                 <Grid container spacing={ 3 }>
-                    <Grid item xs={ 12 } sm={ 5 }>
-                        <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
-                        { isWidthUp('sm', width) && <Sidebar courses={ courses } semesters={ semesters } location={ location }/> }
-                    </Grid>
-                    <Grid item xs={ 12 } sm={ 7 }>
-                        <Query
-                            query={ FIND_REVIEWS }
-                            variables={ { name } }
-                            onCompleted={ data => setRating(data.findOneTeacher.rating) }
-                            notifyOnNetworkStatusChange={ true }
-                        >
-                            { ({ data }) => <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> }
-                        </Query>
-                    </Grid>
+                    <Query
+                        query={ FIND_REVIEWS }
+                        variables={ { name } }
+                        onCompleted={ data => setRating(data.findOneTeacher.rating) }
+                        notifyOnNetworkStatusChange={ true }
+                    >
+                        { ({ data }) => isWidthUp('sm', width) ? <>
+                            <Grid item sm={ 5 }>
+                                <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
+                                <Sidebar classes_={ classes_ } semesters={ semesters } location={ location }/>
+                            </Grid>
+                            <Grid item sm={ 7 }>
+                                <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/>
+                            </Grid>
+                        </> : <>
+                            <Grid item xs={ 12 }>
+                                <HeaderCard rating={ rating } semesters={ semesters } departments={ departments } name={ name }/>
+                                <Tabs value={ currentTab } onChange={ (_, tab) => setCurrentTab(tab) } style={ { alignItems: 'center' } }>
+                                    <Tab label='Reviews'/>
+                                    <Tab label='Courses'/>
+                                </Tabs>
+                            </Grid>
+                            <Grid item xs={ 12 }>
+                                {
+                                    currentTab === 0 ?
+                                        <ReviewDisplay teacher={ name } reviews={ data.reviewPagination }/> :
+                                        <Sidebar classes_={ classes_ } semesters={ semesters } location={ location }/>
+                                }
+                            </Grid>
+                        </> }
+                    </Query>
                 </Grid>
             </div>
         </>
     );
-}
+};
 
 export default withStyles(styles)(TeacherPage);
 
@@ -199,6 +210,7 @@ export const query = graphql`
                 semester
                 name
                 block
+                section
             }
         }
     }

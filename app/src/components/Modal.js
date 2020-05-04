@@ -1,11 +1,12 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
+
 import { withStyles } from '@material-ui/styles';
 
 import styles from '../styles/styles';
 
 const Modal = ({ shown, children, classes }) => (
-    shown && <div style={ {
+    shown ? <div style={ {
         position: 'fixed',
         zIndex: 1,
         left: 0,
@@ -18,7 +19,7 @@ const Modal = ({ shown, children, classes }) => (
         height: '100%'
     } }>
         { children }
-    </Grid></div>
+    </Grid></div> : null
 );
 
 export default withStyles(styles)(Modal);
