@@ -119,11 +119,28 @@ const FIND_LATEST_REVIEWS = gql`
     }
 `;
 
+const GET_SEMESTER_CLASSES = gql`
+    query($semester: String!) {
+        findManyClass(
+            filter: {
+                semester: $semester
+            }
+        ) {
+            name
+            teacher
+            block
+            seats
+            semester
+        }
+    }
+`;
+
 export {
     CREATE_REVIEW,
     CREATE_REPORT,
     FIND_REVIEWS,
     LOAD_ADDITIONAL_REVIEWS,
     FIND_REVIEW_BY_ID,
-    FIND_LATEST_REVIEWS
+    FIND_LATEST_REVIEWS,
+    GET_SEMESTER_CLASSES
 };

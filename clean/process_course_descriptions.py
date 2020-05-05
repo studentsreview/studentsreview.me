@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
 
-with open(os.path.join(data_path, '02.CourseDescriptions20202021.html')) as course_descriptions_raw_file:
+with open(os.path.join(data_path, '2020_2021', '02.CourseDescriptions20202021.html')) as course_descriptions_raw_file:
     course_descriptions = BeautifulSoup(course_descriptions_raw_file.read(), 'html.parser')
 
 with open(os.path.join(os.path.dirname(__file__), 'aliases.json')) as alias_file:

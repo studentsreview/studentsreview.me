@@ -96,7 +96,7 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
                             starSpacing={ theme.spacing(0.25) }
                         />
                         <Typography variant='caption' style={ { marginLeft: theme.spacing(0.5) } }>
-                            { moment(review.timestamp).format('MMM Do YYYY') }
+                            { moment.duration(moment(review.timestamp).diff(moment())).humanize(true) }
                         </Typography>
                         { showTeacher ? <Typography variant='caption' style={ { marginLeft: theme.spacing(0.5) } }>
                             - { teacher }
