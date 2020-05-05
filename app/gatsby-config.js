@@ -44,5 +44,5 @@ module.exports = {
         `gatsby-plugin-offline`,
         `gatsby-plugin-sitemap`
     ],
-    siteMetadata: require('../config/config')
+    siteMetadata: require('../config/site_config')
 }

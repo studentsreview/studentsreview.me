@@ -4,7 +4,7 @@ import { isIOS } from 'react-device-detect';
 import { useTheme } from '@material-ui/styles';
 import { useMediaQuery } from '@material-ui/core';
 
-import config from '../../config/config';
+import config from '../../config/site_config';
 
 const semesterValue = semester => {
     const match = /(Spring|Fall)(\d{4})/.exec(semester);

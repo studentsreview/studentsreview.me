@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { composeWithMongoose }  = require('graphql-compose-mongoose');
 const { Class } = require('./Class');
 const sha256 = require('sha256');
-const config = require('../../../config/config');
+const config = require('../../../config/site_config');
 
 const reviewSchema = new mongoose.Schema({
     _id: String,
@@ -22,8 +22,8 @@ const reviewSchema = new mongoose.Schema({
     },
     text: {
         type: String,
-        minlength: config.reviews.minCharacters,
-        maxlength: config.reviews.maxCharacters,
+        minlength: config.reviews.min_characters,
+        maxlength: config.reviews.max_characters,
         required: true
     },
     timestamp: {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Typography, Grid, Divider, Paper, List, ListItem } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { Typography, Grid, Divider, Paper, List, ListItem, MenuItem, Select } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
 import { Query, withApollo } from 'react-apollo'
@@ -9,11 +9,12 @@ import { OutboundLink } from 'gatsby-plugin-google-analytics';
 import { Link } from 'gatsby';
 import Icon from '@mdi/react';
 import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
+import { ResponsiveLine } from '@nivo/line';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
-import { FIND_LATEST_REVIEWS } from '../graphql'
+import { FIND_LATEST_REVIEWS, GET_SEMESTER_CLASSES } from '../graphql'
 import { isWidthUp } from '@material-ui/core/withWidth';
-import { splitSemester, sortSemesters, useWidth } from '../utils';
+import { splitSemester, sortSemesters, useWidth, removeDupes } from '../utils';
 import slugify from 'slugify';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -87,12 +88,93 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
                         <Typography variant='body1' color='secondary'>Arena Timeline</Typography>
                     </OutboundLink>
                 </Grid>
-                <Grid item>
-                    <OutboundLink href='https://docs.google.com/document/d/1CnM-ff73bMnli3BDGoKJAOZ5SHCrNP0ErcqA8S3zyE4/edit' target='_blank' rel='noopener noreferrer'>
-                        <Typography variant='body1' color='secondary'>Course Descriptions</Typography>
-                    </OutboundLink>
-                </Grid>
             </Grid>
+        </Paper>
+    );
+});
+
+const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
+    const [semesterClasses, setSemesterClasses] = useState([]);
+
+    useEffect(() => {
+        for (let semester of semesters) {
+            client.query({
+                query: GET_SEMESTER_CLASSES,
+                variables: {
+                    semester
+                }
+            })
+                .then(({ data: { findManyClass } }) => {
+                    setSemesterClasses(previousSemesterClasses => previousSemesterClasses.concat(findManyClass));
+                });
+        }
+    }, []);
+
+    const [selectedClassName, setSelectedClassName] = useState('AP Art History');
+    const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
+
+    return (
+        <Paper className={ classes.control } style={ { height: '50vh' } }>
+            <Select
+                value={ selectedClassName }
+                onChange={ e => setSelectedClassName(e.target.value) }
+            >
+                {
+                    removeDupes(semesterClasses.map(semesterClass => semesterClass.name))
+                        .map((className, idx) => (
+                            <MenuItem value={ className } key={ idx }>{ className }</MenuItem>
+                        ))
+                }
+            </Select>
+            <Select
+                value={ selectedSemester }
+                renderValue={ val => splitSemester(val) }
+                onChange={ e => setSelectedSemester(e.target.value) }
+            >
+                {
+                    semesters
+                        .map((semester, idx) => (
+                            <MenuItem value={ semester } key={ idx }>{ splitSemester(semester) }</MenuItem>
+                        ))
+                }
+            </Select>
+            <ResponsiveLine
+                data={
+                    semesterClasses
+                        .filter(semesterClass => semesterClass.name === selectedClassName && semesterClass.semester === selectedSemester)
+                        .map(semesterClass => ({
+                            id: `Block ${ semesterClass.block } - ${ semesterClass.teacher.includes(' ') ? semesterClass.teacher.split(' ').slice(1).join(' ') : semesterClass.teacher }`,
+                            data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))
+                        }))
+                }
+                margin={ { bottom: 70, left: 70, top: 10, right: 10 } }
+                xScale={ { type: 'point' } }
+                yScale={ { type: 'linear', min: 0, max: 'auto', reverse: false } }
+                axisBottom={ {
+                    orient: 'bottom',
+                    legend: 'Rotation / Pick',
+                    legendOffset: 35,
+                    tickSize: 5,
+                    tickPadding: 5,
+                    legendPosition: 'middle'
+                } }
+                axisLeft={ {
+                    orient: 'left',
+                    legend: 'Seats',
+                    legendOffset: -40,
+                    tickSize: 5,
+                    tickPadding: 5,
+                    legendPosition: 'middle'
+                } }
+                colors={ { scheme: 'nivo' } }
+                pointSize={ 10 }
+                pointColor={ { theme: 'background' } }
+                pointBorderWidth={ 2 }
+                pointBorderColor={ { from: 'serieColor' } }
+                useMesh={ true }
+                enableSlices='x'
+                tooltip={ ({ x, y }) => `${ y } seats left at rotation ${ x }` }
+            />
         </Paper>
     );
 });
@@ -115,7 +197,8 @@ const IndexPage = ({ classes, client }) => {
                     </Grid> }
                     <Grid item xs={ 12 } sm={ 9 }>
                         <HeaderCard/>
-                        <Typography variant='h4' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
+                        <SeatsWidget client={ client } semesters={ ['Fall2020', 'Spring2021'] }/>
+                        <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                         <Query
                             query={ FIND_LATEST_REVIEWS }
                             variables={ {

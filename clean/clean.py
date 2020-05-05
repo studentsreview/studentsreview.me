@@ -50,12 +50,12 @@ def semester_value(semester):
     return year + (0.5 if semester == 'Fall' else 0)
 
 data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
-for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.listdir(data_path)),
+for announcer in sorted(os.listdir(os.path.join(data_path, 'pdf_announcers')),
                         key=lambda announcer_path: semester_value(os.path.basename(announcer_path)[:-4])):
     print(announcer)
     data[announcer[:-4]] = []
     pages = read_pdf(
-        os.path.join(data_path, announcer),
+        os.path.join(data_path, 'pdf_announcers', announcer),
         output_format='json',
         pages='all',
         guess=False,
@@ -64,6 +64,7 @@ for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.
 
     headers = []
     for header in pages[0]['data'][0]:
+        header['text'] = header['text'].replace('  ', ' ')
         alias = aliases.get(header['text'])
         if alias is None:
             alias = input(f'{header["text"]}:')
@@ -82,6 +83,7 @@ for announcer in sorted(filter(lambda data_file: data_file.endswith('.pdf'), os.
                 row = row[:len(headers) - len(row)]
             data[announcer[:-4]].append({})
             for cell in row:
+                cell['text'] = cell['text'].replace('  ', ' ')
                 header = headers[row.index(cell)]
                 if header:
                     alias = aliases.get(cell['text'])
@@ -113,7 +115,10 @@ data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
 import csv
 
-with open(os.path.join(data_path, '2020-2021 Class Announcer - Full Announcer.csv')) as _2020_2021_announcer_file:
+with open(os.path.join(data_path, '2020_2021', '2020-2021 Class Announcer - Full Announcer.csv')) as _2020_2021_announcer_file:
+    with open(os.path.join(data_path, '2020_2021', '2020_2021_seat_data.json')) as _2020_2021_seat_data_file:
+        seat_data = json.load(_2020_2021_seat_data_file)
+
     data['Fall2020'] = []
     data['Spring2021'] = []
     reader = csv.reader(_2020_2021_announcer_file, delimiter=',', quotechar='"')
@@ -167,6 +172,20 @@ with open(os.path.join(data_path, '2020-2021 Class Announcer - Full Announcer.cs
 
         else:
             semesters = ['Fall2020', 'Spring2021']
+
+        for seat_datum in seat_data:
+            if aliases.get(seat_datum['teacher']) is None:
+                continue
+
+            if aliases[seat_datum['teacher']] == class_['teacher'] and seat_datum['block'] == class_['block'] and (
+                len(semesters) == 2 and seat_datum['semester'] == 'Both' or
+                semesters[0] == 'Fall2020' and seat_datum['semester'] == '1' or
+                semesters[0] == 'Spring2021' and seat_datum['semester'] == '2'
+            ):
+                class_['seats'] = seat_datum['seat_series']
+
+        if class_['name'] == '' or class_['teacher'] == '':
+            continue
 
         for semester in semesters:
             data[semester].append(class_.copy())
@@ -238,6 +257,9 @@ for semester in data:
                 course['sectioned'] = True
             except StopIteration:
                 sectioned = True
+
+        if class_.get('seats') is None:
+            class_['seats'] = None
 
         if any(test in class_['name'] for test in ['Algebra', 'Geometry', 'Calculus', 'Statistics', 'Math']):
             department = 'Math'
