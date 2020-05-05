@@ -169,9 +169,10 @@ with open(os.path.join(data_path, '2020_2021', '2020-2021 Class Announcer - Full
                 semesters = ['Spring2021']
 
             class_['block'] = class_['block'][1]
-
+            class_['length'] = 'Semester'
         else:
             semesters = ['Fall2020', 'Spring2021']
+            class_['length'] = 'Year'
 
         for seat_datum in seat_data:
             if aliases.get(seat_datum['teacher']) is None:
