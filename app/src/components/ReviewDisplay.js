@@ -6,7 +6,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 import Review from './Review';
 
 import { FIND_REVIEWS, LOAD_ADDITIONAL_REVIEWS, FIND_REVIEW_BY_ID } from '../graphql';
-import { hashReview } from '../utils';
 
 import styles from '../styles/styles';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics'
@@ -44,8 +43,8 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
 
     if (reviews) {
         filteredReviews = reviews.items.slice();
-        if (filteredReviews.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)) !== -1) {
-            filteredReviews.splice(reviews.items.findIndex(review => hashReview(review, teacher) === window.location.hash.substr(1)), 1);
+        if (filteredReviews.findIndex(review => review._id.substr(0, 10) === window.location.hash.substr(1)) !== -1) {
+            filteredReviews.splice(reviews.items.findIndex(review => review._id.substr(0, 10) === window.location.hash.substr(1)), 1);
         }
     }
 
@@ -95,7 +94,7 @@ const ReviewDisplay = ({ classes, reviews, client, teacher }) => {
             hasMore={ reviews && reviews.pageInfo.hasNextPage }
         >
             <Typography innerRef={ headerRef } variant='h6' className={ classes.control } style={ { textAlign: 'center' } }>Reviews</Typography>
-            { linkedReview ? <Review idx={ hashReview(linkedReview, teacher) } review={ linkedReview } teacher={ teacher } selected/> : null }
+            { linkedReview ? <Review key={ linkedReview._id } review={ linkedReview } teacher={ teacher } selected/> : null }
             {
                 reviews && filteredReviews.length > 0 ? filteredReviews.map((review, idx) =>
                         <Review key={ idx } review={ review } teacher={ teacher }/>

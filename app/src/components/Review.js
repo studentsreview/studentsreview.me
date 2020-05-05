@@ -17,7 +17,7 @@ import CollapsibleText from '../components/CollapsibleText';
 
 import moment from 'moment';
 import slugify from 'slugify';
-import { hashReview, isMigrant, copyToClipboard } from '../utils';
+import { isMigrant, copyToClipboard } from '../utils';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import styles from '../styles/styles';
@@ -70,7 +70,7 @@ const Review = ({ classes, review, teacher, selected, onClick, showTeacher }) =>
                             });
                             copyToClipboard(
                                 e.target,
-                                `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ hashReview(review, teacher) }`
+                                `${ window.location.origin }/teachers/${ slugify(teacher, { lower: true }) }#${ review._id.substr(0, 10) }`
                             );
                         } }>
                             Copy Link

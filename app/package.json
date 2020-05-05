@@ -46,7 +46,6 @@
     "react-helmet": "^5.2.1",
     "react-infinite-scroller": "^1.2.4",
     "react-star-ratings": "https://github.com/kajchang/react-star-ratings.git",
-    "sha256": "^0.2.0",
     "sharp": "^0.23.0",
     "slugify": "^1.3.4",
     "smoothscroll-polyfill": "^0.4.4"

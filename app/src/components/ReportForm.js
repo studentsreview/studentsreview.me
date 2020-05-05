@@ -4,7 +4,6 @@ import { Check, Close } from '@material-ui/icons'
 import { withTheme, withStyles } from '@material-ui/styles';
 import { Mutation } from 'react-apollo';
 
-import { getReviewId } from '../utils';
 import { CREATE_REPORT } from '../graphql';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -67,7 +66,7 @@ const ReportForm = ({ classes, review, teacher, onClose }) => {
                                 createReport({
                                     variables: {
                                         reason: value,
-                                        review: getReviewId(review, teacher)
+                                        review: review._id.substr(0, 10)
                                     }
                                 });
                             } }>Submit</Button>

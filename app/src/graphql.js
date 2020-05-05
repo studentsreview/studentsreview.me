@@ -58,6 +58,7 @@ const FIND_REVIEWS = gql`
                 timestamp
                 text
                 rating
+                _id
             }
         }
     }
@@ -80,6 +81,7 @@ const LOAD_ADDITIONAL_REVIEWS = gql`
                 timestamp
                 text
                 rating
+                _id
             }
         }
     }
@@ -95,6 +97,7 @@ const FIND_REVIEW_BY_ID = gql`
             timestamp
             text
             rating
+            _id
         }
     }
 `;
@@ -114,6 +117,7 @@ const FIND_LATEST_REVIEWS = gql`
                 text
                 rating
                 teacher
+                _id
             }
         }
     }
