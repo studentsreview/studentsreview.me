@@ -10,7 +10,7 @@ import { Link } from 'gatsby';
 import Icon from '@mdi/react';
 import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
 import { ResponsiveLine } from '@nivo/line';
-import { Slice } from '@nivo/line';
+import { TableTooltip } from '@nivo/tooltip';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS, GET_SEMESTER_CLASSES } from '../graphql'
@@ -262,28 +262,16 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                 useMesh={ true }
                 enableSlices='x'
                 sliceTooltip={ ({ slice }) => (
-                    <div
-                        style={{
-                            background: 'white',
-                            padding: '9px 12px',
-                            border: '1px solid #ccc',
-                        }}
-                    >
-                        { slice.points.map(point => {
+                    <TableTooltip
+                        rows={ slice.points.map(point => {
                             const pointClass = JSON.parse(point.serieId);
-                            return (
-                                <div
-                                    key={ point.id }
-                                    style={{
-                                        color: point.serieColor,
-                                        padding: '3px 0',
-                                    }}
-                                >
-                                    <strong>Block { pointClass.block } - { shortenTeacherName(pointClass.teacher) } </strong> { point.data.yFormatted } Seats Left
-                                </div>
-                            );
+                            return [
+                                <span style={{ display: 'block', width: '12px', height: '12px', background: point.serieColor }}/>,
+                                `Block ${ pointClass.block } - ${ shortenTeacherName(pointClass.teacher) }`,
+                                <strong>{ point.data.yFormatted } Seat${ point.data.y !== 1 ? 's' : '' } Left</strong>
+                            ]
                         }) }
-                    </div>
+                    />
                 ) }
             />
         </Paper>
