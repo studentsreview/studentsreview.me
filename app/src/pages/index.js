@@ -162,7 +162,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
     }
 
     return (
-        <Paper className={ classes.control } style={ { height: isWidthUp('sm', width) ? '50vh': '75vh', marginTop: theme.spacing(2) } }>
+        <Paper className={ classes.control } style={ { height: isWidthUp('sm', width) ? '50vh': '90vh', marginTop: theme.spacing(2) } }>
             <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Seat Tracker</Typography>
             <Select
                 value={ selectedDepartment }
