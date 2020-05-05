@@ -11,7 +11,7 @@ import CollapsibleText from '../components/CollapsibleText';
 import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { formatSemesterRange, getBlocks, removeDupes, semesterValue, sortSemesters, shortenTeacherName } from '../utils';
+import { formatSemesterRange, getBlocks, removeDupes, sortSemesters, shortenTeacherName } from '../utils';
 import { FIND_REVIEWS } from '../graphql';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -127,8 +127,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                 trackCustomEvent({
                                     category: 'Semester Select',
                                     action: 'Select',
-                                    label: 'Course Page',
-                                    value: semesterValue(semester)
+                                    label: e.target.value
                                 });
                                 setSemester(semester);
                             } }

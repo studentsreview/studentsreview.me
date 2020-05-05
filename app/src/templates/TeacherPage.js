@@ -17,7 +17,7 @@ import { graphql, prefetchPathname } from 'gatsby'
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
 import { FIND_REVIEWS } from '../graphql';
-import { semesterValue, formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
+import { formatSemesterRange, getCurrentSemester, getBlocks, removeDupes, sortSemesters, useWidth } from '../utils';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
 import { LowellHighSchool } from '../schema';
@@ -98,8 +98,7 @@ const Sidebar = withStyles(styles)(({ classes, classes_, semesters, location }) 
                     trackCustomEvent({
                         category: 'Semester Select',
                         action: 'Select',
-                        label: 'Teacher Page',
-                        value: semesterValue(semester)
+                        label: e.target.value
                     });
                     setSemester(semester);
                 } }

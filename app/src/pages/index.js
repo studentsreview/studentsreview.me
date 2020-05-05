@@ -170,8 +170,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                     trackCustomEvent({
                         category: 'Department Select',
                         action: 'Select',
-                        label: 'Index Page',
-                        value: e.target.value
+                        label: e.target.value
                     });
                     setSelectedDepartment(e.target.value);
                 } }
@@ -190,8 +189,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                     trackCustomEvent({
                         category: 'Class Name Select',
                         action: 'Select',
-                        label: 'Index Page',
-                        value: e.target.value
+                        label: e.target.value
                     });
                     setSelectedClassName(e.target.value);
                 } }
@@ -214,8 +212,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                         trackCustomEvent({
                             category: 'Semester Select',
                             action: 'Select',
-                            label: 'Index Page',
-                            value: e.target.value
+                            label: e.target.value
                         });
                         setSelectedSemester(e.target.value);
                     } }
