@@ -131,6 +131,7 @@ const GET_SEMESTER_CLASSES = gql`
             block
             seats
             semester
+            department
         }
     }
 `;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Grid, Divider, Paper, List, ListItem, MenuItem, Select } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles'
+import { withStyles, useTheme } from '@material-ui/styles'
 import { Helmet } from 'react-helmet';
 import { Query, withApollo } from 'react-apollo'
 import InfiniteScroll from 'react-infinite-scroller';
@@ -94,7 +94,13 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
 });
 
 const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
+    const theme = useTheme();
+
     const [semesterClasses, setSemesterClasses] = useState([]);
+
+    const [selectedDepartment, setSelectedDepartment] = useState('')
+    const [selectedClassName, setSelectedClassName] = useState('');
+    const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
 
     useEffect(() => {
         for (let semester of semesters) {
@@ -105,49 +111,105 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                 }
             })
                 .then(({ data: { findManyClass } }) => {
-                    setSemesterClasses(previousSemesterClasses => previousSemesterClasses.concat(findManyClass));
+                    setSemesterClasses(previousSemesterClasses => {
+                        if (semester === semesters[0]) {
+                            setSelectedDepartment(findManyClass[0].department);
+                            setSelectedClassName(findManyClass[0].name);
+                        }
+                        return previousSemesterClasses.concat(findManyClass);
+                    });
                 });
         }
     }, []);
 
-    const [selectedClassName, setSelectedClassName] = useState('AP Art History');
-    const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
+    useEffect(() => {
+        if (selectedDepartment === '') return;
+        setSelectedClassName(semesterClasses.find(semesterClass => semesterClass.department === selectedDepartment).name);
+    }, [selectedDepartment]);
+    useEffect(() => {
+        if (selectedClassName === '') return;
+        setSelectedSemester(semesterClasses.find(semesterClass => semesterClass.name === selectedClassName).semester);
+    }, [selectedClassName]);
+
+    let selectedClasses = semesterClasses
+        .filter(semesterClass => semesterClass.name === selectedClassName);
+
+    let yearLongCourseSelected = selectedClasses.length % 2 === 0;
+    if (yearLongCourseSelected) {
+        const selectedClassesCopy = selectedClasses.slice();
+        while (selectedClassesCopy.length > 0) {
+            const classToMatch = selectedClassesCopy.pop();
+            const matchIndex = selectedClassesCopy.findIndex(selectedClassCopy =>
+                selectedClassCopy.teacher === classToMatch.teacher &&
+                selectedClassCopy.block === classToMatch.block
+            );
+            selectedClassesCopy.splice(matchIndex, 1);
+            if (matchIndex === -1) {
+                yearLongCourseSelected = false;
+                break;
+            }
+        }
+    }
+
+    if (yearLongCourseSelected) {
+        selectedClasses = selectedClasses.filter(selectedClass => selectedClass.semester === semesters[0]);
+    } else {
+        selectedClasses = selectedClasses.filter(selectedClass => selectedClass.semester === selectedSemester);
+    }
 
     return (
-        <Paper className={ classes.control } style={ { height: '50vh' } }>
+        <Paper className={ classes.control } style={ { height: '50vh', marginTop: theme.spacing(2) } }>
+            <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Seat Tracker</Typography>
+            <Select
+                value={ selectedDepartment }
+                onChange={ e => setSelectedDepartment(e.target.value) }
+            >
+                {
+                    removeDupes(semesterClasses.map(semesterClass => semesterClass.department))
+                        .sort()
+                        .map((department, idx) => (
+                            <MenuItem value={ department } key={ idx }>{ department }</MenuItem>
+                        ))
+                }
+            </Select>
             <Select
                 value={ selectedClassName }
                 onChange={ e => setSelectedClassName(e.target.value) }
             >
                 {
-                    removeDupes(semesterClasses.map(semesterClass => semesterClass.name))
+                    removeDupes(semesterClasses
+                        .filter(semesterClass => semesterClass.department === selectedDepartment)
+                        .map(semesterClass => semesterClass.name)
+                    )
                         .map((className, idx) => (
                             <MenuItem value={ className } key={ idx }>{ className }</MenuItem>
                         ))
                 }
             </Select>
-            <Select
-                value={ selectedSemester }
-                renderValue={ val => splitSemester(val) }
-                onChange={ e => setSelectedSemester(e.target.value) }
-            >
-                {
-                    semesters
-                        .map((semester, idx) => (
-                            <MenuItem value={ semester } key={ idx }>{ splitSemester(semester) }</MenuItem>
-                        ))
-                }
-            </Select>
+            {
+                !yearLongCourseSelected ? <Select
+                    value={ selectedSemester }
+                    renderValue={ val => splitSemester(val) }
+                    onChange={ e => setSelectedSemester(e.target.value) }
+                >
+                    {
+                        semesters
+                            .map((semester, idx) => (
+                                <MenuItem value={ semester } key={ idx }>{ splitSemester(semester) }</MenuItem>
+                            ))
+                    }
+                </Select> : null
+            }
             <ResponsiveLine
                 data={
-                    semesterClasses
-                        .filter(semesterClass => semesterClass.name === selectedClassName && semesterClass.semester === selectedSemester)
+                    selectedClasses
+                        .sort((a, b) => b.block - a.block)
                         .map(semesterClass => ({
                             id: `Block ${ semesterClass.block } - ${ semesterClass.teacher.includes(' ') ? semesterClass.teacher.split(' ').slice(1).join(' ') : semesterClass.teacher }`,
                             data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))
                         }))
                 }
-                margin={ { bottom: 70, left: 70, top: 10, right: 10 } }
+                margin={ { bottom: 120, left: 70, top: 10, right: 10 } }
                 xScale={ { type: 'point' } }
                 yScale={ { type: 'linear', min: 0, max: 'auto', reverse: false } }
                 axisBottom={ {
