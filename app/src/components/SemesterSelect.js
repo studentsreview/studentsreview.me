@@ -6,7 +6,7 @@ import { splitSemester } from '../utils';
 const SemesterSelect = ({ semesters, value, onChange }) => (
     <Select
         value={ value }
-        renderValue={ val => splitSemester(val) }
+        renderValue={ val => <MenuItem>{ splitSemester(val) }</MenuItem> }
         onChange={ e => onChange(e.target.value) }
     >
         <MenuItem value={ value }>{ splitSemester(value) }</MenuItem>

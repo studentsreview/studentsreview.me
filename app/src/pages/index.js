@@ -10,11 +10,12 @@ import { Link } from 'gatsby';
 import Icon from '@mdi/react';
 import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
 import { ResponsiveLine } from '@nivo/line';
+import { Slice } from '@nivo/line';
 
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS, GET_SEMESTER_CLASSES } from '../graphql'
 import { isWidthUp } from '@material-ui/core/withWidth';
-import { splitSemester, sortSemesters, useWidth, removeDupes } from '../utils';
+import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName } from '../utils';
 import slugify from 'slugify';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -116,7 +117,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                             setSelectedDepartment(findManyClass[0].department);
                             setSelectedClassName(findManyClass[0].name);
                         }
-                        return previousSemesterClasses.concat(findManyClass);
+                        return previousSemesterClasses.concat(findManyClass.filter(semesterClass => !!semesterClass.seats));
                     });
                 });
         }
@@ -141,7 +142,8 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
             const classToMatch = selectedClassesCopy.pop();
             const matchIndex = selectedClassesCopy.findIndex(selectedClassCopy =>
                 selectedClassCopy.teacher === classToMatch.teacher &&
-                selectedClassCopy.block === classToMatch.block
+                selectedClassCopy.block === classToMatch.block &&
+                selectedClassCopy.seats.every((seats, idx) => seats === classToMatch.seats[idx])
             );
             selectedClassesCopy.splice(matchIndex, 1);
             if (matchIndex === -1) {
@@ -205,7 +207,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                     selectedClasses
                         .sort((a, b) => b.block - a.block)
                         .map(semesterClass => ({
-                            id: `Block ${ semesterClass.block } - ${ semesterClass.teacher.includes(' ') ? semesterClass.teacher.split(' ').slice(1).join(' ') : semesterClass.teacher }`,
+                            id: JSON.stringify(semesterClass),
                             data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))
                         }))
                 }
@@ -235,7 +237,30 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                 pointBorderColor={ { from: 'serieColor' } }
                 useMesh={ true }
                 enableSlices='x'
-                tooltip={ ({ x, y }) => `${ y } seats left at rotation ${ x }` }
+                sliceTooltip={ ({ slice }) => (
+                    <div
+                        style={{
+                            background: 'white',
+                            padding: '9px 12px',
+                            border: '1px solid #ccc',
+                        }}
+                    >
+                        { slice.points.map(point => {
+                            const pointClass = JSON.parse(point.serieId);
+                            return (
+                                <div
+                                    key={ point.id }
+                                    style={{
+                                        color: point.serieColor,
+                                        padding: '3px 0',
+                                    }}
+                                >
+                                    <strong>Block { pointClass.block } - { shortenTeacherName(pointClass.teacher) } </strong> { point.data.yFormatted } Seats Left
+                                </div>
+                            );
+                        }) }
+                    </div>
+                ) }
             />
         </Paper>
     );

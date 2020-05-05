@@ -17,6 +17,7 @@ const removeDupes = array => Array.from(new Set(array));
 const getReviewId = (review, teacher) => sha256(review.timestamp.concat(review.text).concat(teacher));
 const hashReview = (review, teacher) => getReviewId(review, teacher).substr(0, 10);
 const isMigrant = review => new Date(review.timestamp).toISOString() === '0001-01-01T00:00:00.000Z';
+const shortenTeacherName = teacherName => teacherName.includes(' ') ? teacherName.split(' ').slice(1).join(' ') : teacherName;
 const sortSemesters = semesters => semesters.sort((a, b) => semesterValue(b) - semesterValue(a));
 const formatSemesterRange = semesters => semesters.length === 1 ?  (semesters[0] !== config.announcers[0] ? splitSemester(semesters[0]) : 'Pre-'.concat(splitSemester(config.announcers[0]))) :
     `${ semesters[semesters.length - 1] !== config.announcers[0] ? splitSemester(semesters[semesters.length - 1]) : 'Pre-'.concat(splitSemester(config.announcers[0])) } - ${ splitSemester(semesters[0]) }`;
@@ -72,6 +73,7 @@ export {
     getReviewId,
     hashReview,
     isMigrant,
+    shortenTeacherName,
     sortSemesters,
     formatSemesterRange,
     copyToClipboard,

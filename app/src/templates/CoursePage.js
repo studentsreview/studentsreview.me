@@ -11,7 +11,7 @@ import CollapsibleText from '../components/CollapsibleText';
 import { graphql, prefetchPathname } from 'gatsby';
 import { navigate } from '@reach/router';
 import slugify from 'slugify';
-import { formatSemesterRange, getBlocks, removeDupes, semesterValue, sortSemesters } from '../utils'
+import { formatSemesterRange, getBlocks, removeDupes, semesterValue, sortSemesters, shortenTeacherName } from '../utils';
 import { FIND_REVIEWS } from '../graphql';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -145,8 +145,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                     /> : <Chip
                                         key={ idx }
                                         label={
-                                            `${ class_.teacher.includes(' ') ? class_.teacher.split(' ').slice(1).join(' ') : class_.teacher }${
-                                                class_.section ? ` (${ class_.section })` : '' }`
+                                            `${ shortenTeacherName(class_.teacher) }${ class_.section ? ` (${ class_.section })` : '' }`
                                         }
                                         onClick={ () => navigate(`/teachers/${ slugify(class_.teacher, { lower: true }) }`, {
                                             state: { semester: semester === semesters[0] ? null : semester }
