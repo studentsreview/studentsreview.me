@@ -268,7 +268,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                             return [
                                 <span style={{ display: 'block', width: '12px', height: '12px', background: point.serieColor }}/>,
                                 `Block ${ pointClass.block } - ${ shortenTeacherName(pointClass.teacher) }`,
-                                <strong>{ point.data.yFormatted } Seat${ point.data.y !== 1 ? 's' : '' } Left</strong>
+                                <strong>{ point.data.yFormatted } Seat{ point.data.y !== 1 ? 's' : '' } Left</strong>
                             ]
                         }) }
                     />
