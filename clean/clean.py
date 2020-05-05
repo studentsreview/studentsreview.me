@@ -114,6 +114,7 @@ for x in range(301, 303):
 data['Fall2015'][400]['teacher'] = 'Julian Pollak'
 
 import csv
+import re
 
 with open(os.path.join(data_path, '2020_2021', '2020-2021 Class Announcer - Full Announcer.csv')) as _2020_2021_announcer_file:
     with open(os.path.join(data_path, '2020_2021', '2020_2021_seat_data.json')) as _2020_2021_seat_data_file:
@@ -122,6 +123,8 @@ with open(os.path.join(data_path, '2020_2021', '2020-2021 Class Announcer - Full
     data['Fall2020'] = []
     data['Spring2021'] = []
     reader = csv.reader(_2020_2021_announcer_file, delimiter=',', quotechar='"')
+    class_queue = []
+
     for row in reader:
         # ['code', 'name', 'room', 'block', 'teacher']
         class_ = {}
@@ -132,65 +135,82 @@ with open(os.path.join(data_path, '2020_2021', '2020-2021 Class Announcer - Full
         class_['room'] = row[3]
         class_['block'] = row[1][:-1]
         class_['teacher'] = row[4]
+        class_queue.append(class_)
 
         notes = row[6][2:]
 
-        aliased_attrs = ['teacher']
+        while len(class_queue) != 0:
+            class_ = class_queue.pop(0)
 
-        if class_['name'].endswith('(Off Semester)'):
-            continue
+            aliased_attrs = ['teacher']
 
-        if class_['name'].startswith('AP English'):
-            class_['name'] = ' '.join(class_['name'].split()[:5])
-            class_['section'] = notes
-        elif class_['name'] == 'Upper Division Junior/Senior English A (Non AP)' or class_['name'] == 'Upper Division Junior/Senior English B (Non AP)':
-            class_['name'] = notes
-            aliased_attrs.append('name')
-            if class_['name'].startswith('Critical Writing'):
-                class_['name'] = 'Critical Writing'
-        elif class_['name'].startswith('English 2'):
-            class_['section'] = class_['name'][9]
-            class_['name'] = 'English 2'
-        else:
-            aliased_attrs.append('name')
-
-        for attr in aliased_attrs:
-            if aliases.get(class_[attr]) is None:
-                alias = input(class_[attr] + '( ' + notes + ' ) :')
-                aliases[class_[attr]] = alias
-
-            class_[attr] = aliases[class_[attr]]
-            write_to_alias_file(aliases)
-
-        if len(class_['block']) == 2:
-            if class_['block'][0] == '1':
-                semesters = ['Fall2020']
-            elif class_['block'][0] == '2':
-                semesters = ['Spring2021']
-
-            class_['block'] = class_['block'][1]
-            class_['length'] = 'Semester'
-        else:
-            semesters = ['Fall2020', 'Spring2021']
-            class_['length'] = 'Year'
-
-        for seat_datum in seat_data:
-            if aliases.get(seat_datum['teacher']) is None:
+            if class_['name'].lower().endswith('(off semester)'):
+                name_parts = re.sub(r'\(.+\)$', '', class_['name']).strip().split('/')
+                teacher_parts = class_['teacher'].split('/')
+                for (index, (name, teacher)) in enumerate(zip(name_parts, teacher_parts)):
+                    new_class = class_.copy()
+                    new_class['name'] = name
+                    new_class['teacher'] = teacher
+                    class_queue.append(new_class)
+                    class_['length'] = 'Semester'
+                    class_['semester'] = 'Fall2020' if index == 1 else 'Spring2021'
                 continue
 
-            if aliases[seat_datum['teacher']] == class_['teacher'] and seat_datum['block'] == class_['block'] and (
-                len(semesters) == 2 and seat_datum['semester'] == 'Both' or
-                len(semesters) == 1 and semesters[0] == 'Fall2020' and seat_datum['semester'] == '1' or
-                len(semesters) == 2 and semesters[0] == 'Spring2021' and seat_datum['semester'] == '2'
-            ):
-                class_['seats'] = seat_datum['seat_series']
-                break
+            if class_['name'].startswith('AP English'):
+                class_['name'] = ' '.join(class_['name'].split()[:5])
+                class_['section'] = notes
+            elif class_['name'] == 'Upper Division Junior/Senior English A (Non AP)' or class_[
+                'name'] == 'Upper Division Junior/Senior English B (Non AP)':
+                class_['name'] = notes
+                aliased_attrs.append('name')
+                if class_['name'].startswith('Critical Writing'):
+                    class_['name'] = 'Critical Writing'
+            elif class_['name'].startswith('English 2'):
+                class_['section'] = class_['name'][9]
+                class_['name'] = 'English 2'
+            else:
+                aliased_attrs.append('name')
 
-        if class_['name'] == '' or class_['teacher'] == '':
-            continue
+            for attr in aliased_attrs:
+                if aliases.get(class_[attr]) is None:
+                    alias = input(class_[attr] + '( ' + notes + ' ) :')
+                    aliases[class_[attr]] = alias
 
-        for semester in semesters:
-            data[semester].append(class_.copy())
+                class_[attr] = aliases[class_[attr]]
+                write_to_alias_file(aliases)
+
+            if class_.get('semester') is None and class_.get('length') is None:
+                if len(class_['block']) == 2:
+                    if class_['block'][0] == '1':
+                        semesters = ['Fall2020']
+                    elif class_['block'][0] == '2':
+                        semesters = ['Spring2021']
+
+                    class_['block'] = class_['block'][1]
+                    class_['length'] = 'Semester'
+                else:
+                    semesters = ['Fall2020', 'Spring2021']
+                    class_['length'] = 'Year'
+            else:
+                semesters = [class_['semester']]
+
+            for seat_datum in seat_data:
+                if aliases.get(seat_datum['teacher']) is None:
+                    continue
+
+                if aliases[seat_datum['teacher']] == class_['teacher'] and seat_datum['block'] == class_['block'] and (
+                        len(semesters) == 2 and seat_datum['semester'] == 'Both' or
+                        len(semesters) == 1 and semesters[0] == 'Fall2020' and seat_datum['semester'] == '1' or
+                        len(semesters) == 2 and semesters[0] == 'Spring2021' and seat_datum['semester'] == '2'
+                ):
+                    class_['seats'] = seat_datum['seat_series']
+                    break
+
+            if class_['name'] == '' or class_['teacher'] == '':
+                continue
+
+            for semester in semesters:
+                data[semester].append(class_.copy())
 
 
 # undetermined fixes
