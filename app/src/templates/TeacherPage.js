@@ -98,7 +98,7 @@ const Sidebar = withStyles(styles)(({ classes, classes_, semesters, location }) 
                     trackCustomEvent({
                         category: 'Semester Select',
                         action: 'Select',
-                        label: e.target.value
+                        label: semester
                     });
                     setSemester(semester);
                 } }

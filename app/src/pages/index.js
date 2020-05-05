@@ -162,7 +162,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
     }
 
     return (
-        <Paper className={ classes.control } style={ { height: isWidthUp('sm', width) ? '50vh': '90vh', marginTop: theme.spacing(2) } }>
+        <Paper className={ classes.control } style={ { height: isWidthUp('sm', width) ? '50vh': '75vh', marginTop: theme.spacing(2) } }>
             <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Seat Tracker</Typography>
             <Select
                 value={ selectedDepartment }
@@ -234,7 +234,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                             data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))
                         }))
                 }
-                margin={ { bottom: 120, left: 70, top: 10, right: 10 } }
+                margin={ { bottom: 170, left: 70, top: 10, right: 10 } }
                 xScale={ { type: 'point' } }
                 yScale={ { type: 'linear', min: 0, max: 'auto', reverse: false } }
                 axisBottom={ {

@@ -127,7 +127,7 @@ const CoursePage = ({ data, pageContext, classes, location, client }) => {
                                 trackCustomEvent({
                                     category: 'Semester Select',
                                     action: 'Select',
-                                    label: e.target.value
+                                    label: semester
                                 });
                                 setSemester(semester);
                             } }
