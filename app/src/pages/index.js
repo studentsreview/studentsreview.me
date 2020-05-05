@@ -15,7 +15,7 @@ import { Slice } from '@nivo/line';
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS, GET_SEMESTER_CLASSES } from '../graphql'
 import { isWidthUp } from '@material-ui/core/withWidth';
-import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName } from '../utils';
+import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName, semesterValue } from '../utils'
 import slugify from 'slugify';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -164,7 +164,15 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
             <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Seat Tracker</Typography>
             <Select
                 value={ selectedDepartment }
-                onChange={ e => setSelectedDepartment(e.target.value) }
+                onChange={ e => {
+                    trackCustomEvent({
+                        category: 'Department Select',
+                        action: 'Select',
+                        label: 'Index Page',
+                        value: e.target.value
+                    });
+                    setSelectedDepartment(e.target.value);
+                } }
             >
                 {
                     removeDupes(semesterClasses.map(semesterClass => semesterClass.department))
@@ -176,7 +184,15 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
             </Select>
             <Select
                 value={ selectedClassName }
-                onChange={ e => setSelectedClassName(e.target.value) }
+                onChange={ e => {
+                    trackCustomEvent({
+                        category: 'Class Name Select',
+                        action: 'Select',
+                        label: 'Index Page',
+                        value: e.target.value
+                    });
+                    setSelectedClassName(e.target.value);
+                } }
             >
                 {
                     removeDupes(semesterClasses
@@ -192,7 +208,15 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                 !yearLongCourseSelected ? <Select
                     value={ selectedSemester }
                     renderValue={ val => splitSemester(val) }
-                    onChange={ e => setSelectedSemester(e.target.value) }
+                    onChange={ e => {
+                        trackCustomEvent({
+                            category: 'Semester Select',
+                            action: 'Select',
+                            label: 'Index Page',
+                            value: e.target.value
+                        });
+                        setSelectedSemester(e.target.value);
+                    } }
                 >
                     {
                         semesters
