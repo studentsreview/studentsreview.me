@@ -21,16 +21,16 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
             site {
                 siteMetadata {
                     reviews {
-                        min_characters
-                        max_characters
+                        minCharacters
+                        maxCharacters
                     }
                 }
             }
         }
     `);
 
-    const minCharacters = data.site.siteMetadata.reviews.min_characters;
-    const maxCharacters = data.site.siteMetadata.reviews.max_characters;
+    const minCharacters = data.site.siteMetadata.reviews.minCharacters;
+    const maxCharacters = data.site.siteMetadata.reviews.maxCharacters;
 
     const inputRestrictions = [
         [reviewText.length < minCharacters, `Reviews must be at least ${ minCharacters } characters.`],

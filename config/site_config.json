@@ -1,8 +1,8 @@
 {
-  "site_url": "https://www.studentsreview.me",
+  "siteUrl": "https://www.studentsreview.me",
   "reviews": {
-    "min_characters": 50,
-    "max_characters": 1000
+    "minCharacters": 50,
+    "maxCharacters": 1000
   },
   "announcers": [
     "Fall2014",
@@ -20,7 +20,7 @@
     "Fall2020",
     "Spring2021"
   ],
-  "arena_rotations": {
+  "arenaRotations": {
     "1": "2020-05-04T21:30:00.000Z",
     "2": "2020-05-04T22:30:00.000Z",
     "3": "2020-05-04T23:30:00.000Z",

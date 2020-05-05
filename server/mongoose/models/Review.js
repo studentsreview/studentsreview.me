@@ -22,8 +22,8 @@ const reviewSchema = new mongoose.Schema({
     },
     text: {
         type: String,
-        minlength: config.reviews.min_characters,
-        maxlength: config.reviews.max_characters,
+        minlength: config.reviews.minCharacters,
+        maxlength: config.reviews.maxCharacters,
         required: true
     },
     timestamp: {
