@@ -271,10 +271,10 @@ for semester in data:
             department = 'English'
         elif any(test in class_['name'] for test in ['Bio', 'Chemistry', 'Physics', 'Physiology', 'Geology', 'Science']):
             department = 'Science'
-        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Microeconomics', 'Macroeconomics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
-            department = 'Social Science'
         elif any(test in class_['name'] for test in ['Band', 'Ceramics', 'Photography', 'Video', 'Drama', 'Art', 'Guitar', 'Piano', 'Orchestra', 'Music', 'Theater', 'Dance']):
             department = 'Visual Performing Arts'
+        elif any(test in class_['name'] for test in ['History', 'Studies', 'Economics', 'Microeconomics', 'Macroeconomics', 'Psychology', 'Democracy', 'Geography', 'Politics']):
+            department = 'Social Science'
         elif any(test in class_['name'] for test in ['PE', 'Swimming', 'Basketball', 'Sports', 'Weight', 'Soccer', 'Yoga']):
             department = 'Physical Education'
         elif any(test in class_['name'] for test in ['JROTC']):
