@@ -10,7 +10,8 @@ const classSchema = new mongoose.Schema({
     semester: String,
     section: String,
     department: String,
-    seats: [Number]
+    seats: [Number],
+    length: String
 });
 
 const Class = mongoose.model('Class', classSchema, 'classes');

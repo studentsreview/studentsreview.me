@@ -15,7 +15,7 @@ import { TableTooltip } from '@nivo/tooltip';
 import { prefetchPathname, useStaticQuery, navigate, graphql } from 'gatsby';
 import { FIND_LATEST_REVIEWS, GET_SEMESTER_CLASSES } from '../graphql'
 import { isWidthUp } from '@material-ui/core/withWidth';
-import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName, semesterValue } from '../utils'
+import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName } from '../utils'
 import slugify from 'slugify';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 
@@ -143,6 +143,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
             const matchIndex = selectedClassesCopy.findIndex(selectedClassCopy =>
                 selectedClassCopy.teacher === classToMatch.teacher &&
                 selectedClassCopy.block === classToMatch.block &&
+                selectedClassCopy.semester !== classToMatch.semester &&
                 selectedClassCopy.seats.every((seats, idx) => seats === classToMatch.seats[idx])
             );
             selectedClassesCopy.splice(matchIndex, 1);
@@ -231,7 +232,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                     selectedClasses
                         .sort((a, b) => b.block - a.block)
                         .map(semesterClass => ({
-                            id: JSON.stringify(semesterClass),
+                            id: JSON.stringify(Object.assign({_: Math.random(), ...semesterClass})),
                             data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))
                         }))
                 }
@@ -269,7 +270,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                                 <span style={{ display: 'block', width: '12px', height: '12px', background: point.serieColor }}/>,
                                 `Block ${ pointClass.block } - ${ shortenTeacherName(pointClass.teacher) }`,
                                 <strong>{ point.data.yFormatted } Seat{ point.data.y !== 1 ? 's' : '' } Left</strong>
-                            ]
+                            ];
                         }) }
                     />
                 ) }
