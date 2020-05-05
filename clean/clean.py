@@ -201,7 +201,7 @@ with open(os.path.join(data_path, '2020_2021', '2020-2021 Class Announcer - Full
                 if aliases[seat_datum['teacher']] == class_['teacher'] and seat_datum['block'] == class_['block'] and (
                         len(semesters) == 2 and seat_datum['semester'] == 'Both' or
                         len(semesters) == 1 and semesters[0] == 'Fall2020' and seat_datum['semester'] == '1' or
-                        len(semesters) == 2 and semesters[0] == 'Spring2021' and seat_datum['semester'] == '2'
+                        len(semesters) == 1 and semesters[0] == 'Spring2021' and seat_datum['semester'] == '2'
                 ):
                     class_['seats'] = seat_datum['seat_series']
                     break
