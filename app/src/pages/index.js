@@ -18,6 +18,7 @@ import { isWidthUp } from '@material-ui/core/withWidth';
 import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName } from '../utils'
 import slugify from 'slugify';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
+import axios from 'axios';
 
 import styles from '../styles/styles';
 
@@ -94,11 +95,12 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
     );
 });
 
-const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
+const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsUrl }) => {
     const theme = useTheme();
     const width = useWidth();
 
     const [semesterClasses, setSemesterClasses] = useState([]);
+    const [liveSeatData, setLiveSeatData] = useState({});
 
     const [selectedDepartment, setSelectedDepartment] = useState('')
     const [selectedClassName, setSelectedClassName] = useState('');
@@ -122,6 +124,9 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                     });
                 });
         }
+
+        axios.get(liveSeatsUrl)
+            .then(({ data }) => setLiveSeatData(data));
     }, []);
 
     useEffect(() => {
@@ -159,6 +164,29 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
         selectedClasses = selectedClasses.filter(selectedClass => selectedClass.semester === semesters[0]);
     } else {
         selectedClasses = selectedClasses.filter(selectedClass => selectedClass.semester === selectedSemester);
+    }
+
+    const getLiveSeatCount = query => {
+        for (let department of Object.keys(liveSeatData)) {
+            for (let className of Object.keys(liveSeatData[department])) {
+                for (let teacher of Object.keys(liveSeatData[department][className])) {
+                    if (teacher
+                        .replace(/\./g, '')
+                        .replace(/([a-z]) (.+)$/g, (_, p1) => p1)
+                        .split(',').every(segment => query.teacher.includes(segment.trim()))
+                    ) {
+                        for (let class_ of liveSeatData[department][className][teacher]) {
+                            if (class_[0] === query.block && (
+                                (query.length === 'Year' && class_[1] === 'Both') ||
+                                (query.length === 'Semester' && semesters[Number(class_[1]) - 1] === query.semester)
+                            )) {
+                                return class_[2];
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return (
@@ -231,7 +259,10 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters }) => {
                         .sort((a, b) => b.block - a.block)
                         .map(semesterClass => ({
                             id: JSON.stringify(Object.assign({_: Math.random(), ...semesterClass})),
-                            data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))
+                            data: semesterClass.seats.map((seats, i) => ({x: i, y: seats})).concat([{
+                                x: 'Live',
+                                y: getLiveSeatCount(semesterClass) || 0
+                            }])
                         }))
                 }
                 margin={ { bottom: 170, left: 70, top: 10, right: 10 } }
@@ -295,7 +326,7 @@ const IndexPage = ({ classes, client }) => {
                     </Grid> }
                     <Grid item xs={ 12 } sm={ 9 }>
                         <HeaderCard/>
-                        <SeatsWidget client={ client } semesters={ ['Fall2020', 'Spring2021'] }/>
+                        <SeatsWidget client={ client } semesters={ ['Fall2020', 'Spring2021'] } liveSeatsUrl='https://arenarolodexscraper.herokuapp.com/'/>
                         <Typography variant='h5' className={ classes.control } style={ { textAlign: 'center' } }>Latest Reviews</Typography>
                         <Query
                             query={ FIND_LATEST_REVIEWS }
