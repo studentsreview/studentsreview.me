@@ -18,10 +18,10 @@ for (let department of Object.keys(root)) {
                     block: class_info[0],
                     semester: class_info[1],
                     seat_series: dumps.map(dump => {
-                        if (dump[department][class_name] === undefined) {
+                        if (dump[department][class_name] === undefined || dump[department][class_name][teacher] === undefined) {
                             for (let class_name_test of Object.keys(dump[department])) {
                                 for (let teacher_test of Object.keys(dump[department][class_name_test])) {
-                                    if (teacher === teacher_test) {
+                                    if (teacher === teacher_test || teacher_test.startsWith(teacher.split(',')[0])) {
                                         for (let class_info_test of dump[department][class_name_test][teacher_test]) {
                                             if (class_info_test[0] === class_info[0] && class_info_test[1] === class_info[1]) {
                                                 return class_info_test[2];
