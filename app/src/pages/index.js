@@ -8,7 +8,7 @@ import Review from '../components/Review';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
 import { Link } from 'gatsby';
 import Icon from '@mdi/react';
-import { mdiInstagram, mdiGithubCircle } from '@mdi/js';
+import { mdiInstagram, mdiGithubCircle, mdiCircle } from '@mdi/js';
 import { ResponsiveLine } from '@nivo/line';
 import { TableTooltip } from '@nivo/tooltip';
 
@@ -125,8 +125,10 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                 });
         }
 
-        axios.get(liveSeatsUrl)
+        const fetchLiveSeatData = () => axios.get(liveSeatsUrl)
             .then(({ data }) => setLiveSeatData(data));
+        fetchLiveSeatData()
+            .then(setInterval(fetchLiveSeatData, 5 * 1000));
     }, []);
 
     useEffect(() => {
@@ -253,6 +255,14 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                     }
                 </Select> : null
             }
+            <br/>
+            <Icon
+                path={ mdiCircle }
+                size={ 0.5 }
+                color='green'
+                style={ { marginRight: 5 } }
+            />
+            <Typography variant='caption'>Seat counts update every 5 seconds.</Typography>
             <ResponsiveLine
                 data={
                     selectedClasses
