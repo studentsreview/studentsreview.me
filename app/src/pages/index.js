@@ -96,16 +96,28 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
     );
 });
 
-const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsUrl }) => {
+const RotationCountdown = () => {
     // useStaticQuery is bugged
     const data = { site: { siteMetadata: { arenaRotations: ["2020-05-04T21:30:00.000Z", "2020-05-04T22:30:00.000Z", "2020-05-04T23:30:00.000Z", "2020-05-05T00:30:00.000Z", "2020-05-05T01:30:00.000Z", "2020-05-06T21:30:00.000Z", "2020-05-06T22:30:00.000Z", "2020-05-06T23:30:00.000Z", "2020-05-07T00:30:00.000Z", "2020-05-07T01:30:00.000Z", "2020-05-08T22:00:00.000Z", "2020-05-08T23:00:00.000Z"] } } };
 
+    const [now, setNow] = useState(moment());
+
+    useEffect(() => {
+        setInterval(() => setNow(moment()), 1000);
+    }, []);
+
+    const arenaRotations = data.site.siteMetadata.arenaRotations;
+    const nextRotation = arenaRotations.findIndex(rotation => new Date(rotation) > new Date());
+
+    return `Rotation ${ nextRotation + 1 } starts in ${ moment.duration(moment(arenaRotations[nextRotation]).diff(now)).humanize() }`;
+};
+
+const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsUrl }) => {
     const theme = useTheme();
     const width = useWidth();
 
     const [semesterClasses, setSemesterClasses] = useState([]);
     const [liveSeatData, setLiveSeatData] = useState({});
-    const [now, setNow] = useState(moment());
 
     const [selectedDepartment, setSelectedDepartment] = useState('')
     const [selectedClassName, setSelectedClassName] = useState('');
@@ -133,9 +145,11 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
         const fetchLiveSeatData = () => axios.get(liveSeatsUrl)
             .then(({ data }) => setLiveSeatData(data));
         fetchLiveSeatData()
-            .then(setInterval(fetchLiveSeatData, 5 * 1000));
-
-        setInterval(() => setNow(moment()), 1000);
+            .then(() => {
+                if (process.env.NODE_ENV === 'production') {
+                    setInterval(fetchLiveSeatData, 5 * 1000);
+                }
+            });
     }, []);
 
     useEffect(() => {
@@ -182,8 +196,15 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                     if (teacher
                         .replace(/\./g, '')
                         .replace(/([A-z]) (.+)$/g, (_, p1) => p1)
-                        .split(',').every(segment => query.teacher.includes(segment.trim()))
-                        || teacher === 'TBD' && query.teacher === 'Undetermined'
+                        .split(',').every(segment => {
+                            segment = segment.trim();
+                            if (segment.length === 1) {
+                                return query.teacher.includes(segment)
+                            } else {
+                                return query.teacher.split(' ').includes(segment);
+                            }
+                        })
+                        || (teacher === 'TBD' && query.teacher === 'Undetermined')
                     ) {
                         for (let class_ of liveSeatData[department][className][teacher]) {
                             if (class_[0] === query.block && (
@@ -198,9 +219,6 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
             }
         }
     }
-
-    const arenaRotations = data.site.siteMetadata.arenaRotations;
-    const nextRotation = arenaRotations.findIndex(rotation => new Date(rotation) > new Date());
 
     return (
         <Paper className={ classes.control } style={ { height: isWidthUp('sm', width) ? '50vh': '75vh', marginTop: theme.spacing(2) } }>
@@ -273,7 +291,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                 color='green'
                 style={ { marginRight: 5 } }
             />
-            <Typography variant='caption'>Seat counts update every 5 seconds. | Rotation { nextRotation + 1 } starts in { moment.duration(moment(arenaRotations[nextRotation]).diff(now)).humanize() }</Typography>
+            <Typography variant='caption'>Seat counts update every 5 seconds. | { <RotationCountdown/> }</Typography>
             <ResponsiveLine
                 data={
                     selectedClasses
