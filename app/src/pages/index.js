@@ -282,7 +282,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                             id: JSON.stringify(Object.assign({_: Math.random(), ...semesterClass})),
                             data: semesterClass.seats.map((seats, i) => ({x: i, y: seats})).concat([{
                                 x: 'Live',
-                                y: getLiveSeatCount(semesterClass) || 0
+                                y: getLiveSeatCount(semesterClass) || semesterClass.seats[semesterClass.seats.length - 1]
                             }])
                         }))
                 }
