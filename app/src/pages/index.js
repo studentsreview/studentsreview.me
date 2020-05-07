@@ -183,6 +183,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                         .replace(/\./g, '')
                         .replace(/([A-z]) (.+)$/g, (_, p1) => p1)
                         .split(',').every(segment => query.teacher.includes(segment.trim()))
+                        || teacher === 'TBD' && query.teacher === 'Undetermined'
                     ) {
                         for (let class_ of liveSeatData[department][className][teacher]) {
                             if (class_[0] === query.block && (
