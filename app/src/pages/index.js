@@ -272,7 +272,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                 color='green'
                 style={ { marginRight: 5 } }
             />
-            <Typography variant='caption'>Seat counts update every 5 seconds. | Rotation { nextRotation } starts in { moment.duration(moment(arenaRotations[nextRotation]).diff(now)).humanize() }</Typography>
+            <Typography variant='caption'>Seat counts update every 5 seconds. | Rotation { nextRotation + 1 } starts in { moment.duration(moment(arenaRotations[nextRotation]).diff(now)).humanize() }</Typography>
             <ResponsiveLine
                 data={
                     selectedClasses
