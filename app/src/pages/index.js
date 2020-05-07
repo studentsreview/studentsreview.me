@@ -19,6 +19,7 @@ import { splitSemester, sortSemesters, useWidth, removeDupes, shortenTeacherName
 import slugify from 'slugify';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
 import axios from 'axios';
+import moment from 'moment';
 
 import styles from '../styles/styles';
 
@@ -96,11 +97,15 @@ const HeaderCard = withStyles(styles)(({ classes }) => {
 });
 
 const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsUrl }) => {
+    // useStaticQuery is bugged
+    const data = { site: { siteMetadata: { arenaRotations: ["2020-05-04T21:30:00.000Z", "2020-05-04T22:30:00.000Z", "2020-05-04T23:30:00.000Z", "2020-05-05T00:30:00.000Z", "2020-05-05T01:30:00.000Z", "2020-05-06T21:30:00.000Z", "2020-05-06T22:30:00.000Z", "2020-05-06T23:30:00.000Z", "2020-05-07T00:30:00.000Z", "2020-05-07T01:30:00.000Z", "2020-05-08T22:00:00.000Z", "2020-05-08T23:00:00.000Z"] } } };
+
     const theme = useTheme();
     const width = useWidth();
 
     const [semesterClasses, setSemesterClasses] = useState([]);
     const [liveSeatData, setLiveSeatData] = useState({});
+    const [now, setNow] = useState(moment());
 
     const [selectedDepartment, setSelectedDepartment] = useState('')
     const [selectedClassName, setSelectedClassName] = useState('');
@@ -129,6 +134,8 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
             .then(({ data }) => setLiveSeatData(data));
         fetchLiveSeatData()
             .then(setInterval(fetchLiveSeatData, 5 * 1000));
+
+        setInterval(() => setNow(moment()), 1000);
     }, []);
 
     useEffect(() => {
@@ -190,6 +197,9 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
             }
         }
     }
+
+    const arenaRotations = data.site.siteMetadata.arenaRotations;
+    const nextRotation = arenaRotations.findIndex(rotation => new Date(rotation) > new Date());
 
     return (
         <Paper className={ classes.control } style={ { height: isWidthUp('sm', width) ? '50vh': '75vh', marginTop: theme.spacing(2) } }>
@@ -262,7 +272,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                 color='green'
                 style={ { marginRight: 5 } }
             />
-            <Typography variant='caption'>Seat counts update every 5 seconds.</Typography>
+            <Typography variant='caption'>Seat counts update every 5 seconds. | Rotation { nextRotation } starts in { moment.duration(moment(arenaRotations[nextRotation]).diff(now)).humanize() }</Typography>
             <ResponsiveLine
                 data={
                     selectedClasses
