@@ -4,7 +4,9 @@ const path = require('path');
 const consolidated_data = [];
 
 const dump_files = fs.readdirSync(path.join(__dirname, 'dumps'));
-const dumps = dump_files.map(dump_file => JSON.parse(fs.readFileSync(path.join(__dirname, 'dumps', dump_file), 'utf8')));
+const dumps = dump_files
+    .sort((a, b) => Number(b.split('.')[0]) - Number(a.split('.')[0]))
+    .map(dump_file => JSON.parse(fs.readFileSync(path.join(__dirname, 'dumps', dump_file), 'utf8')));
 
 const root = dumps[0];
 
