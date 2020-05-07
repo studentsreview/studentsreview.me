@@ -286,7 +286,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                             }])
                         }))
                 }
-                margin={ { bottom: 170, left: 70, top: 10, right: 10 } }
+                margin={ { bottom: isWidthUp('sm', width) ? 150 : 200, left: 70, top: 10, right: 10 } }
                 xScale={ { type: 'point' } }
                 yScale={ { type: 'linear', min: 0, max: 'auto', reverse: false } }
                 axisBottom={ {
