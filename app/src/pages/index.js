@@ -181,7 +181,7 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                 for (let teacher of Object.keys(liveSeatData[department][className])) {
                     if (teacher
                         .replace(/\./g, '')
-                        .replace(/([a-z]) (.+)$/g, (_, p1) => p1)
+                        .replace(/([A-z]) (.+)$/g, (_, p1) => p1)
                         .split(',').every(segment => query.teacher.includes(segment.trim()))
                     ) {
                         for (let class_ of liveSeatData[department][className][teacher]) {
