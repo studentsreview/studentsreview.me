@@ -144,12 +144,15 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
 
         const fetchLiveSeatData = () => axios.get(liveSeatsUrl)
             .then(({ data }) => setLiveSeatData(data));
+
+        /*
         fetchLiveSeatData()
             .then(() => {
                 if (process.env.NODE_ENV === 'production') {
                     setInterval(fetchLiveSeatData, 5 * 1000);
                 }
             });
+        */
     }, []);
 
     useEffect(() => {
@@ -285,23 +288,24 @@ const SeatsWidget = withStyles(styles)(({ classes, client, semesters, liveSeatsU
                 </Select> : null
             }
             <br/>
+            { /*
             <Icon
                 path={ mdiCircle }
                 size={ 0.5 }
                 color='green'
                 style={ { marginRight: 5 } }
             />
-            <Typography variant='caption'>Seat counts update every 5 seconds. | { <RotationCountdown/> }</Typography>
+            <Typography variant='caption'>Seat counts update every 5 seconds.</Typography> */ }
             <ResponsiveLine
                 data={
                     selectedClasses
                         .sort((a, b) => b.block - a.block)
                         .map(semesterClass => ({
                             id: JSON.stringify(Object.assign({_: Math.random(), ...semesterClass})),
-                            data: semesterClass.seats.map((seats, i) => ({x: i, y: seats})).concat([{
+                            data: semesterClass.seats.map((seats, i) => ({x: i, y: seats}))/*.concat([{
                                 x: 'Live',
                                 y: getLiveSeatCount(semesterClass) || semesterClass.seats[semesterClass.seats.length - 1]
-                            }])
+                            }]) */
                         }))
                 }
                 margin={ { bottom: isWidthUp('sm', width) ? 150 : 200, left: 70, top: 10, right: 10 } }
