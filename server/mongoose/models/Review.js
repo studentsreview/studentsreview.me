@@ -47,7 +47,6 @@ reviewSchema.pre('validate', function (next) {
 });
 
 const Review = mongoose.model('Review', reviewSchema, 'reviews');
-const HeldReview = mongoose.model('Review', reviewSchema, 'heldReviews');
 
 const ReviewTC = composeWithMongoose(Review, {
     resolvers: {
@@ -58,8 +57,6 @@ const ReviewTC = composeWithMongoose(Review, {
         }
     }
 });
-
-const HeldReviewTC = composeWithMongoose(HeldReview);
 
 ReviewTC.setResolver('findOne', ReviewTC
     .getResolver('findOne')
@@ -74,6 +71,5 @@ ReviewTC.setResolver('findOne', ReviewTC
 
 module.exports = {
     Review,
-    ReviewTC,
-    HeldReviewTC
+    ReviewTC
 };
