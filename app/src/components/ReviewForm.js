@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Typography, CircularProgress } from '@material-ui/core';
-import { Check, Close } from '@material-ui/icons'
-import { useTheme, withStyles } from '@material-ui/styles';
+import { Check, Build } from '@material-ui/icons';
 import { Mutation } from 'react-apollo';
 import StarRatings from 'react-star-ratings';
 
+import { useTheme, withStyles } from '@material-ui/styles';
 import { useStaticQuery, graphql } from 'gatsby';
 import { FIND_REVIEWS, CREATE_REVIEW } from '../graphql';
 import { trackCustomEvent } from 'gatsby-plugin-google-analytics';
@@ -92,11 +92,11 @@ const ReviewForm = ({ classes, teacher, onClose }) => {
                 } else if (error) {
                     return (
                         <>
-                            <Close className={ classes.blockIcon } htmlColor='red'/>
+                            <Build className={ classes.blockIcon } htmlColor='orange'/>
                             <p style={ {
                                 textAlign: 'center',
-                                color: 'red'
-                            } }>Unable to submit review.</p>
+                                color: 'orange'
+                            } }>{ error.message }</p>
                         </>
                     );
                 } else if (loading) {

@@ -13,6 +13,7 @@ import { ApolloProvider } from 'react-apollo';
 
 import fetch from 'isomorphic-fetch';
 import smoothscroll from 'smoothscroll-polyfill';
+import { GoogleReCaptcha, GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 
 if (typeof window !== 'undefined') {
     smoothscroll.polyfill();
@@ -48,17 +49,28 @@ const cache = new InMemoryCache();
 const client = new ApolloClient({
     uri: process.env.GRAPHQL_URI,
     fetch,
-    cache
+    cache,
+    request: operation => {
+        const token = localStorage.getItem('recaptchaToken')
+        operation.setContext({
+            headers: {
+                authorization: token ? token : ''
+            }
+        })
+    }
 });
 
 const Layout = ({ children }) => (
-    <ApolloProvider client={ client }>
-        <MuiThemeProvider theme={ theme }>
-            <AppHeader/>
-            <InfoBanner/>
-            { children }
-        </MuiThemeProvider>
-    </ApolloProvider>
+    <GoogleReCaptchaProvider reCaptchaKey={ process.env.RECAPTCHA_KEY }>
+        <GoogleReCaptcha onVerify={ token => localStorage.setItem('recaptchaToken', token) }/>
+        <ApolloProvider client={ client }>
+            <MuiThemeProvider theme={ theme }>
+                <AppHeader/>
+                <InfoBanner/>
+                { children }
+            </MuiThemeProvider>
+        </ApolloProvider>
+    </GoogleReCaptchaProvider>
 );
 
 export default Layout;

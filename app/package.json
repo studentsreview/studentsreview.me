@@ -43,6 +43,7 @@
     "react-countup": "^4.1.3",
     "react-device-detect": "^1.6.2",
     "react-dom": "^16.8.6",
+    "react-google-recaptcha-v3": "^1.5.1",
     "react-helmet": "^5.2.1",
     "react-infinite-scroller": "^1.2.4",
     "react-star-ratings": "https://github.com/kajchang/react-star-ratings.git",

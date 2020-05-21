@@ -1,6 +1,7 @@
 const { schemaComposer } = require('graphql-compose');
 
 const { ReviewTC } = require('../mongoose/models/Review');
+const { HeldReviewTC } = require('../mongoose/models/HeldReview');
 const { CourseTC } = require('../mongoose/models/Course');
 const { ClassTC } = require('../mongoose/models/Class');
 const { TeacherTC } = require('../mongoose/models/Teacher');
@@ -22,17 +23,25 @@ schemaComposer.Query.addFields({
 });
 
 schemaComposer.Mutation.addFields({
-    createReview: ReviewTC.getResolver('createOne'),
     createReport: ReportTC.getResolver('createOne'),
+    createReview: ReviewTC.getResolver('createOne').wrapResolve(next => rp => {
+        if (rp.context.recaptchaScore < Number(process.env.RECAPTCHA_REVIEW_MIN_SCORE)) {
+            rp.args.record.remoteAddress = rp.context.remoteAddress;
+            rp.args.record.userAgent = rp.context.userAgent;
+            rp.args.record.recaptchaScore = rp.context.recaptchaScore;
+            HeldReviewTC.getResolver('createOne').resolve(rp);
+            throw new Error('This review will be manually reviewed.');
+        }
+        return next(rp);
+    }),
     ...adminAccess({
         reviewRemoveById: ReviewTC.getResolver('removeById'),
         reportRemoveById: ReportTC.getResolver('removeById')
     })
 });
 
-
 function adminAccess(resolvers) {
-    Object.keys(resolvers).forEach((k) => {
+    Object.keys(resolvers).forEach(k => {
         resolvers[k] = resolvers[k].wrapResolve(next => rp => {
             if (rp.context.authScope !== 'ADMIN') {
                 throw new Error('You must be an admin to access this field.');

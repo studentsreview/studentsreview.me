@@ -3,6 +3,7 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 const bcrypt = require('bcrypt');
+const fetch = require('isomorphic-fetch');
 
 const { ApolloServer } = require('apollo-server-express');
 const cors = require('cors');
@@ -32,6 +33,16 @@ const configurations = {
 const environment = process.env.NODE_ENV || 'production';
 const config = configurations[environment];
 
+async function scoreRecaptcha(token) {
+    if (!token) return 0;
+    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${ process.env.RECAPTCHA_SECRET_KEY }&response=${ token }`, {
+        method: 'post'
+    });
+    const result = await response.json();
+    if (!result.success) return 0;
+    return result.score;
+}
+
 function getScope(token) {
     if (!token) return 'USER';
     return bcrypt.compareSync(token, process.env.ADMIN_PWD_HASH) ? 'ADMIN' : 'USER';
@@ -46,7 +57,10 @@ const apollo = new ApolloServer({
         apiKey: process.env.ENGINE_API_KEY
     },
     cors: cors(),
-    context: integrationContext => ({
+    context: async integrationContext => ({
+        remoteAddress: integrationContext.req.connection.remoteAddress,
+        userAgent: integrationContext.req.headers['user-agent'],
+        recaptchaScore: await scoreRecaptcha(integrationContext.req.headers.authorization),
         authScope: getScope(integrationContext.req.headers.authorization)
     })
 });
