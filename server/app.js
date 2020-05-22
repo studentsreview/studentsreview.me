@@ -27,7 +27,7 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
 
 const configurations = {
     production: { ssl: true, port: 80, hostname: 'api.studentsreview.me' },
-    development: { ssl: false, port: 8080, hostname: 'localhost' }
+    development: { ssl: false, port: 4000, hostname: 'localhost' }
 };
 
 const environment = process.env.NODE_ENV || 'production';
