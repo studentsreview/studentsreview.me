@@ -4,7 +4,7 @@
     "prod": "NODE_ENV=production node app.js"
   },
   "dependencies": {
-    "apollo-server": "^2.6.1",
+    "apollo-server": "^2.14.2",
     "apollo-server-express": "^2.14.2",
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
