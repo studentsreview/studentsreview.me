@@ -15,11 +15,13 @@ module.exports.createPages = async ({ graphql, actions }) => {
     `);
     teachers.data.srapi.findManyTeacher.forEach(({ name }) => {
         if (name !== 'Undetermined') {
+            /*
             createPage({
                 path: `/teachers/${ slugify(name, { lower: true }) }`,
                 component: path.resolve('./src/templates/TeacherPage.js'),
                 context: { name }
             });
+            */
         }
     });
 
@@ -33,11 +35,13 @@ module.exports.createPages = async ({ graphql, actions }) => {
         }
     `);
     courses.data.srapi.findManyCourse.forEach(({ name }) => {
+        /*
         createPage({
             path: `/courses/${ slugify(name, { lower: true }) }`,
             component: path.resolve('./src/templates/CoursePage.js'),
             context: { name }
         });
+        */
     });
 
     const announcers = await graphql(`
@@ -50,11 +54,13 @@ module.exports.createPages = async ({ graphql, actions }) => {
         }
     `);
     announcers.data.site.siteMetadata.announcers.map(semester => {
+        /*
         createPage({
             path: `/announcers/${ semester.toLowerCase() }`,
             component: path.resolve('./src/templates/AnnouncerPage.js'),
             context: { semester }
         });
+        */
     });
 }
 
