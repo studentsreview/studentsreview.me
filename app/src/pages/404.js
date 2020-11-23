@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Typography } from '@material-ui/core';
+import Helmet from 'react-helmet';
 
 import '../styles/layout.css';
 
@@ -10,6 +11,9 @@ const NotFoundPage = () => <Container style={ {
     minHeight: '100%',
     textAlign: 'center',
 } }>
+    <Helmet>
+        <title>studentsreview.me</title>
+    </Helmet>
     <div style={{ flexGrow: 1 }} />
     <img style={{ width: "300px" }} src='/relaxing-walk.svg' alt='Walk' />
     <Typography style={{ marginTop: "25px", fontFamily: "Montserrat" }} variant="h4">
